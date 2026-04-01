@@ -44,9 +44,9 @@ export function VistaArmazem({ recursos, renda, nivelAtual }: VistaArmazemProps)
   const capacidadeProximoNivel = Math.floor(recursos.recursosMaximos * 1.08);
 
   const recursosList = [
-    { icon: '/icon_wood.png', nome: 'Madeira', chave: 'madeira', amount: Math.floor(recursos.madeira), rend: renda.madeira, bg: '#795548', fill: '#a0522d' },
-    { icon: '/icon_stone.png', nome: 'Pedra', chave: 'pedra', amount: Math.floor(recursos.pedra), rend: renda.pedra, bg: '#8b8b8b', fill: '#9e9e9e' },
-    { icon: '/icon_silver.png', nome: 'Moedas de prata', chave: 'prata', amount: Math.floor(recursos.prata), rend: renda.prata, bg: '#607d8b', fill: '#cfd8dc' },
+    { icon: '/icon_wood.png', nome: 'Madeira', chave: 'madeira', amount: Math.floor(recursos.madeira), rawAmount: recursos.madeira, rend: renda.madeira, bg: '#795548', fill: '#a0522d' },
+    { icon: '/icon_stone.png', nome: 'Pedra', chave: 'pedra', amount: Math.floor(recursos.pedra), rawAmount: recursos.pedra, rend: renda.pedra, bg: '#8b8b8b', fill: '#9e9e9e' },
+    { icon: '/icon_silver.png', nome: 'Moedas de prata', chave: 'prata', amount: Math.floor(recursos.prata), rawAmount: recursos.prata, rend: renda.prata, bg: '#607d8b', fill: '#cfd8dc' },
   ];
 
   const escondidoAtual = nivelAtual * 200;
@@ -70,11 +70,11 @@ export function VistaArmazem({ recursos, renda, nivelAtual }: VistaArmazemProps)
               <div className="arm-bar-track" style={{ height: '24px', background: '#3e2723', border: '2px solid #8b4513', position: 'relative' }}>
                 <div className="arm-bar-fill" style={{ height: '100%', width: `${porc}%`, background: r.fill, transition: 'width 0.5s', borderRight: '2px solid #ffcc80', borderTop: '2px solid rgba(255,255,255,0.3)' }}></div>
                 <div className="arm-time-text" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#fff', fontSize: '0.85rem', textShadow: '1px 1px 2px #000' }}>
-                  {r.amount >= recursos.recursosMaximos ? 'Cheio' : getTempoRestante(r.amount, r.rend, recursos.recursosMaximos)}
+                  {r.rawAmount >= recursos.recursosMaximos ? 'Cheio' : getTempoRestante(r.rawAmount, r.rend, recursos.recursosMaximos)}
                 </div>
               </div>
               <div className="arm-footer" style={{ fontSize: '0.85rem', color: '#d7ccc8', marginTop: '4px' }}>
-                {getHorarioCheio(r.amount, r.rend, recursos.recursosMaximos)}
+                {getHorarioCheio(r.rawAmount, r.rend, recursos.recursosMaximos)}
               </div>
             </div>
           );

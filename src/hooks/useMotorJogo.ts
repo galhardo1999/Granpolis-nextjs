@@ -51,11 +51,27 @@ export function useMotorJogo() {
       alterado = true;
     }
 
-    // Processar Recrutamento
-    while (estadoAtual.filaRecrutamento.length > 0 && agora >= estadoAtual.filaRecrutamento[0].fimTempo) {
-      const tarefa = estadoAtual.filaRecrutamento.shift()!;
-      estadoAtual.unidades[tarefa.unidade] += tarefa.quantidade;
-      alterado = true;
+    // Processar Recrutamento (Unidade por Unidade)
+    if (estadoAtual.filaRecrutamento.length > 0) {
+      let tarefa = estadoAtual.filaRecrutamento[0];
+      let tempoPorUnidade = (tarefa.fimTempo - tarefa.inicioTempo) / tarefa.quantidade;
+
+      while (agora >= tarefa.inicioTempo + tempoPorUnidade) {
+        estadoAtual.unidades[tarefa.unidade] = (estadoAtual.unidades[tarefa.unidade] || 0) + 1;
+        tarefa.quantidade -= 1;
+        tarefa.inicioTempo += tempoPorUnidade;
+        alterado = true;
+
+        if (tarefa.quantidade <= 0) {
+          estadoAtual.filaRecrutamento.shift();
+          if (estadoAtual.filaRecrutamento.length > 0) {
+            tarefa = estadoAtual.filaRecrutamento[0];
+            tempoPorUnidade = (tarefa.fimTempo - tarefa.inicioTempo) / tarefa.quantidade;
+          } else {
+            break;
+          }
+        }
+      }
     }
 
     return alterado;
@@ -156,8 +172,8 @@ export function useMotorJogo() {
 
   const possuiRecursos = (custos: { madeira: number, pedra: number, prata: number }) => {
     return estado.recursos.madeira >= custos.madeira &&
-           estado.recursos.pedra >= custos.pedra &&
-           estado.recursos.prata >= custos.prata;
+      estado.recursos.pedra >= custos.pedra &&
+      estado.recursos.prata >= custos.prata;
   };
 
   const calcularTempoRecrutamento = (idUnidade: IdUnidade, quantidade: number) => {
