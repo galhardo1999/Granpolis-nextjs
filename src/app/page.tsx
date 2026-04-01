@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useGameEngine } from '@/hooks/useGameEngine';
 import { TopBar } from '@/components/TopBar';
 import { CityView } from '@/components/CityView';
@@ -21,7 +22,11 @@ export default function Home() {
     resetGame,
     selectGod,
     recruitUnits,
-    calculateRecruitmentTime
+    calculateRecruitmentTime,
+    cancelUpgrade,
+    cancelRecruitment,
+    setCityName,
+    castPower
   } = useGameEngine();
 
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingId | null>(null);
@@ -50,7 +55,8 @@ export default function Home() {
       <TopBar 
         resources={state.resources} 
         income={income} 
-        onReset={resetGame} 
+        cityName={state.cityName}
+        onCityNameChange={setCityName}
       />
 
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex' }}>
@@ -67,50 +73,26 @@ export default function Home() {
             favor={state.resources.favor} 
             maxFavor={state.resources.maxFavor} 
             onSelectGod={selectGod} 
+            onCastPower={castPower}
           />
-          <ConstructionQueue queue={state.queue} />
-          
+        </div>
+
+        {/* BOTTOM QUEUES AREA */}
+        <div id="bottom-queues">
           {state.recruitmentQueue.length > 0 && (
-            <div id="construction-queue" style={{ marginTop: '-30px' }}>
-              <h3>Fila de Recrutamento</h3>
-              <div id="queue-items">
-                {state.recruitmentQueue.map((item, index) => (
-                  <div key={index} className="queue-item">
-                    <span>{item.count}x {UNITS[item.unit].name}</span>
+            <div id="recruitment-queue-horizontal">
+               {state.recruitmentQueue.map((item, index) => (
+                  <div key={index} className="rq-item">
+                    <Image src={UNITS[item.unit].portrait} alt={item.unit} width={32} height={32} />
+                    <span className="rq-count">{item.count}</span>
+                    <button className="rq-cancel" onClick={() => cancelRecruitment(index)}>×</button>
                   </div>
-                ))}
-              </div>
+               ))}
             </div>
           )}
+          <ConstructionQueue queue={state.queue} onCancel={cancelUpgrade} />
         </div>
       </div>
-
-      <nav id="main-nav">
-        <button 
-          className={`nav-btn ${activeTab === 'city' ? 'active' : ''}`} 
-          onClick={() => setActiveTab('city')}
-        >
-          Cidade
-        </button>
-        <button 
-          className={`nav-btn ${activeTab === 'map' ? 'active' : ''}`} 
-          onClick={() => setActiveTab('map')}
-        >
-          Mapa
-        </button>
-        <button 
-          className={`nav-btn ${activeTab === 'reports' ? 'active' : ''}`} 
-          onClick={() => setActiveTab('reports')}
-        >
-          Relatórios
-        </button>
-        <button 
-          className={`nav-btn ${activeTab === 'messages' ? 'active' : ''}`} 
-          onClick={() => setActiveTab('messages')}
-        >
-          Mensagens
-        </button>
-      </nav>
 
       <BuildingModal 
         isOpen={!!selectedBuilding} 

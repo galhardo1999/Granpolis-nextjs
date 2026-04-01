@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { BUILDINGS, INITIAL_STATE, GameState, BuildingId, GAME_SPEED, MAX_QUEUE_SIZE, FAVOR_PRODUCTION_BASE, GodId, UNITS, UnitId } from '@/lib/constants';
+import { BUILDINGS, INITIAL_STATE, GameState, BuildingId, GAME_SPEED, MAX_QUEUE_SIZE, FAVOR_PRODUCTION_BASE, GodId, UNITS, UnitId, GOD_POWERS } from '@/lib/constants';
 
 export function useGameEngine() {
   const [state, setState] = useState<GameState>(INITIAL_STATE);
@@ -233,6 +233,115 @@ export function useGameEngine() {
       }));
     }
   };
+  
+  const cancelUpgrade = (index: number) => {
+    const newState = { ...state };
+    const task = newState.queue[index];
+    if (!task) return;
+
+    const building = BUILDINGS[task.building];
+    const costs = calculateCosts(task.building, task.level);
+    const popCost = (building as any).popCost || 0;
+
+    newState.resources.wood += costs.wood;
+    newState.resources.stone += costs.stone;
+    newState.resources.silver += costs.silver;
+    newState.resources.population += popCost;
+
+    newState.queue.splice(index, 1);
+
+    // Recalculate times
+    const now = Date.now();
+    for (let i = 0; i < newState.queue.length; i++) {
+      const item = newState.queue[i];
+      const duration = item.finishTime - item.startTime;
+      item.startTime = i === 0 ? now : newState.queue[i - 1].finishTime;
+      item.finishTime = item.startTime + duration;
+    }
+
+    setState(newState);
+  };
+
+  const cancelRecruitment = (index: number) => {
+    const newState = { ...state };
+    const task = newState.recruitmentQueue[index];
+    if (!task) return;
+
+    const unit = UNITS[task.unit];
+    newState.resources.wood += unit.costs.wood * task.count;
+    newState.resources.stone += unit.costs.stone * task.count;
+    newState.resources.silver += unit.costs.silver * task.count;
+    newState.resources.population += unit.costs.population * task.count;
+
+    newState.recruitmentQueue.splice(index, 1);
+
+    // Recalculate times
+    const now = Date.now();
+    for (let i = 0; i < newState.recruitmentQueue.length; i++) {
+      const item = newState.recruitmentQueue[i];
+      const duration = item.finishTime - item.startTime;
+      item.startTime = i === 0 ? now : newState.recruitmentQueue[i - 1].finishTime;
+      item.finishTime = item.startTime + duration;
+    }
+
+    setState(newState);
+  };
+
+  const setCityName = (name: string) => {
+    setState(prev => ({
+      ...prev,
+      cityName: name
+    }));
+  };
+
+  const castPower = (powerId: string) => {
+    const allPowers = Object.values(GOD_POWERS).flat();
+    const power = allPowers.find(p => p.id === powerId);
+    
+    if (!power) return { success: false, reason: 'Poder não encontrado' };
+    if (state.resources.favor < power.cost) return { success: false, reason: 'Favor insuficiente' };
+
+    const newState = { ...state };
+    newState.resources.favor -= power.cost;
+
+    switch (powerId) {
+      case 'zeus-sign':
+        newState.units.chariot += 1;
+        break;
+      case 'zeus-bolt':
+        newState.resources.stone = Math.min(newState.resources.maxResources, newState.resources.stone + 500);
+        break;
+      case 'poseidon-gift':
+        newState.resources.wood = Math.min(newState.resources.maxResources, newState.resources.wood + 1000);
+        break;
+      case 'poseidon-call':
+        newState.resources.silver = Math.min(newState.resources.maxResources, newState.resources.silver + 500);
+        break;
+      case 'hera-wedding':
+        newState.resources.wood = Math.min(newState.resources.maxResources, newState.resources.wood + 200);
+        newState.resources.stone = Math.min(newState.resources.maxResources, newState.resources.stone + 200);
+        newState.resources.silver = Math.min(newState.resources.maxResources, newState.resources.silver + 200);
+        break;
+      case 'hera-growth':
+        newState.resources.population += 10;
+        break;
+      case 'atena-wisdom':
+        newState.resources.silver = Math.min(newState.resources.maxResources, newState.resources.silver + 300);
+        break;
+      case 'atena-power':
+        newState.units.hoplite += 5;
+        break;
+      case 'hades-treasures':
+        newState.resources.silver = Math.min(newState.resources.maxResources, newState.resources.silver + 800);
+        break;
+      case 'hades-return':
+        newState.units.swordsman += 5;
+        break;
+    }
+
+    setState(newState);
+    return { success: true };
+  };
 
   return {
     state,
@@ -244,6 +353,10 @@ export function useGameEngine() {
     resetGame,
     selectGod,
     recruitUnits,
-    calculateRecruitmentTime
+    calculateRecruitmentTime,
+    cancelUpgrade,
+    cancelRecruitment,
+    setCityName,
+    castPower
   };
 };

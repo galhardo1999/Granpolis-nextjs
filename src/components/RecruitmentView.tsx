@@ -118,11 +118,21 @@ export function RecruitmentView({
           ) : (
             queue.map((item, index) => {
               const remaining = Math.max(0, Math.ceil((item.finishTime - now) / 1000));
+              const unit = UNITS[item.unit];
               return (
                 <div key={index} className="recruitment-queue-item">
-                  <div>
-                    <span className="unit-name">{UNITS[item.unit].name}</span>
-                    <span className="count"> (x{item.count})</span>
+                  <div className="queue-item-left">
+                    <Image 
+                      src={unit.portrait} 
+                      alt={unit.name} 
+                      width={32} 
+                      height={32} 
+                      className="queue-unit-img"
+                    />
+                    <div className="queue-text">
+                      <span className="unit-name">{unit.name}</span>
+                      <span className="count"> (x{item.count})</span>
+                    </div>
                   </div>
                   <span className="timer">{formatTime(remaining)}</span>
                 </div>

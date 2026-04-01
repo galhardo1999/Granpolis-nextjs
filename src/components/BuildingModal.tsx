@@ -63,7 +63,7 @@ export function BuildingModal({
             />
           </div>
           <div className="info">
-            <h4>{data.name} (Nível {currentLevel}{pendingCount > 0 ? ` + ${pendingCount} em fila` : ''})</h4>
+            <h4>{data.name} (Nível {currentLevel})</h4>
             <p>{data.description}</p>
             <div className="costs">
               <small>
@@ -92,19 +92,58 @@ export function BuildingModal({
 
   return (
     <div id="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div id="modal-container">
+      <div id="modal-container" className={buildingId === 'senate' ? 'senate-wide' : ''}>
         <div id="modal-header">
           <h2 id="modal-title">{buildingId === 'senate' ? 'Senado' : BUILDINGS[buildingId].name}</h2>
           <button id="close-modal" onClick={onClose}>&times;</button>
         </div>
         <div id="modal-body">
           {buildingId === 'senate' ? (
-            <>
-              <h3>Edificações Disponíveis</h3>
-              <hr />
-              <br />
-              {(Object.keys(BUILDINGS) as BuildingId[]).map(id => renderBuildingCard(id))}
-            </>
+            <div id="senate-tree">
+              <div className="senate-node senate-root">
+                {renderBuildingCard('senate')}
+              </div>
+              
+              <div className="tree-connector-main"></div>
+
+              <div className="senate-columns">
+                {/* Column 1: Wood -> Silver -> Harbor */}
+                <div className="senate-column">
+                  {renderBuildingCard('timber-camp')}
+                  <div className="tree-arrow">▼</div>
+                  {renderBuildingCard('silver-mine')}
+                  <div className="tree-arrow">▼</div>
+                  {renderBuildingCard('harbor')}
+                </div>
+
+                {/* Column 2: Farm -> Barracks -> Academy */}
+                <div className="senate-column">
+                  {renderBuildingCard('farm')}
+                  <div className="tree-arrow">▼</div>
+                  {renderBuildingCard('barracks')}
+                  <div className="tree-arrow">▼</div>
+                  {renderBuildingCard('academy')}
+                </div>
+
+                {/* Column 3: Stone -> Temple -> Walls */}
+                <div className="senate-column">
+                  {renderBuildingCard('quarry')}
+                  <div className="tree-arrow">▼</div>
+                  {renderBuildingCard('temple')}
+                  <div className="tree-arrow">▼</div>
+                  {renderBuildingCard('walls')}
+                </div>
+
+                {/* Column 4: Warehouse -> Market -> Cave */}
+                <div className="senate-column">
+                  {renderBuildingCard('warehouse')}
+                  <div className="tree-arrow">▼</div>
+                  {renderBuildingCard('market')}
+                  <div className="tree-arrow">▼</div>
+                  {renderBuildingCard('cave')}
+                </div>
+              </div>
+            </div>
           ) : buildingId === 'barracks' ? (
             <RecruitmentView 
               units={units}

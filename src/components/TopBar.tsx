@@ -17,18 +17,29 @@ interface TopBarProps {
     stone: number;
     silver: number;
   };
-  onReset: () => void;
+  cityName: string;
+  onCityNameChange: (name: string) => void;
 }
 
-export function TopBar({ resources, income, onReset }: TopBarProps) {
+export function TopBar({ resources, income, cityName, onCityNameChange }: TopBarProps) {
   return (
     <header id="top-bar">
-      <div className="city-info">
-        <h1 id="city-name">Polis de Apolo</h1>
+      <h1 className="logo">Granpolis</h1>
+      
+      <div className="city-name-center-wrapper">
+        <div className="city-name-container">
+          <input 
+            id="city-name-input"
+            type="text" 
+            value={cityName} 
+            onChange={(e) => onCityNameChange(e.target.value)}
+            maxLength={15}
+            title="Nome da Cidade"
+          />
+        </div>
       </div>
+
       <div className="resource-container">
-        <button id="reset-btn" title="Reiniciar Jogo" onClick={onReset}>🔄</button>
-        
         <div className="resource" id="res-wood" title={`Madeira (Capacidade: ${resources.maxResources})`}>
           <Image src="/icon_wood.png" alt="Wood" width={28} height={28} />
           <span className={`value ${resources.wood >= resources.maxResources ? 'full' : ''}`}>

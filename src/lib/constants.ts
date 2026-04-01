@@ -1,4 +1,4 @@
-export const GAME_SPEED = 11122;
+export const GAME_SPEED = 1;
 export const MAX_QUEUE_SIZE = 10;
 export const FAVOR_PRODUCTION_BASE = 21110; // Favor per hour
 
@@ -122,6 +122,72 @@ export const BUILDINGS = {
     timeMultiplier: 1.2,
     baseTime: 15,
     popCost: 3
+  },
+  'temple': {
+    id: 'temple',
+    name: 'Templo',
+    description: 'Local de culto aos Deuses. Aumenta a produção de favores divinos.',
+    image: '/buildings/temple.png',
+    baseCost: { wood: 120, stone: 120, silver: 120 },
+    costMultiplier: 1.2,
+    timeMultiplier: 1.2,
+    baseTime: 15,
+    popCost: 2
+  },
+  'market': {
+    id: 'market',
+    name: 'Mercado',
+    description: 'Permite trocar recursos com outras cidades ou aldeias bárbaras.',
+    image: '/buildings/market.png',
+    baseCost: { wood: 80, stone: 80, silver: 80 },
+    costMultiplier: 1.15,
+    timeMultiplier: 1.15,
+    baseTime: 12,
+    popCost: 2
+  },
+  'harbor': {
+    id: 'harbor',
+    name: 'Porto',
+    description: 'Permite a construção de navios e barcos de transporte.',
+    image: '/buildings/harbor.png',
+    baseCost: { wood: 200, stone: 100, silver: 150 },
+    costMultiplier: 1.25,
+    timeMultiplier: 1.2,
+    baseTime: 20,
+    popCost: 5
+  },
+  'academy': {
+    id: 'academy',
+    name: 'Academia',
+    description: 'Onde novas tecnologias e unidades de elite são pesquisadas.',
+    image: '/buildings/senate.png',
+    baseCost: { wood: 150, stone: 150, silver: 150 },
+    costMultiplier: 1.2,
+    timeMultiplier: 1.2,
+    baseTime: 25,
+    popCost: 3
+  },
+  'walls': {
+    id: 'walls',
+    name: 'Muralha',
+    description: 'Protege a cidade contra-ataques terrestres.',
+    image: '/buildings/quarry.png',
+    baseCost: { wood: 50, stone: 150, silver: 50 },
+    costMultiplier: 1.2,
+    timeMultiplier: 1.2,
+    baseTime: 10,
+    popCost: 0
+  },
+  'cave': {
+    id: 'cave',
+    name: 'Gruta',
+    description: 'Permite armazenar prata para espionagem e proteção contra espiões.',
+    image: '/buildings/silver-mine.png',
+    baseCost: { wood: 50, stone: 50, silver: 200 },
+    costMultiplier: 1.1,
+    timeMultiplier: 1.1,
+    baseTime: 8,
+    popCost: 1
   }
 } as const;
 
@@ -188,6 +254,31 @@ export const UNITS = {
 
 export type UnitId = keyof typeof UNITS;
 
+export const GOD_POWERS = {
+  'zeus': [
+    { id: 'zeus-sign', name: 'Sinal Divino', description: 'Invoca 1 Biga instantaneamente.', cost: 50, icon: '⚡' },
+    { id: 'zeus-bolt', name: 'Relâmpago', description: 'Bônus de 500 de Pedra das montanhas.', cost: 200, icon: '🌩️' }
+  ],
+  'poseidon': [
+    { id: 'poseidon-gift', name: 'Presente do Mar', description: 'As ondas trazem +1000 de Madeira.', cost: 100, icon: '🌊' },
+    { id: 'poseidon-call', name: 'Chamado do Oceano', description: 'Oceano concede +500 de Prata.', cost: 150, icon: '🔱' }
+  ],
+  'hera': [
+    { id: 'hera-wedding', name: 'Casamento Real', description: 'Recebe 200 de Madeira, Pedra e Prata.', cost: 30, icon: '💍' },
+    { id: 'hera-growth', name: 'Crescimento', description: 'Abençoa com +10 de População Livre.', cost: 150, icon: '🌱' }
+  ],
+  'atena': [
+    { id: 'atena-wisdom', name: 'Sabedoria', description: 'Atena concede +300 de Prata.', cost: 60, icon: '🦉' },
+    { id: 'atena-power', name: 'Poder Heroico', description: 'Ganha 5 Hoplitas instantaneamente.', cost: 120, icon: '⚔️' }
+  ],
+  'hades': [
+    { id: 'hades-treasures', name: 'Tesouros', description: 'Abre seus cofres: +800 de Prata.', cost: 150, icon: '💎' },
+    { id: 'hades-return', name: 'Retorno das Trevas', description: 'Ganha 5 Espadachins.', cost: 100, icon: '💀' }
+  ]
+} as const;
+
+export type PowerId = typeof GOD_POWERS[GodId][number]['id'];
+
 export const INITIAL_STATE = {
   resources: {
     wood: 500,
@@ -207,7 +298,13 @@ export const INITIAL_STATE = {
     'silver-mine': 1,
     'farm': 1,
     'warehouse': 1,
-    'barracks': 0
+    'barracks': 0,
+    'temple': 0,
+    'market': 0,
+    'harbor': 0,
+    'academy': 0,
+    'walls': 0,
+    'cave': 0
   },
   units: {
     'swordsman': 0,
@@ -230,7 +327,8 @@ export const INITIAL_STATE = {
     startTime: number;
     finishTime: number;
   }[],
-  lastUpdate: Date.now()
+  lastUpdate: Date.now(),
+  cityName: 'Granpolis'
 };
 
 export type GameState = typeof INITIAL_STATE;
