@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { EDIFICIOS } from '@/lib/constantes';
+import { EDIFICIOS } from '@/lib/edificios';
 
 interface VistaArmazemProps {
   recursos: { madeira: number; pedra: number; prata: number; recursosMaximos: number; };

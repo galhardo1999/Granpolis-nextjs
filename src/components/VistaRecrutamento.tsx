@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { UNIDADES, IdUnidade } from '@/lib/constantes';
+import { UNIDADES, IdUnidade } from '@/lib/unidades';
 
 interface VistaRecrutamentoProps {
   unidades: Record<string, number>;

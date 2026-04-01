@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { EDIFICIOS, ESTADO_INICIAL, EstadoJogo, IdEdificio, VELOCIDADE_JOGO, TAMANHO_MAXIMO_FILA, PRODUCAO_BASE_FAVOR, IdDeus, UNIDADES, IdUnidade, PODERES_DIVINOS } from '@/lib/constantes';
+import { VELOCIDADE_JOGO, TAMANHO_MAXIMO_FILA, PRODUCAO_BASE_FAVOR } from '@/lib/config';
+import { IdDeus, PODERES_DIVINOS } from '@/lib/deuses';
+import { EDIFICIOS, IdEdificio } from '@/lib/edificios';
+import { UNIDADES, IdUnidade } from '@/lib/unidades';
+import { ESTADO_INICIAL, EstadoJogo } from '@/lib/estadoInicial';
 
 export function useMotorJogo() {
   const [estado, setEstado] = useState<EstadoJogo>(ESTADO_INICIAL);

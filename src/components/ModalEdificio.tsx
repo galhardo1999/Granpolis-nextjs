@@ -2,7 +2,9 @@
 
 import React, { useEffect } from 'react';
 import Image from 'next/image';
-import { EDIFICIOS, IdEdificio, UNIDADES, IdUnidade, TAMANHO_MAXIMO_FILA } from '@/lib/constantes';
+import { TAMANHO_MAXIMO_FILA } from '@/lib/config';
+import { EDIFICIOS, IdEdificio } from '@/lib/edificios';
+import { UNIDADES, IdUnidade } from '@/lib/unidades';
 import { VistaRecrutamento } from './VistaRecrutamento';
 import { VistaArmazem } from './VistaArmazem';
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { UNIDADES, IdUnidade } from '@/lib/constantes';
+import { UNIDADES, IdUnidade } from '@/lib/unidades';
 
 interface PainelExercitoProps {
   unidades: Record<string, number>;

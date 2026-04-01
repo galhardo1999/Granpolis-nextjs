@@ -8,7 +8,9 @@ import { VistaoCidade } from '@/components/VistaoCidade';
 import { FilaConstrucao } from '@/components/FilaConstrucao';
 import { FilaRecrutamento } from '@/components/FilaRecrutamento';
 import { ModalEdificio } from '@/components/ModalEdificio';
-import { IdEdificio, IdDeus, UNIDADES } from '@/lib/constantes';
+import { IdDeus } from '@/lib/deuses';
+import { IdEdificio } from '@/lib/edificios';
+import { UNIDADES } from '@/lib/unidades';
 import { PoderDivino } from '@/components/PoderesDivinos';
 import { PainelExercito } from '@/components/PainelExercito';
 

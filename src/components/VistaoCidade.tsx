@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { IdEdificio } from '@/lib/constantes';
+import { IdEdificio } from '@/lib/edificios';
 
 interface VistaoCidadeProps {
   edificios: Record<string, number>;

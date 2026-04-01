@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { UNIDADES, IdUnidade, TAMANHO_MAXIMO_FILA } from '@/lib/constantes';
+import { TAMANHO_MAXIMO_FILA } from '@/lib/config';
+import { UNIDADES, IdUnidade } from '@/lib/unidades';
 
 interface ItemRecrutamento {
   unidade: IdUnidade;

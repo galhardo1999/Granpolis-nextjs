@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { EDIFICIOS, IdEdificio, TAMANHO_MAXIMO_FILA } from '@/lib/constantes';
+import { TAMANHO_MAXIMO_FILA } from '@/lib/config';
+import { EDIFICIOS, IdEdificio } from '@/lib/edificios';
 
 interface ItemFila {
   edificio: IdEdificio;

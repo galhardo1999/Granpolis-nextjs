@@ -1,0 +1,57 @@
+import { IdDeus } from './deuses';
+import { IdEdificio } from './edificios';
+import { IdUnidade } from './unidades';
+
+export const ESTADO_INICIAL = {
+  recursos: {
+    madeira: 250,
+    pedra: 250,
+    prata: 250,
+    populacao: 30, // População livre
+    populacaoMaxima: 100,
+    recursosMaximos: 1500,
+    favor: 0,
+    favorMaximo: 500
+  },
+  deusAtual: 'zeus' as IdDeus,
+  edificios: {
+    'senate': 1,
+    'timber-camp': 1,
+    'quarry': 1,
+    'silver-mine': 1,
+    'farm': 1,
+    'warehouse': 1,
+    'barracks': 0,
+    'temple': 0,
+    'market': 0,
+    'harbor': 0,
+    'academy': 0,
+    'walls': 0,
+    'cave': 0
+  },
+  unidades: {
+    'swordsman': 0,
+    'slinger': 0,
+    'archer': 0,
+    'hoplite': 0,
+    'horseman': 0,
+    'chariot': 0,
+    'catapult': 0
+  },
+  fila: [] as {
+    edificio: IdEdificio;
+    inicioTempo: number;
+    fimTempo: number;
+    nivel: number;
+  }[],
+  filaRecrutamento: [] as {
+    unidade: IdUnidade;
+    quantidade: number;
+    inicioTempo: number;
+    fimTempo: number;
+  }[],
+  ultimaAtualizacao: Date.now(),
+  nomeCidade: 'Granpolis'
+};
+
+export type EstadoJogo = typeof ESTADO_INICIAL;

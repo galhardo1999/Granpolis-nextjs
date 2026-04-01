@@ -1,0 +1,150 @@
+export const EDIFICIOS = {
+  'senate': {
+    id: 'senate',
+    nome: 'Senado',
+    descricao: 'O centro político da sua cidade. Aumenta a velocidade de construção.',
+    imagem: '/buildings/senate.png',
+    custoBase: { madeira: 100, pedra: 80, prata: 50 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 120,
+    custoPop: 2
+  },
+  'timber-camp': {
+    id: 'timber-camp',
+    nome: 'Bosque',
+    descricao: 'Produz madeira bruta para construções e tropas.',
+    imagem: '/buildings/timber-camp.png',
+    custoBase: { madeira: 50, pedra: 30, prata: 20 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 60,
+    multiplicadorProducao: 10,
+    custoPop: 1
+  },
+  'quarry': {
+    id: 'quarry',
+    nome: 'Pedreira',
+    descricao: 'Fornece pedras para muralhas e edifícios.',
+    imagem: '/buildings/quarry.png',
+    custoBase: { madeira: 30, pedra: 50, prata: 20 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 60,
+    multiplicadorProducao: 10,
+    custoPop: 1
+  },
+  'silver-mine': {
+    id: 'silver-mine',
+    nome: 'Mina de Prata',
+    descricao: 'Extrai minério de prata para comércio e divindades.',
+    imagem: '/buildings/silver-mine.png',
+    custoBase: { madeira: 40, pedra: 40, prata: 50 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 60,
+    multiplicadorProducao: 10,
+    custoPop: 1
+  },
+  'farm': {
+    id: 'farm',
+    nome: 'Quinta',
+    descricao: 'Fornece alimento para seus cidadãos e exército. Aumenta a população máxima.',
+    imagem: '/buildings/farm.png',
+    custoBase: { madeira: 40, pedra: 20, prata: 20 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 60,
+    custoPop: 0
+  },
+  'warehouse': {
+    id: 'warehouse',
+    nome: 'Armazém',
+    descricao: 'Local onde as matérias-primas são armazenadas. Aumenta a capacidade de recursos.',
+    imagem: '/buildings/warehouse.png',
+    custoBase: { madeira: 50, pedra: 50, prata: 20 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 60,
+    custoPop: 1
+  },
+  'barracks': {
+    id: 'barracks',
+    nome: 'Quartel',
+    descricao: 'No quartel, você pode recrutar tanto tropas regulares, como unidades míticas. Quanto maior o nível do quartel, mais rápido será treinado as suas tropas.',
+    imagem: '/buildings/barracks.png',
+    custoBase: { madeira: 150, pedra: 120, prata: 80 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 300,
+    custoPop: 3
+  },
+  'temple': {
+    id: 'temple',
+    nome: 'Templo',
+    descricao: 'Local de culto aos Deuses. Aumenta a produção de favores divinos.',
+    imagem: '/buildings/temple.png',
+    custoBase: { madeira: 120, pedra: 120, prata: 120 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 600,
+    custoPop: 2
+  },
+  'market': {
+    id: 'market',
+    nome: 'Mercado',
+    descricao: 'Permite trocar recursos com outras cidades ou aldeias bárbaras.',
+    imagem: '/buildings/market.png',
+    custoBase: { madeira: 80, pedra: 80, prata: 80 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 240,
+    custoPop: 2
+  },
+  'harbor': {
+    id: 'harbor',
+    nome: 'Porto',
+    descricao: 'Permite a construção de navios e barcos de transporte.',
+    imagem: '/buildings/harbor.png',
+    custoBase: { madeira: 200, pedra: 100, prata: 150 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 480,
+    custoPop: 5
+  },
+  'academy': {
+    id: 'academy',
+    nome: 'Academia',
+    descricao: 'Onde novas tecnologias e unidades de elite são pesquisadas.',
+    imagem: '/buildings/senate.png',
+    custoBase: { madeira: 150, pedra: 150, prata: 150 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 900,
+    custoPop: 3
+  },
+  'walls': {
+    id: 'walls',
+    nome: 'Muralha',
+    descricao: 'Protege a cidade contra-ataques terrestres.',
+    imagem: '/buildings/quarry.png',
+    custoBase: { madeira: 50, pedra: 150, prata: 50 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 60,
+    custoPop: 0
+  },
+  'cave': {
+    id: 'cave',
+    nome: 'Gruta',
+    descricao: 'Permite armazenar prata para espionagem e proteção contra espiões.',
+    imagem: '/buildings/silver-mine.png',
+    custoBase: { madeira: 50, pedra: 50, prata: 200 },
+    multiplicadorCusto: 1.25,
+    multiplicadorTempo: 1.25,
+    tempoBase: 180,
+    custoPop: 1
+  }
+} as const;
+
+export type IdEdificio = keyof typeof EDIFICIOS;

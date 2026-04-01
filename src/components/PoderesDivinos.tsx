@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { DEUSES, IdDeus, PODERES_DIVINOS } from '@/lib/constantes';
+import { DEUSES, IdDeus, PODERES_DIVINOS } from '@/lib/deuses';
 
 interface PoderDivinoProps {
   idDeusAtual: IdDeus;
