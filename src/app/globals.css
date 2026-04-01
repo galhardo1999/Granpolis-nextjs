@@ -181,6 +181,9 @@ body {
 #slot-timber { top: 55%; left: 15%; }
 #slot-quarry { top: 78%; left: 40%; }
 #slot-silver { top: 82%; left: 88%; }
+#slot-farm { top: 30%; left: 15%; }
+#slot-warehouse { top: 20%; left: 75%; }
+#slot-barracks { top: 60%; left: 80%; }
 
 /* NAV BAR */
 #main-nav {
@@ -281,27 +284,55 @@ body {
 .building-card {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--glass-border);
-    padding: 15px;
-    border-radius: 8px;
+    padding: 12px;
+    border-radius: 10px;
     margin-bottom: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 15px;
+}
+
+.building-card-main {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.building-image-container {
+    width: 90px;
+    height: 90px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--primary-gold);
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.building-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .building-card h4 {
     color: var(--primary-gold);
     font-family: var(--font-heading);
+    margin-bottom: 4px;
 }
 
 .upgrade-btn {
     background: var(--accent-green);
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
+    padding: 10px 20px;
+    border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    min-width: 140px;
 }
 
 .upgrade-btn:disabled {
@@ -467,4 +498,223 @@ body {
 .god-card p {
     font-size: 0.75rem;
     color: #8892B0;
+}
+/* RECRUITMENT VIEW */
+.recruitment-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.unit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.unit-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.unit-card:hover {
+    border-color: var(--primary-gold);
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-5px);
+}
+
+.unit-header {
+    display: flex;
+    gap: 12px;
+}
+
+.unit-portrait {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--primary-gold);
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.unit-info h4 {
+    color: var(--primary-gold);
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.unit-info p {
+    font-size: 0.75rem;
+    color: #8892B0;
+    line-height: 1.2;
+}
+
+.unit-costs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.unit-costs small {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+}
+
+.unit-action {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.unit-input {
+    width: 60px;
+    background: var(--dark-blue);
+    border: 1px solid var(--glass-border);
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.recruit-btn {
+    flex: 1;
+    background: var(--primary-gold);
+    color: var(--deep-blue);
+    border: none;
+    padding: 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.recruit-btn:hover:not(:disabled) {
+    background: var(--secondary-gold);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+.recruit-btn:disabled {
+    background: #444;
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* RECRUITMENT QUEUE */
+.recruitment-queue-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid var(--glass-border);
+}
+
+.recruitment-queue-section h3 {
+    font-family: var(--font-heading);
+    color: var(--primary-gold);
+    margin-bottom: 15px;
+}
+
+.recruitment-queue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.recruitment-queue-item {
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--primary-gold);
+    padding: 10px 15px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.recruitment-queue-item .unit-name {
+    font-weight: bold;
+    color: white;
+}
+
+.recruitment-queue-item .count {
+    color: var(--primary-gold);
+}
+
+.recruitment-queue-item .timer {
+    font-family: monospace;
+    font-size: 1.1rem;
+}
+
+/* ARMY PANEL (LEFT) */
+#army-panel {
+    position: absolute;
+    left: 20px;
+    top: 100px;
+    background: var(--glass-bg);
+    border: 1px solid var(--primary-gold);
+    padding: 15px;
+    border-radius: 8px;
+    width: 200px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    z-index: 500;
+}
+
+#army-panel h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--glass-border);
+    font-family: var(--font-heading);
+}
+
+.army-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.army-unit-box {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: #000;
+}
+
+.army-unit-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.army-unit-box .unit-count {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,0.8);
+    color: var(--primary-gold);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 1px 3px;
+    border-top-left-radius: 4px;
+    border-left: 1px solid var(--primary-gold);
+    border-top: 1px solid var(--primary-gold);
+}
+
+.army-unit-box:hover {
+    border-color: var(--primary-gold);
+    transform: scale(1.1);
+    z-index: 10;
+    transition: all 0.2s;
 }

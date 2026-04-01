@@ -28,6 +28,18 @@ export function CityView({ buildings, onBuildingClick }: CityViewProps) {
       <div className="building-slot silver-mine" id="slot-silver" onClick={() => onBuildingClick('silver-mine')}>
         <div className="building-label">Mina de Prata (Nv. <span className="level">{buildings['silver-mine'] || 1}</span>)</div>
       </div>
+
+      <div className="building-slot farm" id="slot-farm" onClick={() => onBuildingClick('farm')}>
+        <div className="building-label">Quinta (Nv. <span className="level">{buildings.farm || 1}</span>)</div>
+      </div>
+
+      <div className="building-slot warehouse" id="slot-warehouse" onClick={() => onBuildingClick('warehouse')}>
+        <div className="building-label">Armazém (Nv. <span className="level">{buildings.warehouse || 1}</span>)</div>
+      </div>
+
+      <div className="building-slot barracks" id="slot-barracks" onClick={() => onBuildingClick('barracks')}>
+        <div className="building-label">Quartel (Nv. <span className="level">{buildings.barracks || 0}</span>)</div>
+      </div>
     </main>
   );
 }

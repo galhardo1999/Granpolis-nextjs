@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { BUILDINGS, BuildingId } from '@/lib/constants';
+import { BUILDINGS, BuildingId, UNITS, UnitId } from '@/lib/constants';
+import { RecruitmentView } from './RecruitmentView';
 
 interface BuildingModalProps {
   isOpen: boolean;
@@ -14,6 +15,11 @@ interface BuildingModalProps {
   calculateCosts: (id: BuildingId, level: number) => { wood: number; stone: number; silver: number };
   canAfford: (costs: { wood: number; stone: number; silver: number }) => boolean;
   freePopulation: number;
+  onRecruit?: (unitId: UnitId, count: number) => { success: boolean; reason?: string };
+  calculateRecruitmentTime?: (unitId: UnitId, count: number) => number;
+  resources: { wood: number; stone: number; silver: number; population: number };
+  units: Record<string, number>;
+  recruitmentQueue: { unit: UnitId; count: number; startTime: number; finishTime: number }[];
 }
 
 export function BuildingModal({
@@ -25,7 +31,12 @@ export function BuildingModal({
   onUpgrade,
   calculateCosts,
   canAfford,
-  freePopulation
+  freePopulation,
+  onRecruit,
+  calculateRecruitmentTime,
+  resources,
+  units,
+  recruitmentQueue
 }: BuildingModalProps) {
   if (!isOpen || !buildingId) return null;
 
@@ -41,20 +52,31 @@ export function BuildingModal({
 
     return (
       <div key={id} className="building-card">
-        <div className="info">
-          <h4>{data.name} (Nível {currentLevel}{pendingCount > 0 ? ` + ${pendingCount} em fila` : ''})</h4>
-          <p>{data.description}</p>
-          <div className="costs">
-            <small>
-              <Image src="/icon_wood.png" alt="Wood" width={16} height={16} style={{ verticalAlign: 'middle' }} /> {costs.wood}{' '}
-              <Image src="/icon_stone.png" alt="Stone" width={16} height={16} style={{ verticalAlign: 'middle' }} /> {costs.stone}{' '}
-              <Image src="/icon_silver.png" alt="Silver" width={16} height={16} style={{ verticalAlign: 'middle' }} /> {costs.silver}{' '}
-              {popCost > 0 && (
-                <>
-                  <Image src="/icon_pop.png" alt="Pop" width={16} height={16} style={{ verticalAlign: 'middle' }} /> {popCost}
-                </>
-              )}
-            </small>
+        <div className="building-card-main">
+          <div className="building-image-container">
+            <Image 
+              src={(data as any).image || '/placeholder_building.png'} 
+              alt={data.name} 
+              width={80} 
+              height={80} 
+              className="building-card-image"
+            />
+          </div>
+          <div className="info">
+            <h4>{data.name} (Nível {currentLevel}{pendingCount > 0 ? ` + ${pendingCount} em fila` : ''})</h4>
+            <p>{data.description}</p>
+            <div className="costs">
+              <small>
+                <Image src="/icon_wood.png" alt="Wood" width={16} height={16} style={{ verticalAlign: 'middle' }} /> {costs.wood}{' '}
+                <Image src="/icon_stone.png" alt="Stone" width={16} height={16} style={{ verticalAlign: 'middle' }} /> {costs.stone}{' '}
+                <Image src="/icon_silver.png" alt="Silver" width={16} height={16} style={{ verticalAlign: 'middle' }} /> {costs.silver}{' '}
+                {popCost > 0 && (
+                  <>
+                    <Image src="/icon_pop.png" alt="Pop" width={16} height={16} style={{ verticalAlign: 'middle' }} /> {popCost}
+                  </>
+                )}
+              </small>
+            </div>
           </div>
         </div>
         <button 
@@ -83,6 +105,14 @@ export function BuildingModal({
               <br />
               {(Object.keys(BUILDINGS) as BuildingId[]).map(id => renderBuildingCard(id))}
             </>
+          ) : buildingId === 'barracks' ? (
+            <RecruitmentView 
+              units={units}
+              queue={recruitmentQueue}
+              onRecruit={onRecruit!}
+              resources={resources}
+              calculateRecruitmentTime={calculateRecruitmentTime!}
+            />
           ) : (
             <>
               <p>{BUILDINGS[buildingId].description}</p>

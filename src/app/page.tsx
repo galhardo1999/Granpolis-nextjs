@@ -6,8 +6,9 @@ import { TopBar } from '@/components/TopBar';
 import { CityView } from '@/components/CityView';
 import { ConstructionQueue } from '@/components/ConstructionQueue';
 import { BuildingModal } from '@/components/BuildingModal';
-import { BuildingId, GodId } from '@/lib/constants';
+import { BuildingId, GodId, UNITS } from '@/lib/constants';
 import { DivinePowers } from '@/components/DivinePowers';
+import { ArmyPanel } from '@/components/ArmyPanel';
 
 export default function Home() {
   const { 
@@ -18,7 +19,9 @@ export default function Home() {
     calculateIncome, 
     canAfford,
     resetGame,
-    selectGod
+    selectGod,
+    recruitUnits,
+    calculateRecruitmentTime
   } = useGameEngine();
 
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingId | null>(null);
@@ -55,6 +58,8 @@ export default function Home() {
           buildings={state.buildings} 
           onBuildingClick={setSelectedBuilding} 
         />
+
+        <ArmyPanel units={state.units} />
         
         <div style={{ position: 'absolute', right: '20px', top: '100px', display: 'flex', flexDirection: 'column', gap: '40px', alignItems: 'flex-end' }}>
           <DivinePowers 
@@ -64,6 +69,19 @@ export default function Home() {
             onSelectGod={selectGod} 
           />
           <ConstructionQueue queue={state.queue} />
+          
+          {state.recruitmentQueue.length > 0 && (
+            <div id="construction-queue" style={{ marginTop: '-30px' }}>
+              <h3>Fila de Recrutamento</h3>
+              <div id="queue-items">
+                {state.recruitmentQueue.map((item, index) => (
+                  <div key={index} className="queue-item">
+                    <span>{item.count}x {UNITS[item.unit].name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -104,6 +122,11 @@ export default function Home() {
         calculateCosts={calculateCosts}
         canAfford={canAfford}
         freePopulation={state.resources.population}
+        onRecruit={recruitUnits}
+        calculateRecruitmentTime={calculateRecruitmentTime}
+        resources={state.resources}
+        units={state.units}
+        recruitmentQueue={state.recruitmentQueue}
       />
     </div>
   );

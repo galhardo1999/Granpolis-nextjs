@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { BUILDINGS, INITIAL_STATE, GameState, BuildingId, GAME_SPEED, MAX_QUEUE_SIZE, FAVOR_PRODUCTION_BASE, GodId } from '@/lib/constants';
+import { BUILDINGS, INITIAL_STATE, GameState, BuildingId, GAME_SPEED, MAX_QUEUE_SIZE, FAVOR_PRODUCTION_BASE, GodId, UNITS, UnitId } from '@/lib/constants';
 
 export function useGameEngine() {
   const [state, setState] = useState<GameState>(INITIAL_STATE);
@@ -36,21 +36,28 @@ export function useGameEngine() {
 
   const processQueue = (currentState: GameState, now: number) => {
     let changed = false;
+    
+    // Process Buildings
     while (currentState.queue.length > 0 && now >= currentState.queue[0].finishTime) {
       const task = currentState.queue.shift()!;
       currentState.buildings[task.building]++;
       
-      // Update capacities if necessary
       if (task.building === 'farm') {
         currentState.resources.maxPopulation = calculateMaxPopulation(currentState.buildings.farm);
-        // Free population increases because the "total" space increased
         currentState.resources.population += 20; 
       } else if (task.building === 'warehouse') {
         currentState.resources.maxResources = calculateMaxResources(currentState.buildings.warehouse);
       }
-      
       changed = true;
     }
+
+    // Process Recruitment
+    while (currentState.recruitmentQueue.length > 0 && now >= currentState.recruitmentQueue[0].finishTime) {
+      const task = currentState.recruitmentQueue.shift()!;
+      currentState.units[task.unit] += task.count;
+      changed = true;
+    }
+
     return changed;
   };
 
@@ -153,6 +160,61 @@ export function useGameEngine() {
            state.resources.silver >= costs.silver;
   };
 
+  const calculateRecruitmentTime = (unitId: UnitId, count: number) => {
+    const unit = UNITS[unitId];
+    const baseTime = unit.baseTime * count;
+    const barracksLevel = state.buildings['barracks'] || 0;
+    // Each level of barracks reduces time by 5%
+    const reduction = Math.pow(0.95, barracksLevel);
+    return (baseTime * reduction) / GAME_SPEED;
+  };
+
+  const recruitUnits = (unitId: UnitId, count: number) => {
+    if (count <= 0) return { success: false, reason: 'Quantidade inválida' };
+    
+    const unit = UNITS[unitId];
+    const totalCosts = {
+      wood: unit.costs.wood * count,
+      stone: unit.costs.stone * count,
+      silver: unit.costs.silver * count,
+      population: unit.costs.population * count
+    };
+
+    if (state.recruitmentQueue.length >= 7) {
+      return { success: false, reason: 'Fila de recrutamento cheia (Máximo 7)' };
+    }
+
+    if (canAfford(totalCosts) && state.resources.population >= totalCosts.population) {
+      const newState = { ...state };
+      newState.resources.wood -= totalCosts.wood;
+      newState.resources.stone -= totalCosts.stone;
+      newState.resources.silver -= totalCosts.silver;
+      newState.resources.population -= totalCosts.population;
+
+      const finalTime = calculateRecruitmentTime(unitId, count);
+      const now = Date.now();
+      const startTime = newState.recruitmentQueue.length > 0
+        ? newState.recruitmentQueue[newState.recruitmentQueue.length - 1].finishTime
+        : now;
+
+      newState.recruitmentQueue.push({
+        unit: unitId,
+        count: count,
+        startTime: startTime,
+        finishTime: startTime + (finalTime * 1000)
+      });
+
+      setState(newState);
+      return { success: true };
+    }
+
+    if (state.resources.population < totalCosts.population) {
+      return { success: false, reason: 'População insuficiente' };
+    }
+
+    return { success: false, reason: 'Recursos insuficientes' };
+  };
+
   const resetGame = () => {
     if (confirm("Tem certeza que deseja resetar TODA a sua pólis? Isso apagará seu progresso atual.")) {
       setState(INITIAL_STATE);
@@ -180,6 +242,8 @@ export function useGameEngine() {
     calculateIncome,
     canAfford,
     resetGame,
-    selectGod
+    selectGod,
+    recruitUnits,
+    calculateRecruitmentTime
   };
-}
+};
