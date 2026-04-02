@@ -1,17 +1,19 @@
 import { IdDeus } from './deuses';
 import { IdEdificio } from './edificios';
 import { IdUnidade } from './unidades';
+import { IdPesquisa } from './pesquisas';
 
 export const ESTADO_INICIAL = {
   recursos: {
     madeira: 250,
     pedra: 250,
     prata: 250,
-    populacao: 100, // População livre
+    populacao: 100,         // População livre
     populacaoMaxima: 100,
     recursosMaximos: 1000,
     favor: 0,
-    favorMaximo: 500
+    favorMaximo: 500,
+    prataNaGruta: 0          // Prata protegida da Gruta
   },
   deusAtual: 'zeus' as IdDeus,
   edificios: {
@@ -38,6 +40,7 @@ export const ESTADO_INICIAL = {
     'chariot': 0,
     'catapult': 0
   },
+  pesquisasConcluidas: [] as IdPesquisa[],
   fila: [] as {
     edificio: IdEdificio;
     inicioTempo: number;

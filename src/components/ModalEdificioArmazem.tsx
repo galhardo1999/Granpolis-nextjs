@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { EDIFICIOS } from '@/lib/edificios';
 
@@ -11,12 +11,6 @@ interface ModalEdificioArmazemProps {
 }
 
 export function ModalEdificioArmazem({ recursos, renda, nivelAtual }: ModalEdificioArmazemProps) {
-  // Refresh force
-  const [, setAgora] = useState(Date.now());
-  useEffect(() => {
-    const min = setInterval(() => setAgora(Date.now()), 1000);
-    return () => clearInterval(min);
-  }, []);
 
   const getTempoRestante = (atual: number, rendaValor: number, max: number) => {
     if (atual >= max) return "Máxima capacidade alcançada";

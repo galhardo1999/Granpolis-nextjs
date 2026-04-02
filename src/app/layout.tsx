@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Outfit, Cinzel_Decorative } from "next/font/google";
 import "./globals.css";
+import { ToastProvider } from "@/components/ToastProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -19,8 +20,8 @@ const cinzel = Cinzel_Decorative({
 });
 
 export const metadata: Metadata = {
-  title: "Grepolis Evolution - Jogo de Estratégia",
-  description: "Um jogo de estratégia grego imersivo com produção de recursos em tempo real.",
+  title: "Granpolis — Jogo de Estratégia Grego",
+  description: "Um jogo de estratégia de civilização grega com produção em tempo real, sistema de pesquisas e combate.",
 };
 
 export default function RootLayout({
@@ -31,7 +32,9 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body className={`${inter.variable} ${outfit.variable} ${cinzel.variable}`}>
-        {children}
+        <ToastProvider>
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );

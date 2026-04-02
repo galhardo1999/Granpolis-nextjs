@@ -1,9 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { memo } from 'react';
 import Image from 'next/image';
 import { TAMANHO_MAXIMO_FILA } from '@/lib/config';
 import { EDIFICIOS, IdEdificio } from '@/lib/edificios';
+import { formatarTempo } from '@/lib/utils';
+
+// PERF-02 FIX: agora recebe `agora` do motor — sem setInterval local
+// PERF-01 FIX: memo para evitar re-renders desnecessários
 
 interface ItemFila {
   edificio: IdEdificio;
@@ -14,25 +18,11 @@ interface ItemFila {
 
 interface FilaConstrucaoProps {
   fila: ItemFila[];
+  agora: number;
   aoCancelar: (indice: number) => void;
 }
 
-export function FilaConstrucao({ fila, aoCancelar }: FilaConstrucaoProps) {
-  const [agora, setAgora] = useState(Date.now());
-
-  useEffect(() => {
-    const temporizador = setInterval(() => setAgora(Date.now()), 1000);
-    return () => clearInterval(temporizador);
-  }, []);
-
-  const formatarTempo = (segundos: number) => {
-    const h = Math.floor(segundos / 3600);
-    const m = Math.floor((segundos % 3600) / 60);
-    const s = segundos % 60;
-    if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-    return `${m}:${s.toString().padStart(2, '0')}`;
-  };
-
+export const FilaConstrucao = memo(function FilaConstrucao({ fila, agora, aoCancelar }: FilaConstrucaoProps) {
   return (
     <div className="queue-horizontal-panel">
       <div className="queue-label-vertical">OBRAS</div>
@@ -41,24 +31,26 @@ export function FilaConstrucao({ fila, aoCancelar }: FilaConstrucaoProps) {
           const edificio = EDIFICIOS[item.edificio];
           const restante = Math.max(0, Math.ceil((item.fimTempo - agora) / 1000));
           const duracaoTotal = item.fimTempo - item.inicioTempo;
-          const progresso = indice === 0 ? Math.min(100, Math.max(0, ((agora - item.inicioTempo) / duracaoTotal) * 100)) : 0;
+          const progresso = indice === 0
+            ? Math.min(100, Math.max(0, ((agora - item.inicioTempo) / duracaoTotal) * 100))
+            : 0;
 
           return (
             <div key={indice} className={`q-item ${indice === 0 ? 'active' : ''}`}>
               <div className="q-box">
-                <Image 
-                  src={edificio.imagem} 
-                  alt={edificio.nome} 
-                  width={60} 
-                  height={60} 
+                <Image
+                  src={edificio.imagem}
+                  alt={edificio.nome}
+                  width={60}
+                  height={60}
                   className="q-img"
                 />
                 <div className="q-level">▲ {item.nivel}</div>
                 <button className="q-cancel" onClick={() => aoCancelar(indice)} title="Cancelar construção">×</button>
               </div>
-              
+
               <div className="q-name">{edificio.nome}</div>
-              
+
               {indice === 0 && (
                 <div className="q-progress-container">
                   <div className="q-timer">{formatarTempo(restante)}</div>
@@ -70,8 +62,7 @@ export function FilaConstrucao({ fila, aoCancelar }: FilaConstrucaoProps) {
             </div>
           );
         })}
-        
-        {/* Slots vazios para preencher a barra visualmente como no jogo */}
+
         {Array.from({ length: Math.max(0, TAMANHO_MAXIMO_FILA - fila.length) }).map((_, i) => (
           <div key={`vazio-${i}`} className="q-item empty">
             <div className="q-box"></div>
@@ -80,4 +71,4 @@ export function FilaConstrucao({ fila, aoCancelar }: FilaConstrucaoProps) {
       </div>
     </div>
   );
-}
+});

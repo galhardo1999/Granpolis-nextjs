@@ -1370,3 +1370,228 @@ body {
     transform: skewX(-25deg);
     animation: lightning-streak 4s infinite cubic-bezier(0.19, 1, 0.22, 1);
 }
+
+/* ═══════════════════════════════════════════════════
+   FEAT-05: MICRO-ANIMAÇÕES DE FEEDBACK SENSORIAL
+   ═══════════════════════════════════════════════════ */
+
+/* Resource value pop animation */
+@keyframes resourcePop {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.15); color: #FFD700; }
+    100% { transform: scale(1); }
+}
+
+.resource .value {
+    transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.resource .value.pop {
+    animation: resourcePop 0.4s ease;
+}
+
+/* Queue item slide-in */
+@keyframes queueSlideIn {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.q-item:not(.empty) {
+    animation: queueSlideIn 0.35s ease backwards;
+}
+
+.q-item:nth-child(1) { animation-delay: 0s; }
+.q-item:nth-child(2) { animation-delay: 0.05s; }
+.q-item:nth-child(3) { animation-delay: 0.1s; }
+.q-item:nth-child(4) { animation-delay: 0.15s; }
+
+/* Shake animation for disabled/error actions */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    15% { transform: translateX(-6px); }
+    30% { transform: translateX(5px); }
+    45% { transform: translateX(-4px); }
+    60% { transform: translateX(3px); }
+    75% { transform: translateX(-2px); }
+}
+
+.upgrade-btn:disabled:active {
+    animation: shake 0.4s ease;
+}
+
+/* Favor meter pulse while accumulating */
+@keyframes favorPulse {
+    0%, 100% { box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+    50% { box-shadow: 0 4px 10px rgba(0,0,0,0.5), 0 0 12px rgba(79, 182, 255, 0.4); }
+}
+
+.favor-meter {
+    animation: favorPulse 3s infinite ease-in-out;
+}
+
+/* Building slot golden glow on hover */
+.building-slot:hover .building-label {
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+    transition: box-shadow 0.3s;
+}
+
+/* Smooth resource bar fill in warehouse */
+.arm-bar-fill {
+    transition: width 1s ease !important;
+}
+
+/* Active queue item subtle glow */
+.q-item.active .q-box {
+    animation: activeQueueGlow 2s infinite ease-in-out;
+}
+
+@keyframes activeQueueGlow {
+    0%, 100% { box-shadow: 0 0 5px rgba(118, 199, 192, 0.3); }
+    50% { box-shadow: 0 0 15px rgba(118, 199, 192, 0.6); }
+}
+
+/* Building card hover lift in senate tree */
+#senate-tree .building-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+#senate-tree .building-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+/* Army unit hover pop */
+.army-unit-box {
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+/* Modal overlay fade-in */
+#modal-overlay {
+    animation: overlayFadeIn 0.25s ease;
+}
+
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Research item hover */
+.power-item:not(.disabled):hover {
+    background: rgba(109, 76, 65, 0.08);
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+/* Unit count badge pop */
+.army-unit-box .unit-count {
+    transition: transform 0.2s;
+}
+
+.army-unit-box:hover .unit-count {
+    transform: scale(1.15);
+}
+
+/* ═══════════════════════════════════════════════════
+   MERCADO — SWAP UI
+   ═══════════════════════════════════════════════════ */
+
+.mercado-container {
+    color: #e2d5b0;
+    font-family: var(--font-main);
+}
+
+.mercado-swap {
+    background: linear-gradient(135deg, #0c1f38, #1a2d4a);
+    border: 1px solid #3a5a8a;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.mercado-swap-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.mercado-resource-select {
+    background: #0d1117;
+    border: 1px solid #3a5a8a;
+    color: #e2d5b0;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.mercado-arrow {
+    font-size: 1.5rem;
+    color: #D4AF37;
+    animation: swapArrowPulse 2s infinite ease-in-out;
+}
+
+@keyframes swapArrowPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; transform: scale(1.1); }
+}
+
+.mercado-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.mercado-slider-row input[type="range"] {
+    flex: 1;
+    accent-color: #D4AF37;
+}
+
+.mercado-preview {
+    display: flex;
+    justify-content: space-around;
+    padding: 12px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    margin: 12px 0;
+}
+
+.mercado-preview-item {
+    text-align: center;
+}
+
+.mercado-preview-item .label {
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.mercado-preview-item .val {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.mercado-btn {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, #1e3a5f, #2563eb);
+    border: 1px solid #3b82f6;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mercado-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+.mercado-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
