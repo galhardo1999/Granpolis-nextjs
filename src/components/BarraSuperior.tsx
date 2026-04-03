@@ -18,6 +18,7 @@ interface BarraSuperiorProps {
     madeira: number;
     pedra: number;
     prata: number;
+    populacao: number;
   };
   nomeCidade: string;
   aoAlterarNomeCidade: (nome: string) => void;
@@ -76,8 +77,9 @@ export const BarraSuperior = memo(function BarraSuperior({
         <div className="resource" id="res-pop" title="População Livre / Capacidade Total">
           <Image src="/icon_pop.png" alt="População" width={28} height={28} />
           <span className={`value ${recursos.populacao <= 0 ? 'empty' : ''}`}>
-            {recursos.populacao} / {recursos.populacaoMaxima}
+            {Math.floor(recursos.populacao)} / {recursos.populacaoMaxima}
           </span>
+          <span className="income">+{Math.floor(renda.populacao)}/h</span>
         </div>
 
         {aoResetar && (
@@ -111,10 +113,11 @@ export const BarraSuperior = memo(function BarraSuperior({
     Math.floor(prev.recursos.madeira) === Math.floor(next.recursos.madeira) &&
     Math.floor(prev.recursos.pedra) === Math.floor(next.recursos.pedra) &&
     Math.floor(prev.recursos.prata) === Math.floor(next.recursos.prata) &&
-    prev.recursos.populacao === next.recursos.populacao &&
+    Math.floor(prev.recursos.populacao) === Math.floor(next.recursos.populacao) &&
     prev.recursos.populacaoMaxima === next.recursos.populacaoMaxima &&
     prev.recursos.recursosMaximos === next.recursos.recursosMaximos &&
     Math.floor(prev.renda.madeira) === Math.floor(next.renda.madeira) &&
+    Math.floor(prev.renda.populacao) === Math.floor(next.renda.populacao) &&
     prev.nomeCidade === next.nomeCidade
   );
 });

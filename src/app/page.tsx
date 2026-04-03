@@ -7,11 +7,13 @@ import { ModalEdificioCidade } from '@/components/ModalEdificioCidade';
 import { FilaConstrucao } from '@/components/FilaConstrucao';
 import { FilaRecrutamento } from '@/components/FilaRecrutamento';
 import { ModalEdificio } from '@/components/ModalEdificio';
-import { IdEdificio } from '@/lib/edificios';
+import { EDIFICIOS, IdEdificio } from '@/lib/edificios';
+import { UNIDADES, IdUnidade } from '@/lib/unidades';
 import { PoderDivino } from '@/components/PoderesDivinos';
 import { PainelExercito } from '@/components/PainelExercito';
 import { ModalConfirmacao } from '@/components/ModalConfirmacao';
 import { useToast } from '@/components/ToastProvider';
+import Image from 'next/image';
 
 export default function Inicio() {
   const {
@@ -50,9 +52,19 @@ export default function Inicio() {
     if (eventosConclusao.length === 0) return;
     for (const evento of eventosConclusao) {
       if (evento.tipo === 'edificio') {
-        mostrarToast(`🏗️ ${evento.nome} Nv.${evento.nivel} concluído!`, 'sucesso', '🏛️');
+        const imagem = (EDIFICIOS[evento.id as IdEdificio] as any)?.imagem || '/placeholder_building.png';
+        mostrarToast(
+          `${evento.nome} Nv.${evento.nivel} concluído!`,
+          'sucesso',
+          <Image src={imagem} alt={evento.nome} width={24} height={24} style={{ borderRadius: '4px' }} />
+        );
       } else if (evento.tipo === 'unidade') {
-        mostrarToast(`🪖 ${evento.quantidade}x ${evento.nome} prontos!`, 'sucesso', '⚔️');
+        const imagem = (UNIDADES[evento.id as IdUnidade] as any)?.retrato || '/placeholder.png';
+        mostrarToast(
+          `${evento.quantidade}x ${evento.nome} prontos!`,
+          'sucesso',
+          <Image src={imagem} alt={evento.nome} width={24} height={24} style={{ borderRadius: '4px' }} />
+        );
       }
     }
     limparEventos();

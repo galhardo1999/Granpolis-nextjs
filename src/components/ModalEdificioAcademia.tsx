@@ -8,7 +8,7 @@ interface ModalEdificioAcademiaProps {
   prata: number;
   pesquisasConcluidas: IdPesquisa[];
   aoPesquisar: (id: IdPesquisa) => { sucesso: boolean; motivo?: string };
-  aomostrarToast?: (msg: string, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: string) => void;
+  aomostrarToast?: (msg: React.ReactNode, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: React.ReactNode) => void;
 }
 
 export function ModalEdificioAcademia({

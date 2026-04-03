@@ -39,7 +39,7 @@ interface ModalEdificioProps {
   aoAtacarAldeiaBarbar: (exercito: Record<string, number>) => ResultadoBatalha | null;
   aoTrocarRecurso: (de: 'madeira' | 'pedra' | 'prata', para: 'madeira' | 'pedra' | 'prata', quantidade: number) => { sucesso: boolean; motivo?: string };
   agora: number;
-  mostrarToast?: (msg: string, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: string) => void;
+  mostrarToast?: (msg: React.ReactNode, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: React.ReactNode) => void;
 }
 
 // Edifícios que usam modal de recrutamento
@@ -125,7 +125,11 @@ export function ModalEdificio({
       if (!resultado.sucesso && resultado.motivo) {
         mostrarToast?.(resultado.motivo, 'erro');
       } else if (resultado.sucesso) {
-        mostrarToast?.(`🏗️ ${dados.nome} Nv.${proximoNivel} em construção!`, 'sucesso');
+        mostrarToast?.(
+          `${dados.nome} Nv.${proximoNivel} em construção!`,
+          'sucesso',
+          <Image src={(dados as any).imagem || '/placeholder_building.png'} alt={dados.nome} width={24} height={24} style={{ borderRadius: '4px' }} />
+        );
       }
     };
 

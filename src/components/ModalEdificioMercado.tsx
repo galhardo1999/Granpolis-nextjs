@@ -14,7 +14,7 @@ interface ModalEdificioMercadoProps {
   nivelMercado: number;
   recursos: { madeira: number; pedra: number; prata: number; recursosMaximos: number };
   aoTrocar: (de: TipoRecurso, para: TipoRecurso, quantidade: number) => { sucesso: boolean; motivo?: string };
-  mostrarToast?: (msg: string, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: string) => void;
+  mostrarToast?: (msg: React.ReactNode, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: React.ReactNode) => void;
 }
 
 const ICONE_RECURSO: Record<TipoRecurso, string> = {

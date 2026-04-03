@@ -39,6 +39,7 @@ export interface ItemFilaRecrutamento {
 
 export interface EventoConclusao {
   tipo: 'edificio' | 'unidade';
+  id: string;
   nome: string;
   nivel?: number;
   quantidade?: number;
@@ -178,7 +179,7 @@ function gerarChecksum(data: string): string {
 // ============================================================
 interface GameActions {
   // Recursos
-  calcularRenda: () => { madeira: number; pedra: number; prata: number };
+  calcularRenda: () => { madeira: number; pedra: number; prata: number; populacao: number };
   
   // Construção
   calcularCustos: (idEdificio: IdEdificio, nivel: number) => { madeira: number; pedra: number; prata: number };
@@ -228,7 +229,8 @@ export const useGameStore = create<GameStore>()(
         return {
           madeira: calcularProducaoRecurso(s.edificios['timber-camp'] || 0, EDIFICIOS['timber-camp'].multiplicadorProducao) * PROD_DE_RECURSOS,
           pedra: calcularProducaoRecurso(s.edificios['quarry'] || 0, EDIFICIOS['quarry'].multiplicadorProducao) * PROD_DE_RECURSOS,
-          prata: calcularProducaoRecurso(s.edificios['silver-mine'] || 0, EDIFICIOS['silver-mine'].multiplicadorProducao) * PROD_DE_RECURSOS
+          prata: calcularProducaoRecurso(s.edificios['silver-mine'] || 0, EDIFICIOS['silver-mine'].multiplicadorProducao) * PROD_DE_RECURSOS,
+          populacao: (s.edificios['farm'] || 0) > 0 ? 1 + Math.floor((s.edificios['farm'] || 0) / 10) : 0
         };
       },
 
@@ -571,18 +573,22 @@ export const useGameStore = create<GameStore>()(
         const renda = {
           madeira: calcularProducaoRecurso(clone.edificios['timber-camp'] || 0, EDIFICIOS['timber-camp'].multiplicadorProducao) * PROD_DE_RECURSOS,
           pedra: calcularProducaoRecurso(clone.edificios['quarry'] || 0, EDIFICIOS['quarry'].multiplicadorProducao) * PROD_DE_RECURSOS,
-          prata: calcularProducaoRecurso(clone.edificios['silver-mine'] || 0, EDIFICIOS['silver-mine'].multiplicadorProducao) * PROD_DE_RECURSOS
+          prata: calcularProducaoRecurso(clone.edificios['silver-mine'] || 0, EDIFICIOS['silver-mine'].multiplicadorProducao) * PROD_DE_RECURSOS,
+          populacao: (clone.edificios['farm'] || 0) > 0 ? 1 + Math.floor((clone.edificios['farm'] || 0) / 10) : 0
         };
 
         const max = clone.recursos.recursosMaximos;
+        const popMax = clone.recursos.populacaoMaxima;
         const m0 = clone.recursos.madeira;
         const p0 = clone.recursos.pedra;
         const s0 = clone.recursos.prata;
         const f0 = clone.recursos.favor;
+        const pop0 = clone.recursos.populacao;
 
         clone.recursos.madeira = Math.min(max, m0 + (renda.madeira / 3600) * diferenca);
         clone.recursos.pedra = Math.min(max, p0 + (renda.pedra / 3600) * diferenca);
         clone.recursos.prata = Math.min(max, s0 + (renda.prata / 3600) * diferenca);
+        clone.recursos.populacao = Math.min(popMax, pop0 + (renda.populacao / 3600) * diferenca);
 
         const bonusTemplo = 1 + (clone.edificios['temple'] * 0.1);
         const rendaFavor = PRODUCAO_BASE_FAVOR * PROD_DE_RECURSOS * bonusTemplo;
@@ -597,7 +603,7 @@ export const useGameStore = create<GameStore>()(
         while (clone.fila.length > 0 && agoraMs >= clone.fila[0].fimTempo) {
           const tarefa = clone.fila.shift()!;
           clone.edificios[tarefa.edificio]++;
-          eventos.push({ tipo: 'edificio', nome: EDIFICIOS[tarefa.edificio].nome, nivel: tarefa.nivel });
+          eventos.push({ tipo: 'edificio', id: tarefa.edificio, nome: EDIFICIOS[tarefa.edificio].nome, nivel: tarefa.nivel });
 
           if (tarefa.edificio === 'farm') {
             clone.recursos.populacaoMaxima = calcularPopulacaoMaximaPorFarm(clone.edificios.farm, temArado);
@@ -624,7 +630,7 @@ export const useGameStore = create<GameStore>()(
             unidadesNoCiclo++;
 
             if (tarefa.quantidade <= 0) {
-              eventos.push({ tipo: 'unidade', nome: UNIDADES[tarefa.unidade].nome, quantidade: unidadesNoCiclo });
+              eventos.push({ tipo: 'unidade', id: tarefa.unidade, nome: UNIDADES[tarefa.unidade].nome, quantidade: unidadesNoCiclo });
               unidadesNoCiclo = 0;
               clone.filaRecrutamento.shift();
               if (clone.filaRecrutamento.length > 0) {
@@ -640,7 +646,8 @@ export const useGameStore = create<GameStore>()(
           Math.floor(clone.recursos.madeira) !== Math.floor(m0) ||
           Math.floor(clone.recursos.pedra) !== Math.floor(p0) ||
           Math.floor(clone.recursos.prata) !== Math.floor(s0) ||
-          Math.floor(clone.recursos.favor) !== Math.floor(f0);
+          Math.floor(clone.recursos.favor) !== Math.floor(f0) ||
+          Math.floor(clone.recursos.populacao) !== Math.floor(pop0);
 
         if (recursosAlterados || filaAlterada) {
           clone.ultimaAtualizacao = agoraMs;

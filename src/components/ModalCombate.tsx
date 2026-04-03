@@ -8,7 +8,7 @@ import { ResultadoBatalha } from '@/lib/combate';
 interface ModalCombateProps {
   unidades: Record<string, number>;
   aoAtacar: (exercito: Record<string, number>) => ResultadoBatalha | null;
-  aomostrarToast?: (msg: string, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: string) => void;
+  aomostrarToast?: (msg: React.ReactNode, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: React.ReactNode) => void;
 }
 
 export function ModalCombate({ unidades, aoAtacar, aomostrarToast }: ModalCombateProps) {

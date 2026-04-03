@@ -14,7 +14,7 @@ interface ModalEdificioRecrutamentoProps {
   recursos: { madeira: number; pedra: number; prata: number; populacao: number };
   calcularTempoRecrutamento: (idUnidade: IdUnidade, quantidade: number) => number;
   agora: number;
-  mostrarToast?: (msg: string, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: string) => void;
+  mostrarToast?: (msg: React.ReactNode, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: React.ReactNode) => void;
   tipoFiltro?: 'terrestre' | 'naval';
 }
 
