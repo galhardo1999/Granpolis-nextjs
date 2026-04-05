@@ -153,7 +153,7 @@ body {
 #city-view {
     flex: 1;
     position: relative;
-    background: url('/city_background.png') no-repeat center center;
+    background: url('/fundos/fundo_cidade.png') no-repeat center center;
     background-size: 100% 100%;
     display: flex;
     justify-content: center;

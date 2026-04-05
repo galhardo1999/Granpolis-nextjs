@@ -3,7 +3,6 @@
 // Fonte única de verdade. Persistência automática com checksum.
 // ============================================================
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import { EDIFICIOS, IdEdificio } from '@/lib/edificios';
 import { UNIDADES, IdUnidade } from '@/lib/unidades';
 import { IdDeus, PODERES_DIVINOS } from '@/lib/deuses';
@@ -17,13 +16,15 @@ import {
   TEMPO_TREINAMENTO_UNIDADES,
   TAMANHO_MAXIMO_FILA_OBRAS,
   TAMANHO_MAXIMO_FILA_RECRUTAMENTO,
-  PRODUCAO_BASE_FAVOR
+  PRODUCAO_BASE_FAVOR,
+  TAXAS_MERCADO,
+  TipoRecurso
 } from '@/lib/config';
 
 // ============================================================
 // TIPOS
 // ============================================================
-type TipoRecurso = 'madeira' | 'pedra' | 'prata';
+export type { TipoRecurso } from '@/lib/config';
 
 export interface ItemFila {
   edificio: IdEdificio;
@@ -70,6 +71,7 @@ export interface EstadoJogo {
   filaRecrutamento: ItemFilaRecrutamento[];
   ultimaAtualizacao: number;
   nomeCidade: string;
+  cooldownsAldeias: Record<string, number>;
 }
 
 // ============================================================
@@ -120,7 +122,8 @@ const ESTADO_INICIAL: EstadoJogo = {
   fila: [],
   filaRecrutamento: [],
   ultimaAtualizacao: Date.now(),
-  nomeCidade: 'Granpolis'
+  nomeCidade: 'Granpolis',
+  cooldownsAldeias: {}
 };
 
 // ============================================================
@@ -135,7 +138,8 @@ function deepClone(estado: EstadoJogo): EstadoJogo {
     pesquisasConcluidas: [...estado.pesquisasConcluidas],
     missoesColetadas: [...estado.missoesColetadas],
     fila: estado.fila.map(item => ({ ...item })),
-    filaRecrutamento: estado.filaRecrutamento.map(item => ({ ...item }))
+    filaRecrutamento: estado.filaRecrutamento.map(item => ({ ...item })),
+    cooldownsAldeias: { ...estado.cooldownsAldeias }
   };
 }
 
@@ -167,23 +171,13 @@ function calcularProtecaoGruta(nivelGruta: number): number {
   return nivelGruta * 300;
 }
 
-const TAXAS_MERCADO: Record<TipoRecurso, Record<TipoRecurso, number>> = {
-  madeira: { madeira: 1, pedra: 0.90, prata: 0.60 },
-  pedra: { madeira: 0.90, pedra: 1, prata: 0.60 },
-  prata: { madeira: 1.30, pedra: 1.30, prata: 1 }
-};
-
-// Checksum anti-tampering
-const SALT = 'granpolis-2026-aegis';
-function gerarChecksum(data: string): string {
-  let hash = 0;
-  const combined = SALT + data;
-  for (let i = 0; i < combined.length; i++) {
-    const char = combined.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
-  }
-  return Math.abs(hash).toString(36);
+function rendaDoEdificio(edificios: Record<string, number>): { madeira: number; pedra: number; prata: number; populacao: number } {
+  return {
+    madeira: calcularProducaoRecurso(edificios['timber-camp'] || 0, EDIFICIOS['timber-camp'].multiplicadorProducao) * PROD_DE_RECURSOS,
+    pedra: calcularProducaoRecurso(edificios['quarry'] || 0, EDIFICIOS['quarry'].multiplicadorProducao) * PROD_DE_RECURSOS,
+    prata: calcularProducaoRecurso(edificios['silver-mine'] || 0, EDIFICIOS['silver-mine'].multiplicadorProducao) * PROD_DE_RECURSOS,
+    populacao: (edificios['farm'] || 0) > 0 ? 1 + Math.floor((edificios['farm'] || 0) / 10) : 0
+  };
 }
 
 // ============================================================
@@ -211,6 +205,7 @@ interface GameActions {
 
   // Combate
   atacarAldeiaBarbar: (idAldeia: string, exercitoEnviado: Record<string, number>) => ResultadoBatalha | null;
+  iniciarCooldownAldeia: (idAldeia: string, duracaoMinutos: number) => void;
 
   // Poderes Divinos
   selecionarDeus: (idDeus: IdDeus) => { sucesso: boolean; motivo?: string };
@@ -223,7 +218,6 @@ interface GameActions {
   definirNomeCidade: (nome: string) => void;
   resetarJogo: () => void;
   coletarRecompensaMissao: (idMissao: string, recompensa: { madeira?: number, pedra?: number, prata?: number, favor?: number }) => { sucesso: boolean; motivo?: string };
-
   // Game Loop
   tick: (agoraMs: number) => EventoConclusao[];
 }
@@ -231,20 +225,13 @@ interface GameActions {
 type GameStore = EstadoJogo & GameActions;
 
 export const useGameStore = create<GameStore>()(
-  persist(
-    (set, get) => ({
-      // ─── ESTADO INICIAL ────────────────────────────────
-      ...ESTADO_INICIAL,
+  (set, get) => ({
+    // ─── ESTADO INICIAL ────────────────────────────────
+    ...ESTADO_INICIAL,
 
       // ─── RECURSOS ──────────────────────────────────────
       calcularRenda: () => {
-        const s = get();
-        return {
-          madeira: calcularProducaoRecurso(s.edificios['timber-camp'] || 0, EDIFICIOS['timber-camp'].multiplicadorProducao) * PROD_DE_RECURSOS,
-          pedra: calcularProducaoRecurso(s.edificios['quarry'] || 0, EDIFICIOS['quarry'].multiplicadorProducao) * PROD_DE_RECURSOS,
-          prata: calcularProducaoRecurso(s.edificios['silver-mine'] || 0, EDIFICIOS['silver-mine'].multiplicadorProducao) * PROD_DE_RECURSOS,
-          populacao: (s.edificios['farm'] || 0) > 0 ? 1 + Math.floor((s.edificios['farm'] || 0) / 10) : 0
-        };
+        return rendaDoEdificio(get().edificios);
       },
 
       // ─── CONSTRUÇÃO ────────────────────────────────────
@@ -531,8 +518,19 @@ export const useGameStore = create<GameStore>()(
           clone.unidades[uid] = Math.max(0, (clone.unidades[uid] || 0) - baixas);
         }
 
-        set({ recursos: clone.recursos, unidades: clone.unidades });
+        if (resultado.sucesso) {
+          clone.cooldownsAldeias[idAldeia] = Date.now() + (aldeia.tempoRecargaMinutos * 60 * 1000);
+        }
+
+        set({ recursos: clone.recursos, unidades: clone.unidades, cooldownsAldeias: clone.cooldownsAldeias });
         return resultado;
+      },
+
+      iniciarCooldownAldeia: (idAldeia, duracaoMinutos) => {
+        const s = get();
+        const clone = deepClone(s);
+        clone.cooldownsAldeias[idAldeia] = Date.now() + (duracaoMinutos * 60 * 1000);
+        set({ cooldownsAldeias: clone.cooldownsAldeias });
       },
 
       // ─── PODERES DIVINOS ───────────────────────────────
@@ -602,7 +600,6 @@ export const useGameStore = create<GameStore>()(
       definirNomeCidade: (nome) => set({ nomeCidade: sanitizarTexto(nome, 15) }),
 
       resetarJogo: () => {
-        localStorage.removeItem('granpolis-state');
         set({ ...ESTADO_INICIAL, ultimaAtualizacao: Date.now() });
       },
 
@@ -630,12 +627,7 @@ export const useGameStore = create<GameStore>()(
         const eventos: EventoConclusao[] = [];
 
         // Produção de recursos
-        const renda = {
-          madeira: calcularProducaoRecurso(clone.edificios['timber-camp'] || 0, EDIFICIOS['timber-camp'].multiplicadorProducao) * PROD_DE_RECURSOS,
-          pedra: calcularProducaoRecurso(clone.edificios['quarry'] || 0, EDIFICIOS['quarry'].multiplicadorProducao) * PROD_DE_RECURSOS,
-          prata: calcularProducaoRecurso(clone.edificios['silver-mine'] || 0, EDIFICIOS['silver-mine'].multiplicadorProducao) * PROD_DE_RECURSOS,
-          populacao: (clone.edificios['farm'] || 0) > 0 ? 1 + Math.floor((clone.edificios['farm'] || 0) / 10) : 0
-        };
+        const renda = rendaDoEdificio(clone.edificios);
 
         const max = clone.recursos.recursosMaximos;
         const popMax = clone.recursos.populacaoMaxima;
@@ -724,63 +716,5 @@ export const useGameStore = create<GameStore>()(
 
         return eventos;
       }
-    }),
-    {
-      name: 'granpolis-state',
-      storage: createJSONStorage(() => {
-        // Custom storage with checksum
-        return {
-          getItem: (name: string) => {
-            const data = localStorage.getItem(name);
-            const checksum = localStorage.getItem(name + '-checksum');
-            if (data) {
-              if (checksum && gerarChecksum(data) !== checksum) {
-                console.warn('Save adulterado detectado. Resetando.');
-                localStorage.removeItem(name);
-                localStorage.removeItem(name + '-checksum');
-                return null;
-              }
-              return data;
-            }
-            return null;
-          },
-          setItem: (name: string, value: string) => {
-            localStorage.setItem(name, value);
-            localStorage.setItem(name + '-checksum', gerarChecksum(value));
-          },
-          removeItem: (name: string) => {
-            localStorage.removeItem(name);
-            localStorage.removeItem(name + '-checksum');
-          }
-        };
-      }),
-      // Only persist state, not actions
-      partialize: (state) => ({
-        recursos: state.recursos,
-        deusAtual: state.deusAtual,
-        edificios: state.edificios,
-        unidades: state.unidades,
-        pesquisasConcluidas: state.pesquisasConcluidas,
-        missoesColetadas: state.missoesColetadas,
-        fila: state.fila,
-        filaRecrutamento: state.filaRecrutamento,
-        ultimaAtualizacao: state.ultimaAtualizacao,
-        nomeCidade: state.nomeCidade
-      }),
-      // Migrar saves antigos
-      version: 6,
-      migrate: (persisted: any, version: number) => {
-        if (version < 6) {
-          return {
-            ...ESTADO_INICIAL,
-            ...persisted,
-            missoesColetadas: persisted?.missoesColetadas || [],
-            recursos: { ...ESTADO_INICIAL.recursos, ...(persisted?.recursos || {}) },
-            unidades: { ...ESTADO_INICIAL.unidades, ...(persisted?.unidades || {}) }
-          };
-        }
-        return persisted;
-      }
-    }
-  )
+    })
 );

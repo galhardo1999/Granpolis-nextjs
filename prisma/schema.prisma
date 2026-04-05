@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  cidade Cidade?
+}
+
+model Cidade {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  nomeCidade      String   @default("Granpolis")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Recursos
+  madeira         Float    @default(250)
+  pedra           Float    @default(250)
+  prata           Float    @default(250)
+  populacao       Float    @default(100)
+  populacaoMaxima Float    @default(100)
+  recursosMaximos Float    @default(300)
+  favor           Float    @default(0)
+  favorMaximo     Float    @default(500)
+  prataNaGruta    Float    @default(0)
+
+  // Deus atual
+  deusAtual       String?
+
+  // Edificios (JSON: { senate: 1, timberCamp: 0, ... })
+  edificios       Json     @default("{}")
+
+  // Unidades (JSON: { swordsman: 0, slinger: 0, ... })
+  unidades        Json     @default("{}")
+
+  // Pesquisas concluídas
+  pesquisasConcluidas String[] @default([])
+
+  // Missões coletadas
+  missoesColetadas    String[] @default([])
+
+  // Fila de construção
+  fila            Json     @default("[]")
+
+  // Fila de recrutamento
+  filaRecrutamento Json    @default("[]")
+
+  // Cooldowns de aldeias
+  cooldownsAldeias Json    @default("{}")
+
+  ultimaAtualizacao DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}

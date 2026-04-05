@@ -2,35 +2,35 @@ export const DEUSES = {
   'zeus': {
     id: 'zeus' as const,
     nome: 'Zeus',
-    retrato: '/god_zeus.png',
+    retrato: '/deuses/deus_zeus.png',
     cor: '#FFD700',
     descricao: 'Rei dos Deuses, senhor do céu e do trovão.'
   },
   'poseidon': {
     id: 'poseidon' as const,
     nome: 'Poseidón',
-    retrato: '/god_poseidon.png',
+    retrato: '/deuses/deus_poseidon.png',
     cor: '#0077BE',
     descricao: 'Senhor dos mares e dos terremotos.'
   },
   'hera': {
     id: 'hera' as const,
     nome: 'Hera',
-    retrato: '/god_hera.png',
+    retrato: '/deuses/deus_hera.png',
     cor: '#DA70D6',
     descricao: 'Rainha dos Deuses, protetora do matrimônio.'
   },
   'atena': {
     id: 'atena' as const,
     nome: 'Atena',
-    retrato: '/god_atena.png',
+    retrato: '/deuses/deus_atena.png',
     cor: '#D3D3D3',
     descricao: 'Deusa da sabedoria e da guerra de estratégia.'
   },
   'hades': {
     id: 'hades' as const,
     nome: 'Hades',
-    retrato: '/god_hades.png',
+    retrato: '/deuses/deus_hades.png',
     cor: '#4B0082',
     descricao: 'Senhor do submundo e das riquezas subterrâneas.'
   }

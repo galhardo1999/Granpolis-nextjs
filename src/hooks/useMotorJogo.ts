@@ -38,7 +38,8 @@ export function useMotorJogo() {
     fila: s.fila,
     filaRecrutamento: s.filaRecrutamento,
     ultimaAtualizacao: s.ultimaAtualizacao,
-    nomeCidade: s.nomeCidade
+    nomeCidade: s.nomeCidade,
+    cooldownsAldeias: s.cooldownsAldeias
   })));
 
   // ─── Store actions (don't cause re-renders) ───────────
@@ -63,8 +64,6 @@ export function useMotorJogo() {
 
   // ─── Hydration detection ──────────────────────────────
   useEffect(() => {
-    // Zustand persist re-hydrates automatically from localStorage.
-    // We just need a small delay to let it happen.
     const timer = setTimeout(() => setCarregado(true), 50);
     return () => clearTimeout(timer);
   }, []);
@@ -121,6 +120,7 @@ export function useMotorJogo() {
     pesquisar,
     temPesquisa,
     atacarAldeiaBarbar,
-    trocarRecurso
+    trocarRecurso,
+    resetarJogoStore
   };
 }

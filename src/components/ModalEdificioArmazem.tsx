@@ -38,9 +38,9 @@ export function ModalEdificioArmazem({ recursos, renda, nivelAtual }: ModalEdifi
   const capacidadeProximoNivel = Math.floor(recursos.recursosMaximos * 1.08);
 
   const recursosList = [
-    { icon: '/icon_wood.png', nome: 'Madeira', chave: 'madeira', amount: Math.floor(recursos.madeira), rawAmount: recursos.madeira, rend: renda.madeira, bg: '#795548', fill: '#a0522d' },
-    { icon: '/icon_stone.png', nome: 'Pedra', chave: 'pedra', amount: Math.floor(recursos.pedra), rawAmount: recursos.pedra, rend: renda.pedra, bg: '#8b8b8b', fill: '#9e9e9e' },
-    { icon: '/icon_silver.png', nome: 'Moedas de prata', chave: 'prata', amount: Math.floor(recursos.prata), rawAmount: recursos.prata, rend: renda.prata, bg: '#607d8b', fill: '#cfd8dc' },
+    { icon: '/icones/icone_madeira.png', nome: 'Madeira', chave: 'madeira', amount: Math.floor(recursos.madeira), rawAmount: recursos.madeira, rend: renda.madeira, bg: '#795548', fill: '#a0522d' },
+    { icon: '/icones/icone_pedra.png', nome: 'Pedra', chave: 'pedra', amount: Math.floor(recursos.pedra), rawAmount: recursos.pedra, rend: renda.pedra, bg: '#8b8b8b', fill: '#9e9e9e' },
+    { icon: '/icones/icone_prata.png', nome: 'Moedas de prata', chave: 'prata', amount: Math.floor(recursos.prata), rawAmount: recursos.prata, rend: renda.prata, bg: '#607d8b', fill: '#cfd8dc' },
   ];
 
   const escondidoAtual = nivelAtual * 200;

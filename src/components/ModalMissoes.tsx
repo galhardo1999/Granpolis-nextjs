@@ -33,17 +33,17 @@ export function ModalMissoes({ aberto, aoFechar }: { aberto: boolean; aoFechar: 
       <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
         {recompensa.madeira && (
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.9rem', color: '#8b4513' }}>
-            <Image src="/icon_wood.png" width={16} height={16} alt="Madeira" /> +{recompensa.madeira}
+            <Image src="/icones/icone_madeira.png" width={16} height={16} alt="Madeira" /> +{recompensa.madeira}
           </span>
         )}
         {recompensa.pedra && (
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.9rem', color: '#555' }}>
-            <Image src="/icon_stone.png" width={16} height={16} alt="Pedra" /> +{recompensa.pedra}
+            <Image src="/icones/icone_pedra.png" width={16} height={16} alt="Pedra" /> +{recompensa.pedra}
           </span>
         )}
         {recompensa.prata && (
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.9rem', color: '#708090' }}>
-            <Image src="/icon_silver.png" width={16} height={16} alt="Prata" /> +{recompensa.prata}
+            <Image src="/icones/icone_prata.png" width={16} height={16} alt="Prata" /> +{recompensa.prata}
           </span>
         )}
         {recompensa.favor && (

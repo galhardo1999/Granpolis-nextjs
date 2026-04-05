@@ -2,13 +2,12 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { TipoRecurso, TAXAS_MERCADO } from '@/lib/config';
 
 // ============================================================
 // MERCADO — Sistema de Troca de Recursos
 // UX-05: Funcionalidade real para o edifício Mercado
 // ============================================================
-
-type TipoRecurso = 'madeira' | 'pedra' | 'prata';
 
 interface ModalEdificioMercadoProps {
   nivelMercado: number;
@@ -18,9 +17,9 @@ interface ModalEdificioMercadoProps {
 }
 
 const ICONE_RECURSO: Record<TipoRecurso, string> = {
-  madeira: '/icon_wood.png',
-  pedra: '/icon_stone.png',
-  prata: '/icon_silver.png'
+  madeira: '/icones/icone_madeira.png',
+  pedra: '/icones/icone_pedra.png',
+  prata: '/icones/icone_prata.png'
 };
 
 const NOME_RECURSO: Record<TipoRecurso, string> = {
@@ -29,13 +28,7 @@ const NOME_RECURSO: Record<TipoRecurso, string> = {
   prata: 'Prata'
 };
 
-// Taxa de câmbio: quantos do recurso de destino por 100 do recurso de origem
-// Prata vale mais, madeira/pedra valem mais entre si
-const TAXAS: Record<TipoRecurso, Record<TipoRecurso, number>> = {
-  madeira: { madeira: 1, pedra: 0.90, prata: 0.60 },
-  pedra:   { madeira: 0.90, pedra: 1, prata: 0.60 },
-  prata:   { madeira: 1.30, pedra: 1.30, prata: 1 }
-};
+const TIPOS_RECURSO: TipoRecurso[] = ['madeira', 'pedra', 'prata'];
 
 export function ModalEdificioMercado({
   nivelMercado,
@@ -50,7 +43,7 @@ export function ModalEdificioMercado({
   const maxDisponivel = Math.floor(recursos[de]);
   // Nível do mercado melhora a taxa em 2% por nível
   const bonusMercado = 1 + (nivelMercado * 0.02);
-  const taxaFinal = TAXAS[de][para] * bonusMercado;
+  const taxaFinal = TAXAS_MERCADO[de][para] * bonusMercado;
   const quantidadeRecebida = Math.floor(quantidade * taxaFinal);
 
   const handleTrocar = () => {
@@ -82,8 +75,6 @@ export function ModalEdificioMercado({
     setPara(temp);
     setQuantidade(0);
   };
-
-  const tiposRecurso: TipoRecurso[] = ['madeira', 'pedra', 'prata'];
 
   if (nivelMercado === 0) {
     return (
@@ -126,7 +117,7 @@ export function ModalEdificioMercado({
               onChange={e => { setDe(e.target.value as TipoRecurso); setQuantidade(0); }}
               className="mercado-resource-select"
             >
-              {tiposRecurso.map(r => (
+              {TIPOS_RECURSO.map(r => (
                 <option key={r} value={r}>{NOME_RECURSO[r]}</option>
               ))}
             </select>
@@ -163,7 +154,7 @@ export function ModalEdificioMercado({
               onChange={e => setPara(e.target.value as TipoRecurso)}
               className="mercado-resource-select"
             >
-              {tiposRecurso.filter(r => r !== de).map(r => (
+              {TIPOS_RECURSO.filter(r => r !== de).map(r => (
                 <option key={r} value={r}>{NOME_RECURSO[r]}</option>
               ))}
             </select>
@@ -229,7 +220,7 @@ export function ModalEdificioMercado({
           <thead>
             <tr style={{ color: '#888' }}>
               <th style={{ padding: '4px 8px', textAlign: 'left' }}>De → Para</th>
-              {tiposRecurso.map(t => (
+              {TIPOS_RECURSO.map(t => (
                 <th key={t} style={{ padding: '4px 8px', textAlign: 'center' }}>
                   <Image src={ICONE_RECURSO[t]} alt={t} width={16} height={16} style={{ verticalAlign: 'middle' }} />
                 </th>
@@ -237,14 +228,14 @@ export function ModalEdificioMercado({
             </tr>
           </thead>
           <tbody>
-            {tiposRecurso.map(origem => (
+            {TIPOS_RECURSO.map(origem => (
               <tr key={origem}>
                 <td style={{ padding: '4px 8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Image src={ICONE_RECURSO[origem]} alt={origem} width={16} height={16} />
                   {NOME_RECURSO[origem]}
                 </td>
-                {tiposRecurso.map(destino => {
-                  const taxa = TAXAS[origem][destino] * bonusMercado;
+                {TIPOS_RECURSO.map(destino => {
+                  const taxa = TAXAS_MERCADO[origem][destino] * bonusMercado;
                   const cor = origem === destino ? '#555' : taxa >= 1 ? '#52b788' : '#f59e0b';
                   return (
                     <td key={destino} style={{ padding: '4px 8px', textAlign: 'center', color: cor, fontWeight: 600 }}>

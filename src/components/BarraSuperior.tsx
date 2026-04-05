@@ -23,6 +23,7 @@ interface BarraSuperiorProps {
   nomeCidade: string;
   aoAlterarNomeCidade: (nome: string) => void;
   aoResetar?: () => void;
+  aoLogout?: () => void;
 }
 
 export const BarraSuperior = memo(function BarraSuperior({
@@ -30,7 +31,8 @@ export const BarraSuperior = memo(function BarraSuperior({
   renda,
   nomeCidade,
   aoAlterarNomeCidade,
-  aoResetar
+  aoResetar,
+  aoLogout
 }: BarraSuperiorProps) {
   const [floatingEffects, setFloatingEffects] = useState<any[]>([]);
 
@@ -77,7 +79,7 @@ export const BarraSuperior = memo(function BarraSuperior({
 
       <div className="resource-container">
         <div className="resource" id="res-wood" title={`Madeira (Capacidade: ${recursos.recursosMaximos})`} style={{ position: 'relative' }}>
-          <Image src="/icon_wood.png" alt="Madeira" width={28} height={28} />
+          <Image src="/icones/icone_madeira.png" alt="Madeira" width={28} height={28} />
           <span className={`value ${recursos.madeira >= recursos.recursosMaximos ? 'full' : ''}`}>
             {Math.floor(recursos.madeira)}
           </span>
@@ -88,7 +90,7 @@ export const BarraSuperior = memo(function BarraSuperior({
         </div>
 
         <div className="resource" id="res-stone" title={`Pedra (Capacidade: ${recursos.recursosMaximos})`} style={{ position: 'relative' }}>
-          <Image src="/icon_stone.png" alt="Pedra" width={28} height={28} />
+          <Image src="/icones/icone_pedra.png" alt="Pedra" width={28} height={28} />
           <span className={`value ${recursos.pedra >= recursos.recursosMaximos ? 'full' : ''}`}>
             {Math.floor(recursos.pedra)}
           </span>
@@ -99,7 +101,7 @@ export const BarraSuperior = memo(function BarraSuperior({
         </div>
 
         <div className="resource" id="res-silver" title={`Prata (Capacidade: ${recursos.recursosMaximos})`} style={{ position: 'relative' }}>
-          <Image src="/icon_silver.png" alt="Prata" width={28} height={28} />
+          <Image src="/icones/icone_prata.png" alt="Prata" width={28} height={28} />
           <span className={`value ${recursos.prata >= recursos.recursosMaximos ? 'full' : ''}`}>
             {Math.floor(recursos.prata)}
           </span>
@@ -110,7 +112,7 @@ export const BarraSuperior = memo(function BarraSuperior({
         </div>
 
         <div className="resource" id="res-pop" title="População Livre / Capacidade Total" style={{ position: 'relative' }}>
-          <Image src="/icon_pop.png" alt="População" width={28} height={28} />
+          <Image src="/icones/icone_populacao.png" alt="População" width={28} height={28} />
           <span className={`value ${recursos.populacao <= 0 ? 'empty' : ''}`}>
             {Math.floor(recursos.populacao)} / {recursos.populacaoMaxima}
           </span>
@@ -140,6 +142,28 @@ export const BarraSuperior = memo(function BarraSuperior({
             onMouseLeave={e => (e.currentTarget.style.background = 'rgba(127,29,29,0.5)')}
           >
             ↺ Reset
+          </button>
+        )}
+        {aoLogout && (
+          <button
+            id="btn-logout"
+            onClick={aoLogout}
+            title="Sair da conta"
+            style={{
+              background: 'rgba(127,29,29,0.5)',
+              border: '1px solid #7f1d1d',
+              color: '#fca5a5',
+              borderRadius: '6px',
+              padding: '4px 10px',
+              cursor: 'pointer',
+              fontSize: '0.75rem',
+              marginLeft: '8px',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(185,28,28,0.7)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'rgba(127,29,29,0.5)')}
+          >
+            ⊘ Sair
           </button>
         )}
       </div>

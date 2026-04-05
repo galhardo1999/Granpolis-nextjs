@@ -174,7 +174,7 @@ export function ModalEdificioRecrutamento({
             <tbody>
               <tr>
                 <td style={{ border: '1px solid #a67538', padding: '6px' }}>
-                  <Image src="/icon_wood.png" alt="Wood" width={16} height={16} style={{ verticalAlign: 'middle', marginRight: '5px' }} />
+                  <Image src="/icones/icone_madeira.png" alt="Wood" width={16} height={16} style={{ verticalAlign: 'middle', marginRight: '5px' }} />
                   <strong style={{ color: (qtd * selecionada.custos.madeira > recursos.madeira) ? 'red' : 'inherit' }}>{qtd * selecionada.custos.madeira}</strong>
                   <span style={{ fontSize: '11px', color: '#555' }}> ({selecionada.custos.madeira})</span>
                 </td>
@@ -184,19 +184,19 @@ export function ModalEdificioRecrutamento({
               </tr>
               <tr>
                 <td style={{ border: '1px solid #a67538', padding: '6px', background: '#ffdeb3' }}>
-                  <Image src="/icon_stone.png" alt="Stone" width={16} height={16} style={{ verticalAlign: 'middle', marginRight: '5px' }} />
+                  <Image src="/icones/icone_pedra.png" alt="Stone" width={16} height={16} style={{ verticalAlign: 'middle', marginRight: '5px' }} />
                   <strong style={{ color: (qtd * selecionada.custos.pedra > recursos.pedra) ? 'red' : 'inherit' }}>{qtd * selecionada.custos.pedra}</strong>
                   <span style={{ fontSize: '11px', color: '#555' }}> ({selecionada.custos.pedra})</span>
                 </td>
                 <td style={{ border: '1px solid #a67538', padding: '6px', background: '#ffdeb3' }}>
-                  <Image src="/icon_pop.png" alt="Pop" width={16} height={16} style={{ verticalAlign: 'middle', marginRight: '5px' }} />
+                  <Image src="/icones/icone_populacao.png" alt="Pop" width={16} height={16} style={{ verticalAlign: 'middle', marginRight: '5px' }} />
                   <strong style={{ color: (qtd * selecionada.custos.populacao > recursos.populacao) ? 'red' : 'inherit' }}>{qtd * selecionada.custos.populacao}</strong>
                   <span style={{ fontSize: '11px', color: '#555' }}> ({selecionada.custos.populacao})</span>
                 </td>
               </tr>
               <tr>
                 <td style={{ border: '1px solid #a67538', padding: '6px' }}>
-                  <Image src="/icon_silver.png" alt="Silver" width={16} height={16} style={{ verticalAlign: 'middle', marginRight: '5px' }} />
+                  <Image src="/icones/icone_prata.png" alt="Silver" width={16} height={16} style={{ verticalAlign: 'middle', marginRight: '5px' }} />
                   <strong style={{ color: (qtd * selecionada.custos.prata > recursos.prata) ? 'red' : 'inherit' }}>{qtd * selecionada.custos.prata}</strong>
                   <span style={{ fontSize: '11px', color: '#555' }}> ({selecionada.custos.prata})</span>
                 </td>
@@ -241,7 +241,7 @@ export function ModalEdificioRecrutamento({
 
           {Array.from({ length: Math.max(0, 7 - fila.length) }).map((_, i) => (
             <div key={`empty-${i}`} style={{ width: '40px', height: '40px', border: '1px dashed #a67538', opacity: 0.5, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <Image src="/icon_pop.png" alt="Empty" width={20} height={20} style={{ opacity: 0.2 }} />
+              <Image src="/icones/icone_populacao.png" alt="Empty" width={20} height={20} style={{ opacity: 0.2 }} />
             </div>
           ))}
         </div>

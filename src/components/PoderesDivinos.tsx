@@ -55,7 +55,7 @@ export function PoderDivino({ idDeusAtual, favor, favorMaximo, nivelTemplo, aoSe
             <span className="alterar-label">{deusAtual ? "Alterar" : "Selecionar"}</span>
           </div>
           <Image
-            src={deusAtual ? deusAtual.retrato : '/god_empty.png'}
+            src={deusAtual ? deusAtual.retrato : '/deuses/deus_vazio.png'}
             alt={deusAtual ? deusAtual.nome : 'Sem Deus'}
             width={110}
             height={110}

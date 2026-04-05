@@ -9,6 +9,8 @@ export interface ResultadoBatalha {
   sucesso: boolean;  // atacante venceu?
   baixasAtacante: Record<string, number>;
   baixasDefensor: Record<string, number>;
+  exercitoAtacanteInicial: Record<string, number>;
+  exercitoDefensorInicial: Record<string, number>;
   recursosRoubados: { madeira: number; pedra: number; prata: number };
   relatorio: string[];
 }
@@ -135,7 +137,10 @@ export function simularBatalha(
     sucesso: atacanteVenceu,
     baixasAtacante,
     baixasDefensor,
+    exercitoAtacanteInicial: { ...exercitoAtacante },
+    exercitoDefensorInicial: { ...exercitoDefensor },
     recursosRoubados,
     relatorio
   };
 }
+

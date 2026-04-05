@@ -206,10 +206,10 @@ export function ModalEdificio({
               <>
                 <div style={{ fontWeight: 'bold', marginBottom: '6px', fontSize: '0.85rem' }}>Custos de expansão</div>
                 <div style={{ display: 'flex', gap: '10px', marginBottom: '8px', fontSize: '0.85rem', flexWrap: 'wrap' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '2px', color: recursos.madeira < custos.madeira ? '#D32F2F' : 'inherit' }}><Image src="/icon_wood.png" width={16} height={16} alt=""/> {custos.madeira}</span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '2px', color: recursos.pedra < custos.pedra ? '#D32F2F' : 'inherit' }}><Image src="/icon_stone.png" width={16} height={16} alt=""/> {custos.pedra}</span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '2px', color: recursos.prata < custos.prata ? '#D32F2F' : 'inherit' }}><Image src="/icon_silver.png" width={16} height={16} alt=""/> {custos.prata}</span>
-                  {custoPop > 0 && <span style={{ display: 'flex', alignItems: 'center', gap: '2px', color: populacaoLivre < custoPop ? '#D32F2F' : 'inherit' }}><Image src="/icon_pop.png" width={16} height={16} alt=""/> {custoPop}</span>}
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '2px', color: recursos.madeira < custos.madeira ? '#D32F2F' : 'inherit' }}><Image src="/icones/icone_madeira.png" width={16} height={16} alt=""/> {custos.madeira}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '2px', color: recursos.pedra < custos.pedra ? '#D32F2F' : 'inherit' }}><Image src="/icones/icone_pedra.png" width={16} height={16} alt=""/> {custos.pedra}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '2px', color: recursos.prata < custos.prata ? '#D32F2F' : 'inherit' }}><Image src="/icones/icone_prata.png" width={16} height={16} alt=""/> {custos.prata}</span>
+                  {custoPop > 0 && <span style={{ display: 'flex', alignItems: 'center', gap: '2px', color: populacaoLivre < custoPop ? '#D32F2F' : 'inherit' }}><Image src="/icones/icone_populacao.png" width={16} height={16} alt=""/> {custoPop}</span>}
                 </div>
 
                 <div style={{ fontWeight: 'bold', marginBottom: '4px', fontSize: '0.85rem' }}>Tempo de expansão</div>

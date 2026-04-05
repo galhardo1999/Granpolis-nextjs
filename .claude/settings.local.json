@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)",
+      "Bash(node_modules/.bin/tsc --noEmit)",
+      "Skill(update-config)",
+      "Bash(ls:*)",
+      "Bash(npm install:*)",
+      "Bash(npx prisma:*)",
+      "Bash(rm C:UsersAlexandreDesktopPROJETOSgrepolis-nextjsprisma.config.ts)",
+      "Bash(npm uninstall:*)",
+      "Bash(DEBUG=*)",
+      "Bash(node -e \"const p = require\\(''''zustand/package.json''''\\); console.log\\(''''zustand v'''' + p.version\\)\")",
+      "Bash(node -e \"const { persist } = require\\(''zustand/middleware''\\); console.log\\(''persist OK''\\)\")",
+      "Bash(node -e \"const z = require\\(''zustand/middleware''\\); const m = new Function\\(''persist'', ''createJSONStorage'', z.toString ? ''ok'' : ''no''\\).toString\\(\\);\")",
+      "Bash(node -e \"const {persist} = require\\(''zustand/middleware''\\); const store = require\\(''zustand''\\).create; console.log\\(type of persist\\);\")",
+      "Bash(node -e \"const m = require\\(''zustand/middleware''\\); console.log\\(Object.keys\\(m\\).join\\('', ''\\)\\)\")",
+      "Bash(node -e \":*)"
+    ]
+  }
+}

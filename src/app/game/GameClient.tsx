@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { useMotorJogo } from '@/hooks/useMotorJogo';
+import { useGameStore } from '@/store/gameStore';
 import { BarraSuperior } from '@/components/BarraSuperior';
 import { ModalEdificioCidade } from '@/components/ModalEdificioCidade';
 import { FilaConstrucao } from '@/components/FilaConstrucao';
@@ -17,8 +19,16 @@ import { ModalMissoes } from '@/components/ModalMissoes';
 import { useToast } from '@/components/ToastProvider';
 import { MISSOES } from '@/lib/missoes';
 import Image from 'next/image';
+import type { EstadoJogo, AuthSession } from './types';
 
-export default function Inicio() {
+export function GameClient({
+  estadoInicial,
+  usuario,
+}: {
+  estadoInicial: EstadoJogo;
+  usuario: AuthSession;
+}) {
+
   const {
     estado,
     agora,
@@ -37,22 +47,23 @@ export default function Inicio() {
     cancelarRecrutamento,
     definirNomeCidade,
     lancarPoder,
-    resetarJogo,
+    resetarJogoStore,
     pesquisar,
     temPesquisa,
     atacarAldeiaBarbar,
-    trocarRecurso
+    trocarRecurso,
   } = useMotorJogo();
 
   const { mostrarToast } = useToast();
+  const router = useRouter();
   const [edificioSelecionado, setEdificioSelecionado] = useState<IdEdificio | null>(null);
   const [modalResetAberto, setModalResetAberto] = useState(false);
   const [modalMissoesAberto, setModalMissoesAberto] = useState(false);
   const [modalCombateAberto, setModalCombateAberto] = useState(false);
 
-  // ─────────────────────────────────────────────────────────
+  // ───────────────────────────────────────────────────────
   // UX-04: Exibir toast quando construção/recrutamento conclui
-  // ─────────────────────────────────────────────────────────
+  // ───────────────────────────────────────────────────────
   useEffect(() => {
     if (eventosConclusao.length === 0) return;
     for (const evento of eventosConclusao) {
@@ -75,19 +86,65 @@ export default function Inicio() {
     limparEventos();
   }, [eventosConclusao, limparEventos, mostrarToast]);
 
+  // ───────────────────────────────────────────────────────
+  // Sync periódico com o servidor (a cada 60s e após eventos)
+  // ───────────────────────────────────────────────────────
+  const salvarNoServidor = useCallback(async () => {
+    try {
+      await fetch('/api/game/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...estado,
+          ultimaAtualizacao: Date.now(),
+        }),
+      });
+    } catch {
+      // Silencioso — o jogo continua offline
+    }
+  }, [estado]);
+
+  // Auto-save a cada 10 segundos
+  useEffect(() => {
+    if (!carregado) return;
+    const timer = setInterval(() => {
+      salvarNoServidor();
+    }, 5_000);
+    return () => clearInterval(timer);
+  }, [carregado, salvarNoServidor]);
+
+  // Salvar após cada evento de conclusão
+  useEffect(() => {
+    if (eventosConclusao.length > 0) {
+      salvarNoServidor();
+    }
+  }, [eventosConclusao, salvarNoServidor]);
+
+  // Sync ao montar — acessa Zustand diretamente para evitar
+  // problemas de hidratação com persist middleware
+  useEffect(() => {
+    useGameStore.setState({
+      recursos: estadoInicial.recursos,
+      edificios: estadoInicial.edificios,
+      unidades: estadoInicial.unidades,
+      pesquisasConcluidas: estadoInicial.pesquisasConcluidas,
+      missoesColetadas: estadoInicial.missoesColetadas,
+      fila: estadoInicial.fila,
+      filaRecrutamento: estadoInicial.filaRecrutamento,
+      cooldownsAldeias: estadoInicial.cooldownsAldeias,
+      deusAtual: estadoInicial.deusAtual,
+      nomeCidade: estadoInicial.nomeCidade,
+      ultimaAtualizacao: estadoInicial.ultimaAtualizacao,
+    });
+  }, []);
+
   // Tela de carregamento
   if (!carregado) {
     return (
       <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        background: '#050E1A',
-        color: '#D4AF37',
-        fontFamily: 'var(--font-cinzel)',
-        gap: '20px'
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        alignItems: 'center', height: '100vh', background: '#050E1A',
+        color: '#D4AF37', fontFamily: 'var(--font-cinzel)', gap: '20px'
       }}>
         <div style={{ fontSize: '3rem', animation: 'spin 1.5s linear infinite' }}>🏛️</div>
         <h1 style={{ fontSize: '1.8rem', margin: 0 }}>Carregando Pólis...</h1>
@@ -125,6 +182,12 @@ export default function Inicio() {
     mostrarToast('🪖 Recrutamento cancelado. Recursos devolvidos.', 'sucesso', '⚠️');
   };
 
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+    router.refresh();
+  };
+
   let missoesProntas = 0;
   const indexAtiva = MISSOES.findIndex(m => !estado.missoesColetadas.includes(m.id));
   if (indexAtiva !== -1) {
@@ -141,6 +204,7 @@ export default function Inicio() {
         nomeCidade={estado.nomeCidade}
         aoAlterarNomeCidade={definirNomeCidade}
         aoResetar={() => setModalResetAberto(true)}
+        aoLogout={handleLogout}
       />
 
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex' }}>
@@ -154,8 +218,8 @@ export default function Inicio() {
           <div onClick={() => setModalMissoesAberto(true)} style={{
             background: 'linear-gradient(135deg, rgba(26, 16, 64, 0.9), rgba(10, 22, 40, 0.9))', border: '2px solid #D4AF37', borderRadius: '8px', padding: '10px 15px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)', transition: 'all 0.2s', backdropFilter: 'blur(5px)'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
             <div style={{ fontSize: '2.2rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>📜</div>
             <div>
@@ -176,8 +240,8 @@ export default function Inicio() {
           <div onClick={() => setModalCombateAberto(true)} style={{
             background: 'linear-gradient(135deg, rgba(60, 20, 20, 0.9), rgba(40, 10, 10, 0.9))', border: '2px solid #D4AF37', borderRadius: '8px', padding: '10px 15px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)', transition: 'all 0.2s', backdropFilter: 'blur(5px)'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
             <div style={{ fontSize: '2.2rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>🏕️</div>
             <div>
@@ -252,9 +316,10 @@ export default function Inicio() {
         textoBotaoCancelar="Cancelar"
         tipo="perigo"
         aoConfirmar={() => {
-          resetarJogo();
+          resetarJogoStore();
           setModalResetAberto(false);
           mostrarToast('🏛️ Polis reiniciada. Boa sorte!', 'info');
+          salvarNoServidor();
         }}
         aoCancelar={() => setModalResetAberto(false)}
       />
