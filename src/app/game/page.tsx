@@ -4,6 +4,19 @@ import { GameClient } from './GameClient';
 import { EDIFICIOS } from '@/lib/edificios';
 import { PROD_DE_RECURSOS, PRODUCAO_BASE_FAVOR } from '@/lib/config';
 
+// Tabela de capacidade do armazém por nível (mesma do gameStore)
+const CAPACIDADE_ARMAZEM_POR_NIVEL = [
+  300, 300, 711, 1185, 1706, 2267, 2862, 3487, 4140, 4818, 5518, 6241, 6984, 7746,
+  8526, 9324, 10138, 10969, 11815, 12675, 13550, 14439, 15341, 16257, 17185, 18125,
+  19077, 20041, 21016, 22003, 23000, 24008, 25026, 26055, 27093, 28100
+];
+
+function calcularCapacidadeArmazem(nivelArmazem: number, temCeramica: boolean): number {
+  const indice = Math.max(0, Math.min(nivelArmazem, CAPACIDADE_ARMAZEM_POR_NIVEL.length - 1));
+  const base = CAPACIDADE_ARMAZEM_POR_NIVEL[indice];
+  return temCeramica ? Math.floor(base * 1.10) : base;
+}
+
 // ============================================================
 // SERVER-SIDE: recalcula recursos com base no tempo decorrido
 // desde o último save até o carregamento desta página.
@@ -63,14 +76,25 @@ export default async function GamePage() {
     redirect('/registro');
   }
 
-  // Recalcula produção offline desde o último save
+  // Recalcula capacidade do armazém com base no nível atual (não do DB, que pode estar desatualizado)
+  const edificios = cidade.edificios as Record<string, number>;
+  const pesquisas = cidade.pesquisasConcluidas as string[];
+  const temCeramica = pesquisas.includes('ceramica');
+  const recursosMaximosReais = calcularCapacidadeArmazem(edificios['warehouse'] || 0, temCeramica);
+
+  // Se recursos salvos estão acima da capacidade real do armazém, cap no máximo
+  const madeira = Math.min(recursosMaximosReais, cidade.madeira);
+  const pedra = Math.min(recursosMaximosReais, cidade.pedra);
+  const prata = Math.min(recursosMaximosReais, cidade.prata);
+
+  // Recalcula produção offline desde o último save — agora com capacidade correta
   const offline = calcularProducaoOffline({
-    edificios: cidade.edificios as Record<string, number>,
+    edificios,
     ultimaAtualizacao: cidade.ultimaAtualizacao.getTime(),
-    recursosMaximos: cidade.recursosMaximos,
-    madeira: cidade.madeira,
-    pedra: cidade.pedra,
-    prata: cidade.prata,
+    recursosMaximos: recursosMaximosReais,
+    madeira,
+    pedra,
+    prata,
     populacao: cidade.populacao,
     populacaoMaxima: cidade.populacaoMaxima,
     favor: cidade.favor,
@@ -85,7 +109,7 @@ export default async function GamePage() {
       prata: offline.prata,
       populacao: offline.populacao,
       populacaoMaxima: cidade.populacaoMaxima,
-      recursosMaximos: cidade.recursosMaximos,
+      recursosMaximos: recursosMaximosReais,
       favor: offline.favor,
       favorMaximo: cidade.favorMaximo,
       prataNaGruta: cidade.prataNaGruta,

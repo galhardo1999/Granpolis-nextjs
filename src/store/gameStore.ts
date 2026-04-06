@@ -48,6 +48,14 @@ export interface EventoConclusao {
   quantidade?: number;
 }
 
+export interface GanhoProducao {
+  madeira: number;
+  pedra: number;
+  prata: number;
+  favor: number;
+  populacao: number;
+}
+
 interface Recursos {
   madeira: number;
   pedra: number;
@@ -219,7 +227,7 @@ interface GameActions {
   resetarJogo: () => void;
   coletarRecompensaMissao: (idMissao: string, recompensa: { madeira?: number, pedra?: number, prata?: number, favor?: number }) => { sucesso: boolean; motivo?: string };
   // Game Loop
-  tick: (agoraMs: number) => EventoConclusao[];
+  tick: (agoraMs: number, agora: number) => { eventos: EventoConclusao[]; ganhos: GanhoProducao };
 }
 
 type GameStore = EstadoJogo & GameActions;
@@ -620,7 +628,7 @@ export const useGameStore = create<GameStore>()(
       },
 
       // ─── GAME LOOP TICK ────────────────────────────────
-      tick: (agoraMs) => {
+      tick: (agoraMs, agora) => {
         const s = get();
         const clone = deepClone(s);
         const diferenca = (agoraMs - clone.ultimaAtualizacao) / 1000;
@@ -646,6 +654,15 @@ export const useGameStore = create<GameStore>()(
         const rendaFavor = clone.deusAtual ? PRODUCAO_BASE_FAVOR * PROD_DE_RECURSOS * bonusTemplo : 0;
         clone.recursos.favor = Math.min(clone.recursos.favorMaximo, f0 + (rendaFavor / 3600) * diferenca);
         clone.recursos.prataNaGruta = calcularProtecaoGruta(clone.edificios['cave'] || 0);
+
+        // Calcular ganhos reais deste tick (inteiros para animação)
+        const ganhos = {
+          madeira: Math.floor(clone.recursos.madeira) - Math.floor(m0),
+          pedra: Math.floor(clone.recursos.pedra) - Math.floor(p0),
+          prata: Math.floor(clone.recursos.prata) - Math.floor(s0),
+          favor: Math.floor(clone.recursos.favor) - Math.floor(f0),
+          populacao: Math.floor(clone.recursos.populacao) - Math.floor(pop0)
+        };
 
         // Processar fila de edifícios
         let filaAlterada = false;
@@ -714,7 +731,7 @@ export const useGameStore = create<GameStore>()(
           });
         }
 
-        return eventos;
+        return { eventos, ganhos };
       }
     })
 );

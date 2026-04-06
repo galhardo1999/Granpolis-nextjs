@@ -22,12 +22,13 @@ export function PoderDivino({ idDeusAtual, favor, favorMaximo, nivelTemplo, aoSe
   const poderes = idDeusAtual ? PODERES_DIVINOS[idDeusAtual] : [];
 
   const handleSelecionar = (id: IdDeus) => {
-    if (id !== idDeusAtual) {
-      const resp = aoSelecionarDeus(id);
-      if (resp && typeof resp === 'object' && !resp.sucesso) {
-        mostrarToast(resp.motivo || 'Erro', 'erro', '❌');
+    const resp = aoSelecionarDeus(id);
+    if (resp && typeof resp === 'object') {
+      if (!resp.sucesso) {
+        mostrarToast(resp.motivo || 'Erro ao selecionar deus', 'erro', '❌');
         return;
       }
+      mostrarToast(`${DEUSES[id].nome} agora protege sua cidade!`, 'sucesso', '⚡');
     }
     setSeletorAberto(false);
   };

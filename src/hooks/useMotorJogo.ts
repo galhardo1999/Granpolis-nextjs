@@ -8,7 +8,7 @@
 // ============================================================
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useGameStore, EventoConclusao } from '@/store/gameStore';
+import { useGameStore, EventoConclusao, GanhoProducao } from '@/store/gameStore';
 import { useShallow } from 'zustand/react/shallow';
 import { IdEdificio } from '@/lib/edificios';
 import { IdUnidade } from '@/lib/unidades';
@@ -71,7 +71,7 @@ export function useMotorJogo() {
   // ─── Events cleanup ───────────────────────────────────
   const limparEventos = useCallback(() => setEventosConclusao([]), []);
 
-  // ─── Game loop (1 second tick) ────────────────────────
+  // ─── Game loop (5 second tick) ────────────────────────
   useEffect(() => {
     if (!carregado) return;
 
@@ -79,14 +79,22 @@ export function useMotorJogo() {
       const agoraMs = Date.now();
       setAgora(agoraMs);
 
-      const eventos = tick(agoraMs);
+      const { eventos, ganhos } = tick(agoraMs, agora);
       if (eventos.length > 0) {
         setEventosConclusao(prev => [...prev, ...eventos]);
       }
-    }, 1000);
+      dispatchGanhos(ganhos);
+    }, 5000);
 
     return () => clearInterval(intervalo);
   }, [carregado, tick]);
+
+  // Dispara evento de produção na BarraSuperior para animações flutuantes
+  const dispatchGanhos = (ganhos: GanhoProducao) => {
+    const temGanho = ganhos.madeira > 0 || ganhos.pedra > 0 || ganhos.prata > 0 || ganhos.favor > 0 || ganhos.populacao > 0;
+    if (!temGanho) return;
+    window.dispatchEvent(new CustomEvent('recurso-ganho', { detail: ganhos }));
+  };
 
   // ─── Wrappers for backward compatibility ──────────────
   const resetarJogo = useCallback(() => {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMotorJogo } from '@/hooks/useMotorJogo';
 import { useGameStore } from '@/store/gameStore';
@@ -87,24 +87,29 @@ export function GameClient({
   }, [eventosConclusao, limparEventos, mostrarToast]);
 
   // ───────────────────────────────────────────────────────
-  // Sync periódico com o servidor (a cada 60s e após eventos)
+  // Sync periódico — sempre lê o estado atual do store via ref
   // ───────────────────────────────────────────────────────
+  const estadoRef = useRef(estado);
+  useEffect(() => {
+    estadoRef.current = estado;
+  }, [estado]);
+
   const salvarNoServidor = useCallback(async () => {
     try {
       await fetch('/api/game/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...estado,
+          ...estadoRef.current,
           ultimaAtualizacao: Date.now(),
         }),
       });
     } catch {
       // Silencioso — o jogo continua offline
     }
-  }, [estado]);
+  }, []); // sem dependências — usa sempre a ref atual
 
-  // Auto-save a cada 10 segundos
+  // Auto-save a cada 5 segundos
   useEffect(() => {
     if (!carregado) return;
     const timer = setInterval(() => {
@@ -112,6 +117,20 @@ export function GameClient({
     }, 5_000);
     return () => clearInterval(timer);
   }, [carregado, salvarNoServidor]);
+
+  // Salvar antes de sair (F5, fechar aba, navigation)
+  useEffect(() => {
+    const onBeforeUnload = () => {
+      const data = JSON.stringify({
+        ...estadoRef.current,
+        ultimaAtualizacao: Date.now(),
+      });
+      // sendBeacon garante envio mesmo com aba fechando
+      navigator.sendBeacon('/api/game/sync', new Blob([data], { type: 'application/json' }));
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, []);
 
   // Salvar após cada evento de conclusão
   useEffect(() => {
