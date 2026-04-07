@@ -21,15 +21,28 @@ interface EntidadeMapa {
   aliacaNome?: string | null;
   nivelMaravilha?: number;
   eBarbaro: boolean;
+  eJogador?: boolean;
 }
 
 interface Props {
   aberto: boolean;
   aoFechar: () => void;
   aoClicarCidade: (entidade: EntidadeMapa) => void;
+  aliacaTag?: string | null;
 }
 
-export function MapaMundo({ aberto, aoFechar, aoClicarCidade }: Props) {
+type FiltroMapa = 'todos' | 'aliados' | 'inimigos' | 'sem-alianca';
+
+// Cores de aliança com base no hash da tag
+function getCorAlianca(tag: string | null | undefined): string {
+  if (!tag) return '#444';
+  let hash = 0;
+  for (let i = 0; i < tag.length; i++) hash = tag.charCodeAt(i) + ((hash << 5) - hash);
+  const cores = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#ff69b4', '#00bcd4', '#8bc34a'];
+  return cores[Math.abs(hash) % cores.length];
+}
+
+export function MapaMundo({ aberto, aoFechar, aoClicarCidade, aliacaTag }: Props) {
   const [zoom, setZoom] = useState(1);
   const [panX, setPanX] = useState(0);
   const [panY, setPanY] = useState(0);
@@ -39,6 +52,8 @@ export function MapaMundo({ aberto, aoFechar, aoClicarCidade }: Props) {
   const [erro, setErro] = useState<string | null>(null);
   const isDragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
+  const [filtro, setFiltro] = useState<FiltroMapa>('todos');
+  const [tooltip, setTooltip] = useState<EntidadeMapa | null>(null);
 
   const carregarMapa = useCallback(async (ilha?: number) => {
     setCarregando(true);
@@ -112,6 +127,30 @@ export function MapaMundo({ aberto, aoFechar, aoClicarCidade }: Props) {
                 </button>
               ))}
             </div>
+
+            {/* Filtros */}
+            <div style={{ display: 'flex', gap: '4px', borderLeft: '1px solid #333', paddingLeft: '10px', marginLeft: '5px' }}>
+              {([
+                ['todos', 'Todos'],
+                ['aliados', 'Aliados'],
+                ['inimigos', 'Inimigos'],
+                ['sem-alianca', 'Sem Alianca'],
+              ] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setFiltro(key)}
+                  style={{
+                    padding: '4px 10px', background: filtro === key ? 'rgba(212,175,55,0.2)' : '#1a1a3a',
+                    color: filtro === key ? '#D4AF37' : '#888',
+                    border: '1px solid #333', borderRadius: '4px', cursor: 'pointer',
+                    fontSize: '0.75rem',
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
             <div style={{ marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center' }}>
               <button onClick={() => setZoom(z => Math.max(0.3, z - 0.2))}
                 style={{ padding: '4px 10px', background: '#1a1a3a', color: '#D4AF37', border: '1px solid #D4AF37', borderRadius: '4px', cursor: 'pointer' }}>
@@ -199,57 +238,92 @@ export function MapaMundo({ aberto, aoFechar, aoClicarCidade }: Props) {
                 ))}
 
                 {/* Cities */}
-                {entidades.map((ent, idx) => {
-                  // Map coords to SVG coords (centered)
-                  const cx = 50 + (ent.mapaX / 5);
-                  const cy = 50 + (ent.mapaY / 5);
+                {entidades
+                  .filter((ent) => {
+                    if (ent.eBarbaro) return filtro === 'todos' || filtro === 'inimigos';
+                    // Filtro por relacao com aliaca do usuario
+                    if (filtro === 'aliados') {
+                      return ent.aliacaTag === aliacaTag && !!aliacaTag;
+                    }
+                    if (filtro === 'sem-alianca') {
+                      return !ent.aliacaTag;
+                    }
+                    if (filtro === 'inimigos') {
+                      return !!ent.aliacaTag && ent.aliacaTag !== aliacaTag;
+                    }
+                    return true; // 'todos'
+                  })
+                  .map((ent, idx) => {
+                    const cx = 50 + (ent.mapaX / 5);
+                    const cy = 50 + (ent.mapaY / 5);
 
-                  if (ent.eBarbaro) {
+                    if (ent.eBarbaro) {
+                      return (
+                        <g key={ent.id || idx}
+                          onClick={() => aoClicarCidade(ent)}
+                          onMouseEnter={() => setTooltip(ent)}
+                          onMouseLeave={() => setTooltip(null)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <circle cx={`${cx}%`} cy={`${cy}%`} r="8" fill="#8B4513" stroke="#654321" strokeWidth="1" />
+                          <text x={`${cx}%`} y={`${cy}%`} textAnchor="middle" dominantBaseline="central" fill="#fff" fontSize="8">
+                            ⚔️
+                          </text>
+                        </g>
+                      );
+                    }
+
+                    const corAlianca = getCorAlianca(ent.aliacaTag);
+                    const eAliado = ent.aliacaTag === aliacaTag && !!aliacaTag;
+                    const eInimigo = !!ent.aliacaTag && ent.aliacaTag !== aliacaTag;
+
                     return (
-                      <g key={ent.id || idx}
+                      <g key={ent.cidadeId || idx}
                         onClick={() => aoClicarCidade(ent)}
+                        onMouseEnter={() => setTooltip(ent)}
+                        onMouseLeave={() => setTooltip(null)}
                         style={{ cursor: 'pointer' }}
                       >
-                        <circle cx={`${cx}%`} cy={`${cy}%`} r="8" fill="#8B4513" stroke="#654321" strokeWidth="1" />
-                        <text x={`${cx}%`} y={`${cy}%`} textAnchor="middle" dominantBaseline="central" fill="#fff" fontSize="8">
-                          ⚔️
+                        <circle cx={`${cx}%`} cy={`${cy}%`} r={ent.nivelMaravilha ? 12 : 7}
+                          fill={ent.nivelMaravilha ? '#FFD700' : (eAliado ? '#3b7a4a' : eInimigo ? '#7a3b3b' : '#2a4a6a')}
+                          stroke={corAlianca}
+                          strokeWidth={ent.aliacaTag ? 2 : 1}
+                        />
+                        {ent.nivelMaravilha ? (
+                          <text x={`${cx}%`} y={`${cy}%`} textAnchor="middle" dominantBaseline="central" fill="#050E1A" fontSize="10">
+                            ✦
+                          </text>
+                        ) : null}
+                        <text x={`${cx}%`} y={`${parseFloat(`${cy}`) + 12}%`} textAnchor="middle"
+                          fill="#ccc" fontSize="6">
+                          {ent.nomeCidade}
                         </text>
+                        {ent.aliacaTag ? (
+                          <text x={`${cx}%`} y={`${parseFloat(`${cy}`) - 12}%`} textAnchor="middle"
+                            fill={corAlianca} fontSize="6">
+                            [{ent.aliacaTag}]
+                          </text>
+                        ) : null}
                       </g>
                     );
-                  }
-
-                  const corAlianca = ent.aliacaTag ? '#D4AF37' : '#444';
-
-                  return (
-                    <g key={ent.cidadeId}
-                      onClick={() => aoClicarCidade(ent)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <circle cx={`${cx}%`} cy={`${cy}%`} r={ent.nivelMaravilha ? 12 : 7}
-                        fill={ent.nivelMaravilha ? '#FFD700' : '#2a4a6a'}
-                        stroke={corAlianca}
-                        strokeWidth={ent.aliacaTag ? 2 : 1}
-                      />
-                      {ent.nivelMaravilha ? (
-                        <text x={`${cx}%`} y={`${cy}%`} textAnchor="middle" dominantBaseline="central" fill="#050E1A" fontSize="10">
-                          ✦
-                        </text>
-                      ) : null}
-                      {/* Label */}
-                      <text x={`${cx}%`} y={`${parseFloat(`${cy}`) + 12}%`} textAnchor="middle"
-                        fill="#aaa" fontSize="6">
-                        {ent.nomeCidade || ent.nome}
-                      </text>
-                      {ent.aliacaTag ? (
-                        <text x={`${cx}%`} y={`${parseFloat(`${cy}`) - 12}%`} textAnchor="middle"
-                          fill="#D4AF37" fontSize="6">
-                          [{ent.aliacaTag}]
-                        </text>
-                      ) : null}
-                    </g>
-                  );
-                })}
+                  })}
               </svg>
+
+              {/* Tooltip hover */}
+              {tooltip && !tooltip.eBarbaro && (
+                <div style={{
+                  position: 'absolute', top: '10px', right: '10px',
+                  background: 'rgba(10,21,37,0.95)', border: `1px solid ${getCorAlianca(tooltip.aliacaTag)}`,
+                  borderRadius: '6px', padding: '10px 14px', fontSize: '0.8rem', zIndex: 20,
+                  minWidth: '180px', color: '#ddd',
+                }}>
+                  <div style={{ fontWeight: 'bold', color: '#D4AF37', marginBottom: '6px' }}>{tooltip.nomeCidade}</div>
+                  <div style={{ color: '#888', fontSize: '0.75rem' }}>Jogador: {tooltip.username || '—'}</div>
+                  {tooltip.aliacaNome && <div style={{ color: '#888', fontSize: '0.75rem' }}>Alianca: {tooltip.aliacaNome} [{tooltip.aliacaTag}]</div>}
+                  {tooltip.pontos != null && <div style={{ color: '#888', fontSize: '0.75rem' }}>Pontos: {tooltip.pontos.toLocaleString('pt-BR')}</div>}
+                  {tooltip.nivelMaravilha ? <div style={{ color: '#FFD700', fontWeight: 'bold', marginTop: '4px' }}>★ Maravilha Nv.{tooltip.nivelMaravilha}</div> : null}
+                </div>
+              )}
 
               {/* Legend */}
               <div style={{

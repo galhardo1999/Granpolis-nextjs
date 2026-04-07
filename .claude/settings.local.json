@@ -24,7 +24,9 @@
       "Bash(echo \"EXIT:$?\")",
       "Bash(echo \"EXIT_CODE:$?\")",
       "Bash(find C:/Users/Alexandre/Desktop/PROJETOS/grepolis-nextjs/src -type f -name *.ts -o -name *.tsx)",
-      "Bash(tasklist)"
+      "Bash(tasklist)",
+      "Bash(source .env)",
+      "Bash(find src:*)"
     ]
   }
 }

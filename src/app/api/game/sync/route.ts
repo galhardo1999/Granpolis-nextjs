@@ -17,6 +17,20 @@ export async function GET() {
   const cidadeRaw = await getCidadeByUserId(session.userId);
   if (!cidadeRaw) return NextResponse.json({ erro: 'Cidade não encontrada' }, { status: 404 });
 
+  // Buscar info da aliança se pertencer a uma
+  let aliacaTag: string | null = null;
+  let aliacaNome: string | null = null;
+  if (cidadeRaw.aliacaId) {
+    const aliaca = await prisma.alianca.findUnique({
+      where: { id: cidadeRaw.aliacaId },
+      select: { tag: true, nome: true },
+    });
+    if (aliaca) {
+      aliacaTag = aliaca.tag;
+      aliacaNome = aliaca.nome;
+    }
+  }
+
   const cidade = recalcularEstadoServidor({
     madeira: cidadeRaw.madeira,
     pedra: cidadeRaw.pedra,
@@ -47,6 +61,7 @@ export async function GET() {
     poderesUsadosHoje: (cidadeRaw.poderesUsadosHoje as Record<string, unknown>) ?? {},
     pontos: cidadeRaw.pontos ?? 0,
     nivelMaravilha: cidadeRaw.nivelMaravilha ?? 0,
+    protecaoOfflineAte: (cidadeRaw as any).protecaoOfflineAte ?? null,
   });
 
   return NextResponse.json({
@@ -81,6 +96,9 @@ export async function GET() {
     poderesUsadosHoje: cidade.poderesUsadosHoje,
     pontos: cidade.pontos,
     nivelMaravilha: cidade.nivelMaravilha,
+    aliacaTag,
+    aliacaNome,
+    protecaoOfflineAte: (cidade as any).protecaoOfflineAte as Date | null,
   });
 }
 

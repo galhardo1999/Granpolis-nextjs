@@ -12,6 +12,7 @@ import { PRODUCAO_BASE_FAVOR, calcularCapacidadeArmazem, CAPACIDADE_ARMAZEM_POR_
 import { EDIFICIOS } from './edificios';
 import { calcularProducaoRecurso, calcularProducaoFavor } from './calculoProducao';
 import { gerarPosicaoMapa } from './mapa';
+import { PROTECAO_NOVO_PLAYER } from './protecao';
 
 // Tipos internos para processar filas no servidor
 interface ItemFilaServidor {
@@ -184,6 +185,7 @@ export async function registrarUsuario(
         cooldownsAldeias: {},
         loginStreak: 1,
         ultimoLogin: new Date(),
+        protecaoOfflineAte: new Date(Date.now() + PROTECAO_NOVO_PLAYER),
         poderesUsadosHoje: {},
         pontos: 0,
         nivelMaravilha: 0,
@@ -246,9 +248,7 @@ export async function loginUsuario(
     await prisma.cidade.update({
       where: { id: (cidade as any).id },
       data: {
-        // @ts-expect-error: campos no schema mas Prisma client desatualizado
         loginStreak: novoStreak,
-        // @ts-expect-error: campos no schema mas Prisma client desatualizado
         ultimoLogin: agora,
       },
     });
@@ -337,6 +337,7 @@ export interface DadosCidade {
   poderesUsadosHoje: Record<string, unknown>;
   pontos: number;
   nivelMaravilha: number;
+  protecaoOfflineAte: Date | null;
 }
 
 // ============================================================
@@ -469,6 +470,7 @@ export async function salvarEstadoCidade(userId: string, data: Record<string, un
     poderesUsadosHoje: (raw.poderesUsadosHoje as Record<string, unknown>) ?? {},
     pontos: (raw.pontos as number) ?? 0,
     nivelMaravilha: (raw.nivelMaravilha as number) ?? 0,
+    protecaoOfflineAte: (raw.protecaoOfflineAte as Date | null) ?? null,
   });
 
   return prisma.cidade.update({

@@ -19,6 +19,8 @@ import { ModalMissoes } from '@/components/ModalMissoes';
 import { MapaMundo } from '@/components/MapaMundo';
 import { PainelAlianca } from '@/components/PainelAlianca';
 import { PainelRanking } from '@/components/PainelRanking';
+import { ModalCorreio } from '@/components/ModalCorreio';
+import { BannerEventos } from '@/components/BannerEventos';
 import { useToast } from '@/components/ToastProvider';
 import { MISSOES } from '@/lib/missoes';
 import Image from 'next/image';
@@ -67,6 +69,9 @@ export function GameClient({
   const [modalMapaAberto, setModalMapaAberto] = useState(false);
   const [modalAliancaAberto, setModalAliancaAberto] = useState(false);
   const [modalRankingAberto, setModalRankingAberto] = useState(false);
+  const [modalCorreioAberto, setModalCorreioAberto] = useState(false);
+  const [mensagensNaoLidas, setMensagensNaoLidas] = useState(0);
+  const [aliacaTag, setAliacaTag] = useState<string | null>(null);
 
   // Streak
   const [loginStreak, setLoginStreak] = useState(0);
@@ -122,6 +127,15 @@ export function GameClient({
       .catch(() => { });
   }, [carregado, mostrarToast]);
 
+  // ─── Carregar info da alianca (para filtros do mapa) ─────
+  useEffect(() => {
+    if (!carregado) return;
+    fetch('/api/game/sync')
+      .then(r => r.json())
+      .then(data => setAliacaTag(data.aliacaTag ?? null))
+      .catch(() => { });
+  }, [carregado]);
+
   // ─── Verificar ataques entrantes ────────────────────────
   useEffect(() => {
     if (!carregado) return;
@@ -142,6 +156,23 @@ export function GameClient({
     const timer = setInterval(checkAtaques, 60000); // check a cada 1min
     return () => clearInterval(timer);
   }, [carregado, mostrarToast]);
+
+  // ─── Verificar mensagens nao lidas ───────────────────────
+  useEffect(() => {
+    if (!carregado) return;
+    const checkMensagens = async () => {
+      try {
+        const res = await fetch('/api/game/mensagens');
+        if (res.ok) {
+          const data = await res.json();
+          setMensagensNaoLidas(data.naoLidos || 0);
+        }
+      } catch { }
+    };
+    checkMensagens();
+    const timer = setInterval(checkMensagens, 120000); // check a cada 2min
+    return () => clearInterval(timer);
+  }, [carregado]);
 
   // ─── Save status ──────────────────────────────────────
   const [statusSave, setStatusSave] = useState<'salvo' | 'salvando' | 'erro'>('salvo');
@@ -283,7 +314,7 @@ export function GameClient({
   }
 
   return (
-    <div id="app" className={edificioSelecionado || modalMapaAberto || modalAliancaAberto || modalRankingAberto ? 'modal-open' : ''}>
+    <div id="app" className={edificioSelecionado || modalMapaAberto || modalAliancaAberto || modalRankingAberto || modalCorreioAberto ? 'modal-open' : ''}>
       <BarraSuperior
         recursos={estado.recursos}
         renda={renda}
@@ -291,7 +322,10 @@ export function GameClient({
         aoAlterarNomeCidade={definirNomeCidade}
         aoResetar={() => setModalResetAberto(true)}
         aoLogout={handleLogout}
+        mensagensNaoLidas={mensagensNaoLidas}
       />
+
+      <BannerEventos />
 
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex' }}>
         <ModalEdificioCidade
@@ -360,6 +394,28 @@ export function GameClient({
                 {missoesProntas}
               </div>
             )}
+          </div>
+
+          <div onClick={() => setModalCorreioAberto(true)} style={{
+            background: 'linear-gradient(135deg, rgba(40, 20, 60, 0.9), rgba(10, 22, 40, 0.9))', border: '2px solid #D4AF37', borderRadius: '8px', padding: '10px 15px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)', transition: 'all 0.2s', backdropFilter: 'blur(5px)'
+          }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <div style={{ fontSize: '2.2rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>✉️</div>
+            <div style={{ position: 'relative' }}>
+              <div style={{ fontWeight: 'bold', fontFamily: 'var(--font-heading)', color: '#D4AF37', fontSize: '1.1rem', letterSpacing: '1px' }}>Correio</div>
+              {mensagensNaoLidas > 0 ? (
+                <div style={{ color: '#f87171', fontSize: '0.85rem', fontWeight: 'bold' }}>{mensagensNaoLidas} Nova(s)!</div>
+              ) : (
+                <div style={{ color: '#aaa', fontSize: '0.85rem' }}>Ver mensagens</div>
+              )}
+              {mensagensNaoLidas > 0 && (
+                <div style={{ position: 'absolute', top: '-10px', right: '-25px', background: '#e11d48', color: '#fff', fontSize: '0.7rem', fontWeight: 'bold', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #fff', boxShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+                  {mensagensNaoLidas}
+                </div>
+              )}
+            </div>
           </div>
 
           <div onClick={() => setModalCombateAberto(true)} style={{
@@ -511,6 +567,7 @@ export function GameClient({
         aberto={modalMapaAberto}
         aoFechar={() => setModalMapaAberto(false)}
         aoClicarCidade={() => {}}
+        aliacaTag={aliacaTag}
       />
 
       {/* Modal Aliança */}
@@ -523,6 +580,19 @@ export function GameClient({
       <PainelRanking
         aberto={modalRankingAberto}
         aoFechar={() => setModalRankingAberto(false)}
+      />
+
+      {/* Modal Correio */}
+      <ModalCorreio
+        aberto={modalCorreioAberto}
+        aoFechar={() => {
+          setModalCorreioAberto(false);
+          // Check unread after closing
+          fetch('/api/game/mensagens')
+            .then(r => r.json())
+            .then(data => setMensagensNaoLidas(data.naoLidos || 0))
+            .catch(() => { });
+        }}
       />
 
       {/* Modal Login Streak */}

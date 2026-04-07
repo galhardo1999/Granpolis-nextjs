@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { prisma } from '@/lib/db';
+import { verificarProtecao } from '@/lib/protecao';
 
 const TEMPO_VIAGEM_MINUTOS = 5; // 5 min de viagem entre cidades
 
@@ -104,6 +105,22 @@ export async function POST(req: NextRequest) {
   // Não pode atacar a si mesmo
   if (alvoId === cidadeAtual.id) {
     return NextResponse.json({ erro: 'Não pode atacar a si mesmo' }, { status: 400 });
+  }
+
+  // Verificar proteção de escudo
+  const protecaoAtacante = await verificarProtecao(cidadeAtual.id);
+  if (protecaoAtacante.protegido) {
+    return NextResponse.json({
+      erro: 'Você está sob proteção de escudo e não pode atacar.',
+      tempoRestante: protecaoAtacante.tempoRestanteMinutos,
+    }, { status: 400 });
+  }
+
+  const protecaoDefensor = await verificarProtecao(defensor.id);
+  if (protecaoDefensor.protegido) {
+    return NextResponse.json({
+      erro: `Alvo protegido por escudo (${Math.ceil(protecaoDefensor.tempoRestanteMinutos)}min restante).`,
+    }, { status: 400 });
   }
 
   // Buscar defensor

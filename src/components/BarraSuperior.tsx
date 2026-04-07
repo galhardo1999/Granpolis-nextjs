@@ -24,6 +24,7 @@ interface BarraSuperiorProps {
   aoAlterarNomeCidade: (nome: string) => void;
   aoResetar?: () => void;
   aoLogout?: () => void;
+  mensagensNaoLidas?: number;
 }
 
 export const BarraSuperior = memo(function BarraSuperior({
@@ -32,7 +33,8 @@ export const BarraSuperior = memo(function BarraSuperior({
   nomeCidade,
   aoAlterarNomeCidade,
   aoResetar,
-  aoLogout
+  aoLogout,
+  mensagensNaoLidas = 0,
 }: BarraSuperiorProps) {
   const [floatingEffects, setFloatingEffects] = useState<any[]>([]);
 
@@ -122,6 +124,26 @@ export const BarraSuperior = memo(function BarraSuperior({
           ))}
         </div>
 
+        {mensagensNaoLidas > 0 && (
+          <div
+            style={{
+              background: 'rgba(212,175,55,0.15)',
+              border: '1px solid #D4AF37',
+              borderRadius: '6px',
+              padding: '4px 10px',
+              cursor: 'pointer',
+              fontSize: '0.8rem',
+              color: '#D4AF37',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              marginLeft: '8px',
+            }}
+          >
+            <span style={{ fontSize: '1rem' }}>✉</span>
+            <span style={{ fontWeight: 'bold' }}>{mensagensNaoLidas}</span>
+          </div>
+        )}
         {aoResetar && (
           <button
             id="btn-reset"

@@ -98,6 +98,18 @@ model RelatorioCombate {
   @@index([dataOcorrencia])
 }
 
+model MissaoDiariaCompletada {
+  id        String   @id @default(cuid())
+  cidadeId  String
+  cidade    Cidade   @relation(fields: [cidadeId], references: [id], onDelete: Cascade)
+  missaoId  String
+  data      DateTime
+  coletada  Boolean  @default(false)
+
+  @@unique([cidadeId, missaoId, data])
+  @@index([cidadeId, data])
+}
+
 model EventoMundial {
   id        String   @id @default(cuid())
   tipo      String   // "invasao-barbara", "bencao-zeus", "comercio-vantajoso", "praga-atena", etc.
@@ -128,6 +140,7 @@ model Cidade {
   // Retencao
   loginStreak     Int      @default(0)
   ultimoLogin     DateTime?
+  protecaoOfflineAte DateTime? // Escudo de protecao (novo player, apos derrota, ausencia longa)
   ultimoPoderUsado DateTime?
   poderesUsadosHoje Json   @default("{}")
 
@@ -185,6 +198,9 @@ model Cidade {
 
   // Relatorios de combate
   relatoriosCombate RelatorioCombate[]
+
+  // Missoes diarias completadas
+  missoesDiariasCompletadas MissaoDiariaCompletada[]
 
   @@index([userId])
   @@index([ultimaAtualizacao])
