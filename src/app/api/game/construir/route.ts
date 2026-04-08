@@ -95,13 +95,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ erro: 'Recursos insuficientes' }, { status: 400 });
   }
   if (r.populacao < custoPop) {
-    return NextResponse.json({ erro: 'População insuficiente (Melhore a Quinta)' }, { status: 400 });
+    return NextResponse.json({ erro: 'População insuficiente (Melhore a Fazenda)' }, { status: 400 });
   }
 
   // 5. Calcular tempo de construção
   const temForja = pesquisas.includes('forja');
   const bonusForja = temForja ? 0.85 : 1;
-  const nivelSenado = edificios['senate'] || 0;
+  const nivelSenado = edificios['senado'] || 0;
   const bonusSenado = Math.max(0.1, 1 - nivelSenado * 0.05);
   const tempoFinalSegundos = (
     edificioConfig.tempoBase *

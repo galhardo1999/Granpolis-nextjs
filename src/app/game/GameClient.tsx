@@ -335,99 +335,69 @@ export function GameClient({
 
         {/* Canto Esquerdo Superior: Navegacao */}
         <div style={{ position: 'absolute', left: '20px', top: '80px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div onClick={() => setModalMapaAberto(true)} style={{
-            background: 'linear-gradient(135deg, rgba(10, 40, 20, 0.9), rgba(10, 22, 40, 0.9))', border: '2px solid #D4AF37', borderRadius: '8px', padding: '10px 15px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)', transition: 'all 0.2s', backdropFilter: 'blur(5px)'
-          }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            <div style={{ fontSize: '2.2rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>🗺️</div>
-            <div>
-              <div style={{ fontWeight: 'bold', fontFamily: 'var(--font-heading)', color: '#D4AF37', fontSize: '1.1rem', letterSpacing: '1px' }}>Mapa</div>
-              <div style={{ color: '#aaa', fontSize: '0.85rem' }}>Ver mundo</div>
+          <div onClick={() => setModalMapaAberto(true)} className="sidebar-menu-card">
+            <div className="sidebar-menu-icon">🗺️</div>
+            <div className="sidebar-menu-content">
+              <div className="title">Mapa</div>
+              <div className="subtitle">Ver mundo</div>
             </div>
           </div>
 
-          <div onClick={() => setModalAliancaAberto(true)} style={{
-            background: 'linear-gradient(135deg, rgba(40, 40, 10, 0.9), rgba(10, 22, 40, 0.9))', border: '2px solid #D4AF37', borderRadius: '8px', padding: '10px 15px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)', transition: 'all 0.2s', backdropFilter: 'blur(5px)'
-          }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            <div style={{ fontSize: '2.2rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>👥</div>
-            <div>
-              <div style={{ fontWeight: 'bold', fontFamily: 'var(--font-heading)', color: '#D4AF37', fontSize: '1.1rem', letterSpacing: '1px' }}>Alianças</div>
-              <div style={{ color: '#aaa', fontSize: '0.85rem' }}>Social</div>
+          <div onClick={() => setModalAliancaAberto(true)} className="sidebar-menu-card">
+            <div className="sidebar-menu-icon">👥</div>
+            <div className="sidebar-menu-content">
+              <div className="title">Alianças</div>
+              <div className="subtitle">Social</div>
             </div>
           </div>
 
-          <div onClick={() => setModalRankingAberto(true)} style={{
-            background: 'linear-gradient(135deg, rgba(60, 50, 10, 0.9), rgba(10, 22, 40, 0.9))', border: '2px solid #D4AF37', borderRadius: '8px', padding: '10px 15px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)', transition: 'all 0.2s', backdropFilter: 'blur(5px)'
-          }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            <div style={{ fontSize: '2.2rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>🏆</div>
-            <div>
-              <div style={{ fontWeight: 'bold', fontFamily: 'var(--font-heading)', color: '#D4AF37', fontSize: '1.1rem', letterSpacing: '1px' }}>Ranking</div>
-              <div style={{ color: '#aaa', fontSize: '0.85rem' }}>Leaderboard</div>
+          <div onClick={() => setModalRankingAberto(true)} className="sidebar-menu-card">
+            <div className="sidebar-menu-icon">🏆</div>
+            <div className="sidebar-menu-content">
+              <div className="title">Ranking</div>
+              <div className="subtitle">Leaderboard</div>
             </div>
           </div>
 
-          <div onClick={() => setModalMissoesAberto(true)} style={{
-            background: 'linear-gradient(135deg, rgba(26, 16, 64, 0.9), rgba(10, 22, 40, 0.9))', border: '2px solid #D4AF37', borderRadius: '8px', padding: '10px 15px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)', transition: 'all 0.2s', backdropFilter: 'blur(5px)'
-          }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            <div style={{ fontSize: '2.2rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>📜</div>
-            <div>
-              <div style={{ fontWeight: 'bold', fontFamily: 'var(--font-heading)', color: '#D4AF37', fontSize: '1.1rem', letterSpacing: '1px' }}>Missões</div>
+          <div onClick={() => setModalMissoesAberto(true)} className="sidebar-menu-card">
+            <div className="sidebar-menu-icon">📜</div>
+            <div className="sidebar-menu-content">
+              <div className="title">Missões</div>
               {missoesProntas > 0 ? (
-                <div style={{ color: '#4ade80', fontSize: '0.85rem', fontWeight: 'bold' }}>{missoesProntas} Pronta(s)!</div>
+                <div style={{ color: '#4ade80', fontWeight: 'bold' }}>{missoesProntas} Pronta(s)!</div>
               ) : (
-                <div style={{ color: '#aaa', fontSize: '0.85rem' }}>Ver tarefas</div>
+                <div className="subtitle">Ver tarefas</div>
               )}
             </div>
             {missoesProntas > 0 && (
-              <div style={{ position: 'absolute', top: '-8px', right: '-8px', background: '#e11d48', color: '#fff', fontSize: '0.75rem', fontWeight: 'bold', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #fff', boxShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
+              <div style={{ position: 'absolute', top: '-8px', right: '-8px', background: '#e11d48', color: '#fff', fontSize: '0.75rem', fontWeight: 'bold', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #fff', boxShadow: '0 2px 4px rgba(0,0,0,0.5)', zIndex: 10 }}>
                 {missoesProntas}
               </div>
             )}
           </div>
 
-          <div onClick={() => setModalCorreioAberto(true)} style={{
-            background: 'linear-gradient(135deg, rgba(40, 20, 60, 0.9), rgba(10, 22, 40, 0.9))', border: '2px solid #D4AF37', borderRadius: '8px', padding: '10px 15px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)', transition: 'all 0.2s', backdropFilter: 'blur(5px)'
-          }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            <div style={{ fontSize: '2.2rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>✉️</div>
-            <div style={{ position: 'relative' }}>
-              <div style={{ fontWeight: 'bold', fontFamily: 'var(--font-heading)', color: '#D4AF37', fontSize: '1.1rem', letterSpacing: '1px' }}>Correio</div>
+          <div onClick={() => setModalCorreioAberto(true)} className="sidebar-menu-card">
+            <div className="sidebar-menu-icon">✉️</div>
+            <div className="sidebar-menu-content" style={{ position: 'relative' }}>
+              <div className="title">Correio</div>
               {mensagensNaoLidas > 0 ? (
-                <div style={{ color: '#f87171', fontSize: '0.85rem', fontWeight: 'bold' }}>{mensagensNaoLidas} Nova(s)!</div>
+                <div style={{ color: '#f87171', fontWeight: 'bold' }}>{mensagensNaoLidas} Nova(s)!</div>
               ) : (
-                <div style={{ color: '#aaa', fontSize: '0.85rem' }}>Ver mensagens</div>
-              )}
-              {mensagensNaoLidas > 0 && (
-                <div style={{ position: 'absolute', top: '-10px', right: '-25px', background: '#e11d48', color: '#fff', fontSize: '0.7rem', fontWeight: 'bold', width: '20px', height: '20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #fff', boxShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
-                  {mensagensNaoLidas}
-                </div>
+                <div className="subtitle">Ver mensagens</div>
               )}
             </div>
+            {mensagensNaoLidas > 0 && (
+              <div style={{ position: 'absolute', top: '-8px', right: '-8px', background: '#e11d48', color: '#fff', fontSize: '0.7rem', fontWeight: 'bold', width: '22px', height: '22px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #fff', boxShadow: '0 2px 4px rgba(0,0,0,0.5)', zIndex: 10 }}>
+                {mensagensNaoLidas}
+              </div>
+            )}
           </div>
 
-          <div onClick={() => setModalCombateAberto(true)} style={{
-            background: 'linear-gradient(135deg, rgba(60, 20, 20, 0.9), rgba(40, 10, 10, 0.9))', border: '2px solid #D4AF37', borderRadius: '8px', padding: '10px 15px', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 10px rgba(0,0,0,0.5)', transition: 'all 0.2s', backdropFilter: 'blur(5px)'
-          }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          >
-            <div style={{ fontSize: '2.2rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>🏕️</div>
-            <div>
-              <div style={{ fontWeight: 'bold', fontFamily: 'var(--font-heading)', color: '#D4AF37', fontSize: '1.1rem', letterSpacing: '1px' }}>Aldeias</div>
-              <div style={{ color: '#aaa', fontSize: '0.85rem' }}>Saquear bárbaros</div>
+          <div onClick={() => setModalCombateAberto(true)} className="sidebar-menu-card" style={{ borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+            <div className="sidebar-menu-icon">🏕️</div>
+            <div className="sidebar-menu-content">
+              <div className="title">Aldeias</div>
+              <div className="subtitle">Saquear bárbaros</div>
             </div>
           </div>
 
@@ -458,7 +428,7 @@ export function GameClient({
             idDeusAtual={estado.deusAtual}
             favor={estado.recursos.favor}
             favorMaximo={estado.recursos.favorMaximo}
-            nivelTemplo={estado.edificios['temple'] || 0}
+            nivelTemplo={estado.edificios['templo'] || 0}
             aoSelecionarDeus={handleSelecionarDeus}
             aoLancarPoder={handleLancarPoder}
           />
@@ -543,7 +513,7 @@ export function GameClient({
       {/* Modal de Combate */}
       {modalCombateAberto && (
         <div id="modal-overlay" onClick={(e) => e.target === e.currentTarget && setModalCombateAberto(false)}>
-          <div id="modal-container" className="senate-wide" style={{ width: '800px' }}>
+          <div id="modal-container" className="senado-wide" style={{ width: '800px' }}>
             <div id="modal-header">
               <h2 id="modal-title">🏕️ Aldeias Bárbaras</h2>
               <button id="close-modal" onClick={() => setModalCombateAberto(false)}>&times;</button>

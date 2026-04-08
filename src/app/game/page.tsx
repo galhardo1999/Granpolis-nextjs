@@ -20,7 +20,7 @@ export default async function GamePage() {
   const edificios = cidade.edificios as Record<string, number>;
   const pesquisas = cidade.pesquisasConcluidas as string[];
   const temCeramica = pesquisas.includes('ceramica');
-  const recursosMaximosReais = calcularCapacidadeArmazem(edificios['warehouse'] || 0, temCeramica);
+  const recursosMaximosReais = calcularCapacidadeArmazem(edificios['armazem'] || 0, temCeramica);
 
   // Clapa recursos acima da capacidade
   const cidadeAjustada = {

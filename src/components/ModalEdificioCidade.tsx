@@ -22,56 +22,56 @@ export function ModalEdificioCidade({ edificios, aoClicarEdificio }: ModalEdific
     <main id="city-view">
       <div id="city-background"></div>
       
-      <div className="building-slot senate" id="slot-senate" onClick={() => aoClicarEdificio('senate')}>
-        {renderLabel('senate', 'Senado')}
+      <div className="building-slot senado" id="slot-senado" onClick={() => aoClicarEdificio('senado')}>
+        {renderLabel('senado', 'Senado')}
       </div>
       
-      <div className="building-slot timber-camp" id="slot-timber" onClick={() => aoClicarEdificio('timber-camp')}>
-        {renderLabel('timber-camp', 'Bosque')}
+      <div className="building-slot serraria" id="slot-serraria" onClick={() => aoClicarEdificio('serraria')}>
+        {renderLabel('serraria', 'Serraria')}
       </div>
       
-      <div className="building-slot quarry" id="slot-quarry" onClick={() => aoClicarEdificio('quarry')}>
-        {renderLabel('quarry', 'Pedreira')}
+      <div className="building-slot pedreira" id="slot-pedreira" onClick={() => aoClicarEdificio('pedreira')}>
+        {renderLabel('pedreira', 'Pedreira')}
       </div>
       
-      <div className="building-slot silver-mine" id="slot-silver" onClick={() => aoClicarEdificio('silver-mine')}>
-        {renderLabel('silver-mine', 'Mina de Prata')}
+      <div className="building-slot mina-de-prata" id="slot-mina-de-prata" onClick={() => aoClicarEdificio('mina-de-prata')}>
+        {renderLabel('mina-de-prata', 'Mina de Prata')}
       </div>
 
-      <div className="building-slot farm" id="slot-farm" onClick={() => aoClicarEdificio('farm')}>
-        {renderLabel('farm', 'Quinta')}
+      <div className="building-slot fazenda" id="slot-fazenda" onClick={() => aoClicarEdificio('fazenda')}>
+        {renderLabel('fazenda', 'Fazenda')}
       </div>
 
-      <div className="building-slot warehouse" id="slot-warehouse" onClick={() => aoClicarEdificio('warehouse')}>
-        {renderLabel('warehouse', 'Armazém')}
+      <div className="building-slot armazem" id="slot-armazem" onClick={() => aoClicarEdificio('armazem')}>
+        {renderLabel('armazem', 'Armazém')}
       </div>
 
-      <div className="building-slot barracks" id="slot-barracks" onClick={() => aoClicarEdificio('barracks')}>
-        {renderLabel('barracks', 'Quartel')}
+      <div className="building-slot quartel" id="slot-quartel" onClick={() => aoClicarEdificio('quartel')}>
+        {renderLabel('quartel', 'Quartel')}
       </div>
 
-      <div className="building-slot temple" id="slot-temple" onClick={() => aoClicarEdificio('temple')}>
-        {renderLabel('temple', 'Templo')}
+      <div className="building-slot templo" id="slot-templo" onClick={() => aoClicarEdificio('templo')}>
+        {renderLabel('templo', 'Templo')}
       </div>
 
-      <div className="building-slot market" id="slot-market" onClick={() => aoClicarEdificio('market')}>
-        {renderLabel('market', 'Mercado')}
+      <div className="building-slot mercado" id="slot-mercado" onClick={() => aoClicarEdificio('mercado')}>
+        {renderLabel('mercado', 'Mercado')}
       </div>
 
-      <div className="building-slot harbor" id="slot-harbor" onClick={() => aoClicarEdificio('harbor')}>
-        {renderLabel('harbor', 'Porto')}
+      <div className="building-slot porto" id="slot-porto" onClick={() => aoClicarEdificio('porto')}>
+        {renderLabel('porto', 'Porto')}
       </div>
 
-      <div className="building-slot academy" id="slot-academy" onClick={() => aoClicarEdificio('academy')}>
-        {renderLabel('academy', 'Academia')}
+      <div className="building-slot academia" id="slot-academia" onClick={() => aoClicarEdificio('academia')}>
+        {renderLabel('academia', 'Academia')}
       </div>
 
-      <div className="building-slot walls" id="slot-walls" onClick={() => aoClicarEdificio('walls')}>
-        {renderLabel('walls', 'Muralha')}
+      <div className="building-slot muralha" id="slot-muralha" onClick={() => aoClicarEdificio('muralha')}>
+        {renderLabel('muralha', 'Muralha')}
       </div>
 
-      <div className="building-slot cave" id="slot-cave" onClick={() => aoClicarEdificio('cave')}>
-        {renderLabel('cave', 'Gruta')}
+      <div className="building-slot gruta" id="slot-gruta" onClick={() => aoClicarEdificio('gruta')}>
+        {renderLabel('gruta', 'Gruta')}
       </div>
     </main>
   );

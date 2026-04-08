@@ -129,6 +129,7 @@ export function ModalCombate({ unidades, cooldownsAldeias, agora, aoAtacar, aomo
                         <strong style={{ fontSize: '0.85rem', color: '#5d4037' }}>Defesa:</strong>
                         {Object.entries(aldeia.defesa).map(([idU, qtd]) => {
                           const u = UNIDADES[idU as IdUnidade];
+                          if (!u) return null;
                           return (
                             <div key={idU} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(139, 0, 0, 0.05)', border: '1px solid #c2a77a', borderRadius: '4px', padding: '2px 6px' }} title={u.nome}>
                               <Image src={u.retrato} alt={u.nome} width={20} height={20} style={{ borderRadius: '2px' }} />
@@ -180,6 +181,7 @@ export function ModalCombate({ unidades, cooldownsAldeias, agora, aoAtacar, aomo
                         <strong style={{ fontSize: '0.9rem', color: '#5d4037' }}>Defesa:</strong>
                         {Object.entries(inf.defesa).map(([idU, qtd]) => {
                           const u = UNIDADES[idU as IdUnidade];
+                          if (!u) return null;
                           return (
                             <div key={idU} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(139, 0, 0, 0.05)', border: '1px solid #c2a77a', borderRadius: '4px', padding: '2px 6px' }} title={u.nome}>
                               <Image src={u.retrato} alt={u.nome} width={20} height={20} style={{ borderRadius: '2px' }} />
@@ -392,11 +394,14 @@ export function ModalCombate({ unidades, cooldownsAldeias, agora, aoAtacar, aomo
                   </div>
                   <div style={{ width: '100%', display: 'flex', flexDirection: 'column', border: '1px solid rgba(62,39,35,0.2)', background: 'rgba(255,255,255,0.1)', borderRadius: '2px' }}>
                     <div style={{ display: 'flex', borderBottom: '1px solid rgba(62,39,35,0.2)', background: 'rgba(0,0,0,0.03)' }}>
-                      {Object.keys(vencedor.exercito).map(id => (
-                        <div key={id} style={{ flex: 1, borderRight: '1px solid rgba(62,39,35,0.1)', padding: '4px', display: 'flex', justifyContent: 'center' }}>
-                          <Image src={UNIDADES[id as IdUnidade].retrato} alt={id} width={28} height={28} style={{ borderRadius: '2px', border: '1px solid rgba(0,0,0,0.1)' }} />
-                        </div>
-                      ))}
+                      {Object.keys(vencedor.exercito).map(id => {
+                        const u = UNIDADES[id as IdUnidade];
+                        return (
+                          <div key={id} style={{ flex: 1, borderRight: '1px solid rgba(62,39,35,0.1)', padding: '4px', display: 'flex', justifyContent: 'center' }}>
+                            {u ? <Image src={u.retrato} alt={id} width={28} height={28} style={{ borderRadius: '2px', border: '1px solid rgba(0,0,0,0.1)' }} /> : <span>?</span>}
+                          </div>
+                        );
+                      })}
                     </div>
                     <div style={{ display: 'flex' }}>
                       {Object.entries(vencedor.exercito).map(([id, qtd]) => (
@@ -429,11 +434,14 @@ export function ModalCombate({ unidades, cooldownsAldeias, agora, aoAtacar, aomo
                   </div>
                   <div style={{ width: '100%', display: 'flex', flexDirection: 'column', border: '1px solid rgba(62,39,35,0.2)', background: 'rgba(255,255,255,0.1)', borderRadius: '2px' }}>
                     <div style={{ display: 'flex', borderBottom: '1px solid rgba(62,39,35,0.2)', background: 'rgba(0,0,0,0.03)' }}>
-                      {Object.keys(derrotado.exercito).map(id => (
-                        <div key={id} style={{ flex: 1, borderRight: '1px solid rgba(62,39,35,0.1)', padding: '4px', display: 'flex', justifyContent: 'center' }}>
-                          <Image src={UNIDADES[id as IdUnidade].retrato} alt={id} width={28} height={28} style={{ borderRadius: '2px', border: '1px solid rgba(0,0,0,0.1)' }} />
-                        </div>
-                      ))}
+                      {Object.keys(derrotado.exercito).map(id => {
+                        const u = UNIDADES[id as IdUnidade];
+                        return (
+                          <div key={id} style={{ flex: 1, borderRight: '1px solid rgba(62,39,35,0.1)', padding: '4px', display: 'flex', justifyContent: 'center' }}>
+                            {u ? <Image src={u.retrato} alt={id} width={28} height={28} style={{ borderRadius: '2px', border: '1px solid rgba(0,0,0,0.1)' }} /> : <span>?</span>}
+                          </div>
+                        );
+                      })}
                     </div>
                     <div style={{ display: 'flex' }}>
                       {Object.entries(derrotado.exercito).map(([id, qtd]) => (
@@ -484,7 +492,8 @@ export function ModalCombate({ unidades, cooldownsAldeias, agora, aoAtacar, aomo
                 {Object.values(ultimoRelatorio?.baixasAtacante || {}).reduce((total, b, i) => {
                   const keys = Object.keys(ultimoRelatorio?.baixasAtacante || {});
                   const id = keys[i];
-                  return total + (b * UNIDADES[id as IdUnidade].custos.populacao);
+                  const u = UNIDADES[id as IdUnidade];
+                  return total + (b * (u?.custos.populacao || 0));
                 }, 0)}
               </strong></span>
             </div>

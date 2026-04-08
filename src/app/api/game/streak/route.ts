@@ -42,14 +42,6 @@ export async function POST() {
       favor: recompensa.favor,
       bonusEspecial: recompensa.bonusEspecial || null,
     };
-  } else {
-    await prisma.cidade.update({
-      where: { id: cidadeDb.id },
-      data: {
-        loginStreak: streak,
-        ultimoLogin: new Date(),
-      },
-    });
   }
 
   return NextResponse.json({

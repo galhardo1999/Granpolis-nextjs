@@ -73,13 +73,13 @@ interface ModalEdificioProps {
 }
 
 // Edifícios que usam modal de recrutamento
-const MODAL_RECRUTAMENTO: IdEdificio[] = ['barracks'];
+const MODAL_RECRUTAMENTO: IdEdificio[] = ['quartel'];
 // Edifícios que usam modal naval (recrutamento naval + combate)
-const MODAL_NAVAL: IdEdificio[] = ['harbor'];
+const MODAL_NAVAL: IdEdificio[] = ['porto'];
 // Edifícios que usam modal de academia
-const MODAL_ACADEMIA: IdEdificio[] = ['academy'];
+const MODAL_ACADEMIA: IdEdificio[] = ['academia'];
 // Edifícios que usam modal de mercado
-const MODAL_MERCADO: IdEdificio[] = ['market'];
+const MODAL_MERCADO: IdEdificio[] = ['mercado'];
 
 export function ModalEdificio({
   aberto,
@@ -121,6 +121,7 @@ export function ModalEdificio({
   // ──────────────────────────────────────────────────────────
   const renderizarCartaoEdificio = (id: IdEdificio) => {
     const dados = EDIFICIOS[id];
+    if (!dados) return null;
     const nivelAtual = edificiosAtuais[id] || 0;
     const qtdPendente = fila.filter(f => f.edificio === id).length;
     const proximoNivel = nivelAtual + qtdPendente + 1;
@@ -140,10 +141,11 @@ export function ModalEdificio({
       const reqs = dados.requisitos as Record<string, number>;
       for (const [idReq, nivelReq] of Object.entries(reqs)) {
         const reqEdificio = idReq as IdEdificio;
+        const infoReq = EDIFICIOS[reqEdificio];
         const nivelAtualReq = (edificiosAtuais[reqEdificio] || 0) + fila.filter(f => f.edificio === reqEdificio).length;
         if (nivelAtualReq < nivelReq) {
           requisitosAtendidos = false;
-          reqsTexto.push(`${EDIFICIOS[reqEdificio].nome} (Nv. ${nivelReq})`);
+          reqsTexto.push(`${infoReq?.nome || idReq} (Nv. ${nivelReq})`);
         }
       }
     }
@@ -167,7 +169,7 @@ export function ModalEdificio({
       <div key={id} className="building-card" style={{ position: 'relative' }}>
         {/* Ícone de informação com tooltip exclusivo para descrição */}
         <div style={{ position: 'absolute', top: '6px', right: '6px', zIndex: 10 }}>
-          <TooltipBox alignX="right" isDownwards={id === 'senate'} content={
+          <TooltipBox alignX="right" isDownwards={id === 'senado'} content={
             <div style={{ fontSize: '0.85rem', lineHeight: '1.4', maxWidth: '220px', textAlign: 'center', color: '#3e2723' }}>
               <strong>{dados.nome}</strong><br/>
               <span style={{ color: '#5d4037', display: 'block', marginTop: '4px' }}>{dados.descricao}</span>
@@ -196,7 +198,7 @@ export function ModalEdificio({
           </div>
         </div>
 
-        <TooltipBox isDownwards={id === 'senate'} content={
+        <TooltipBox isDownwards={id === 'senado'} content={
           <div style={{ textAlign: 'left', fontFamily: 'Arial, sans-serif' }}>
             <h3 style={{ margin: '0 0 8px 0', fontSize: '1.05rem', color: '#1a1a1a', borderBottom: '1px solid #c2a77a', paddingBottom: '4px' }}>
               {dados.nome} ({proximoNivel})
@@ -255,7 +257,7 @@ export function ModalEdificio({
   // Conteúdo especial para Gruta — mostra prata protegida
   // ──────────────────────────────────────────────────────────
   const renderizarGruta = () => {
-    const nivelGruta = edificiosAtuais['cave'] || 0;
+    const nivelGruta = edificiosAtuais['gruta'] || 0;
     const protecao = nivelGruta * 200;
     return (
       <div>
@@ -280,7 +282,7 @@ export function ModalEdificio({
             </div>
           )}
         </div>
-        {renderizarCartaoEdificio('cave')}
+        {renderizarCartaoEdificio('gruta')}
       </div>
     );
   };
@@ -289,7 +291,7 @@ export function ModalEdificio({
   // Conteúdo especial para Muralha — mostra bônus de defesa
   // ──────────────────────────────────────────────────────────
   const renderizarMuralha = () => {
-    const nivelMuralha = edificiosAtuais['walls'] || 0;
+    const nivelMuralha = edificiosAtuais['muralha'] || 0;
     const bonusDefesa = Math.round(nivelMuralha * 3);
     return (
       <div>
@@ -314,7 +316,7 @@ export function ModalEdificio({
             </div>
           )}
         </div>
-        {renderizarCartaoEdificio('walls')}
+        {renderizarCartaoEdificio('muralha')}
       </div>
     );
   };
@@ -323,53 +325,53 @@ export function ModalEdificio({
   // Conteúdo do modal por tipo de edifício
   // ──────────────────────────────────────────────────────────
   const renderizarConteudo = () => {
-    if (idEdificio === 'senate') {
+    if (idEdificio === 'senado') {
       return (
-        <div id="senate-tree">
-          <div className="senate-node senate-root">
-            {renderizarCartaoEdificio('senate')}
+        <div id="senado-arvore">
+          <div className="senado-no senado-raiz">
+            {renderizarCartaoEdificio('senado')}
           </div>
 
           <div className="tree-connector-main"></div>
 
-          <div className="senate-columns">
-            <div className="senate-column">
-              {renderizarCartaoEdificio('timber-camp')}
+          <div className="senado-colunas">
+            <div className="senado-coluna">
+              {renderizarCartaoEdificio('serraria')}
               <div className="tree-arrow">▼</div>
-              {renderizarCartaoEdificio('silver-mine')}
+              {renderizarCartaoEdificio('mina-de-prata')}
               <div className="tree-arrow">▼</div>
-              {renderizarCartaoEdificio('harbor')}
+              {renderizarCartaoEdificio('porto')}
             </div>
 
-            <div className="senate-column">
-              {renderizarCartaoEdificio('farm')}
+            <div className="senado-coluna">
+              {renderizarCartaoEdificio('fazenda')}
               <div className="tree-arrow">▼</div>
-              {renderizarCartaoEdificio('barracks')}
+              {renderizarCartaoEdificio('quartel')}
               <div className="tree-arrow">▼</div>
-              {renderizarCartaoEdificio('academy')}
+              {renderizarCartaoEdificio('academia')}
             </div>
 
-            <div className="senate-column">
-              {renderizarCartaoEdificio('quarry')}
+            <div className="senado-coluna">
+              {renderizarCartaoEdificio('pedreira')}
               <div className="tree-arrow">▼</div>
-              {renderizarCartaoEdificio('temple')}
+              {renderizarCartaoEdificio('templo')}
               <div className="tree-arrow">▼</div>
-              {renderizarCartaoEdificio('walls')}
+              {renderizarCartaoEdificio('muralha')}
             </div>
 
-            <div className="senate-column">
-              {renderizarCartaoEdificio('warehouse')}
+            <div className="senado-coluna">
+              {renderizarCartaoEdificio('armazem')}
               <div className="tree-arrow">▼</div>
-              {renderizarCartaoEdificio('market')}
+              {renderizarCartaoEdificio('mercado')}
               <div className="tree-arrow">▼</div>
-              {renderizarCartaoEdificio('cave')}
+              {renderizarCartaoEdificio('gruta')}
             </div>
           </div>
         </div>
       );
     }
 
-    if (idEdificio === 'warehouse' && renda) {
+    if (idEdificio === 'armazem' && renda) {
       return (
         <>
           <ModalEdificioArmazem
@@ -401,7 +403,7 @@ export function ModalEdificio({
       return (
         <>
           <ModalEdificioAcademia
-            nivelAcademia={edificiosAtuais['academy'] || 0}
+            nivelAcademia={edificiosAtuais['academia'] || 0}
             prata={recursos.prata}
             pesquisasConcluidas={pesquisasConcluidas}
             aoPesquisar={aoPesquisar}
@@ -437,7 +439,7 @@ export function ModalEdificio({
       return (
         <>
           <ModalEdificioMercado
-            nivelMercado={edificiosAtuais['market'] || 0}
+            nivelMercado={edificiosAtuais['mercado'] || 0}
             recursos={recursos}
             aoTrocar={aoTrocarRecurso}
             mostrarToast={mostrarToast}
@@ -448,18 +450,19 @@ export function ModalEdificio({
       );
     }
 
-    if (idEdificio === 'cave') {
+    if (idEdificio === 'gruta') {
       return renderizarGruta();
     }
 
-    if (idEdificio === 'walls') {
+    if (idEdificio === 'muralha') {
       return renderizarMuralha();
     }
 
     // Genérico
+    const dadosGeral = EDIFICIOS[idEdificio];
     return (
       <>
-        <p>{EDIFICIOS[idEdificio].descricao}</p>
+        <p>{dadosGeral?.descricao || 'Edifício não reconhecido'}</p>
         <br />
         <p><strong>Nv. Atual:</strong> {edificiosAtuais[idEdificio] || 0}</p>
         <hr />
@@ -468,13 +471,13 @@ export function ModalEdificio({
     );
   };
 
-  const isWide = ['senate', 'warehouse', 'barracks', 'academy', 'harbor', 'market'].includes(idEdificio);
+  const isWide = ['senado', 'armazem', 'quartel', 'academia', 'porto', 'mercado'].includes(idEdificio);
 
   return (
     <div id="modal-overlay" onClick={(e) => e.target === e.currentTarget && aoFechar()}>
-      <div id="modal-container" className={isWide ? 'senate-wide' : ''}>
+      <div id="modal-container" className={isWide ? 'senado-wide' : ''}>
         <div id="modal-header">
-          <h2 id="modal-title">{EDIFICIOS[idEdificio].nome}</h2>
+          <h2 id="modal-title">{EDIFICIOS[idEdificio]?.nome || 'Edifício'}</h2>
           <button id="close-modal" onClick={aoFechar}>&times;</button>
         </div>
         <div id="modal-body">

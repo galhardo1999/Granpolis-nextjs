@@ -64,7 +64,7 @@ async function processarAtaque(ataque: {
     prata: defensor.prata,
   };
 
-  const nivelMuralha = ((defensor.edificios ?? {}) as Record<string, number>)['walls'] || 0;
+  const nivelMuralha = ((defensor.edificios ?? {}) as Record<string, number>)['muralha'] || 0;
 
   const bonusAtaque = atacante.pesquisasConcluidas.includes('metalurgia') ? 1.1 : 1;
   const bonusDefesa = defensor.pesquisasConcluidas.includes('escudo') ? 1.1 : 1;
@@ -102,7 +102,7 @@ async function processarAtaque(ataque: {
     });
 
     // Deduzir recursos do defensor
-    const prataProtegida = ((defensor.edificios ?? {}) as Record<string, number>)['cave'] || 0;
+    const prataProtegida = ((defensor.edificios ?? {}) as Record<string, number>)['gruta'] || 0;
     const protecaoGruta = prataProtegida * 300;
     const prataSaqueavel = Math.max(0, defensor.prata - protecaoGruta);
     const prataSaqueadaReal = Math.min(prataSaqueavel, resultado.recursosRoubados.prata);

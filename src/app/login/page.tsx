@@ -43,7 +43,9 @@ export default function LoginPage() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #0a1628 0%, #1a1040 50%, #0a1628 100%)',
+      background: 'linear-gradient(rgba(10, 22, 40, 0.7), rgba(10, 22, 40, 0.7)), url(/images/login-bg.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
       fontFamily: 'var(--font-outfit, sans-serif)',
     }}>
       <div style={{

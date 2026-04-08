@@ -22,15 +22,26 @@ export const RECOMPENSAS_STREAK: RecompensaStreak[] = [
 ];
 
 export function calcularProximoStreak(ultimoLogin: Date | null, streakAtual: number): { streak: number; recompensa: RecompensaStreak | null } {
+  const agora = new Date();
+  
   if (!ultimoLogin) {
     return { streak: 1, recompensa: RECOMPENSAS_STREAK[0] };
   }
 
-  const agora = Date.now();
-  const ultimo = ultimoLogin.getTime();
-  const horasDesdeUltimo = (agora - ultimo) / (1000 * 60 * 60);
+  // Verificar se é o mesmo dia do calendário
+  const isMesmoDia = 
+    agora.getFullYear() === ultimoLogin.getFullYear() &&
+    agora.getMonth() === ultimoLogin.getMonth() &&
+    agora.getDate() === ultimoLogin.getDate();
 
-  // Se passou menos de 28h, conta como dia consecutivo
+  if (isMesmoDia) {
+    // Já logou hoje, não dá recompensa e mantém o streak
+    return { streak: streakAtual, recompensa: null };
+  }
+
+  const horasDesdeUltimo = (agora.getTime() - ultimoLogin.getTime()) / (1000 * 60 * 60);
+
+  // Se passou menos de 48h, conta como dia consecutivo
   if (horasDesdeUltimo <= 48) {
     // Proxima recompensa (loop apos 7 dias)
     const proximo = streakAtual % 7;

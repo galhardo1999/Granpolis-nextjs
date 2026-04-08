@@ -29,7 +29,7 @@ export function ModalEdificioRecrutamento({
   tipoFiltro = 'terrestre'
 }: ModalEdificioRecrutamentoProps) {
   const listaUnidades = (Object.keys(UNIDADES) as IdUnidade[]).filter(id => UNIDADES[id].tipo === tipoFiltro);
-  const [unidadeSelecionada, setUnidadeSelecionada] = useState<IdUnidade>(listaUnidades[0] || 'swordsman');
+  const [unidadeSelecionada, setUnidadeSelecionada] = useState<IdUnidade>(listaUnidades[0] || 'espadachim');
   const [qtd, setQtd] = useState<number>(0);
 
   const getMaxRecrutavel = (id: IdUnidade) => {
@@ -224,6 +224,15 @@ export function ModalEdificioRecrutamento({
           {fila.map((item, i) => {
             const restante = Math.max(0, Math.ceil((item.fimTempo - agora) / 1000));
             const u = UNIDADES[item.unidade];
+            
+            if (!u) {
+              return (
+                <div key={i} style={{ width: '40px', height: '40px', position: 'relative', border: '1px solid #8b5a2b', background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                   ?
+                </div>
+              );
+            }
+
             return (
               <div key={i} style={{ width: '40px', height: '40px', position: 'relative', border: '1px solid #8b5a2b', background: '#000' }}>
                 <Image src={u.retrato} alt={u.nome} fill style={{ objectFit: 'cover' }} />

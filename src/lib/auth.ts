@@ -169,14 +169,14 @@ export async function registrarUsuario(
         prataNaGruta: 0,
         deusAtual: null,
         edificios: {
-          senate: 1, 'timber-camp': 0, quarry: 0, 'silver-mine': 0,
-          farm: 0, warehouse: 0, barracks: 0, temple: 0,
-          market: 0, harbor: 0, academy: 0, walls: 0, cave: 0,
+          senado: 1, 'serraria': 0, pedreira: 0, 'mina-de-prata': 0,
+          fazenda: 0, armazem: 0, quartel: 0, templo: 0,
+          mercado: 0, porto: 0, academia: 0, muralha: 0, gruta: 0,
         },
         unidades: {
-          swordsman: 0, slinger: 0, archer: 0, hoplite: 0,
-          horseman: 0, chariot: 0, catapult: 0, bireme: 0,
-          'transport-ship': 0, trireme: 0,
+          espadachim: 0, fundeiro: 0, arqueiro: 0, hoplita: 0,
+          cavaleiro: 0, carruagem: 0, catapulta: 0, birreme: 0,
+          'navio-de-transporte': 0, trirreme: 0,
         },
         pesquisasConcluidas: [],
         missoesColetadas: [],
@@ -366,8 +366,8 @@ export function recalcularEstadoServidor(cidade: DadosCidade): DadosCidade {
   // ── 2. Recalcular capacidades derivadas dos novos níveis ───
   const temCeramica = cidade.pesquisasConcluidas.includes('ceramica');
   const temArado = cidade.pesquisasConcluidas.includes('arado');
-  const nivelWarehouse = edificios['warehouse'] || 0;
-  const nivelFarm = edificios['farm'] || 0;
+  const nivelWarehouse = edificios['armazem'] || 0;
+  const nivelFarm = edificios['fazenda'] || 0;
 
   const recursosMax = calcularCapacidadeArmazem(nivelWarehouse, temCeramica);
   const popMaxFarm = nivelFarm > 0
@@ -410,10 +410,10 @@ export function recalcularEstadoServidor(cidade: DadosCidade): DadosCidade {
 
   // ── 4. Calcular produção de recursos (on-the-fly) ──────────
   const e = edificios;
-  const madeiraPorHora = calcularProducaoRecurso(e['timber-camp'] || 0, EDIFICIOS['timber-camp'].multiplicadorProducao);
-  const pedraPorHora = calcularProducaoRecurso(e['quarry'] || 0, EDIFICIOS['quarry'].multiplicadorProducao);
-  const prataPorHora = calcularProducaoRecurso(e['silver-mine'] || 0, EDIFICIOS['silver-mine'].multiplicadorProducao);
-  const favorPorHora = calcularProducaoFavor(cidade.deusAtual, e['temple'] || 0);
+  const madeiraPorHora = calcularProducaoRecurso(e['serraria'] || 0, EDIFICIOS['serraria'].multiplicadorProducao);
+  const pedraPorHora = calcularProducaoRecurso(e['pedreira'] || 0, EDIFICIOS['pedreira'].multiplicadorProducao);
+  const prataPorHora = calcularProducaoRecurso(e['mina-de-prata'] || 0, EDIFICIOS['mina-de-prata'].multiplicadorProducao);
+  const favorPorHora = calcularProducaoFavor(cidade.deusAtual, e['templo'] || 0);
 
   return {
     ...cidade,

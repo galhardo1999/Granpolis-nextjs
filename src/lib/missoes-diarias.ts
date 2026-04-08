@@ -24,7 +24,7 @@ export const POOL_MISSOES_DIARIAS: MissaoDiaria[] = [
     titulo: 'Colheita Abundante',
     descricao: 'Produza 500 recursos no total (madeira + pedra + prata).',
     verificarProgresso: (estado) => ({
-      atual: Math.floor(estado.recursos.madeira) + Math.floor(estado.recursos.pedra) + Math.floor(estado.recursos.prata),
+      atual: Math.floor(estado.recursos.madeira || 0) + Math.floor(estado.recursos.pedra || 0) + Math.floor(estado.recursos.prata || 0),
       necessario: 500
     }),
     recompensa: { madeira: 100, pedra: 100, prata: 100 },
@@ -36,9 +36,9 @@ export const POOL_MISSOES_DIARIAS: MissaoDiaria[] = [
     descricao: 'Acumule mais de 1000 de cada recurso.',
     verificarProgresso: (estado) => ({
       atual: Math.min(
-        Math.floor(estado.recursos.madeira),
-        Math.floor(estado.recursos.pedra),
-        Math.floor(estado.recursos.prata)
+        Math.floor(estado.recursos.madeira || 0),
+        Math.floor(estado.recursos.pedra || 0),
+        Math.floor(estado.recursos.prata || 0)
       ),
       necessario: 1000
     }),
@@ -52,7 +52,7 @@ export const POOL_MISSOES_DIARIAS: MissaoDiaria[] = [
     titulo: 'Mãos à Obra',
     descricao: 'Inicie pelo menos 1 construção.',
     verificarProgresso: (estado) => ({
-      atual: estado.fila.length,
+      atual: estado.fila?.length || 0,
       necessario: 1
     }),
     recompensa: { madeira: 150, pedra: 150 },
@@ -63,7 +63,7 @@ export const POOL_MISSOES_DIARIAS: MissaoDiaria[] = [
     titulo: 'Construtor Dedicado',
     descricao: 'Complete 3 melhorias de edifícios (verifique o nível atual vs base).',
     verificarProgresso: (estado) => {
-      const total = Object.values(estado.edificios).reduce((a, b) => a + b, 0);
+      const total = Object.values(estado.edificios || {}).reduce((a, b) => a + b, 0);
       return { atual: total, necessario: 3 };
     },
     recompensa: { madeira: 300, pedra: 300, prata: 200 },
@@ -76,7 +76,7 @@ export const POOL_MISSOES_DIARIAS: MissaoDiaria[] = [
     titulo: 'Aldeia Crescendo',
     descricao: 'Recrute 10 unidades no total.',
     verificarProgresso: (estado) => {
-      const total = Object.values(estado.unidades).reduce((a, b) => a + b, 0);
+      const total = Object.values(estado.unidades || {}).reduce((a, b) => a + b, 0);
       return { atual: total, necessario: 10 };
     },
     recompensa: { prata: 200, madeira: 150 },
@@ -87,7 +87,7 @@ export const POOL_MISSOES_DIARIAS: MissaoDiaria[] = [
     titulo: 'Exército Formidável',
     descricao: 'Tenha pelo menos 50 unidades no total.',
     verificarProgresso: (estado) => {
-      const total = Object.values(estado.unidades).reduce((a, b) => a + b, 0);
+      const total = Object.values(estado.unidades || {}).reduce((a, b) => a + b, 0);
       return { atual: total, necessario: 50 };
     },
     recompensa: { prata: 500, madeira: 300, pedra: 300 },
@@ -115,7 +115,7 @@ export const POOL_MISSOES_DIARIAS: MissaoDiaria[] = [
     titulo: 'Fé Renovada',
     descricao: 'Tenha pelo menos 100 Favor Divino acumulado.',
     verificarProgresso: (estado) => ({
-      atual: Math.floor(estado.recursos.favor),
+      atual: Math.floor(estado.recursos.favor || 0),
       necessario: 100
     }),
     recompensa: { favor: 50 },
@@ -126,7 +126,7 @@ export const POOL_MISSOES_DIARIAS: MissaoDiaria[] = [
     titulo: 'Devoção Total',
     descricao: 'Tenha um Deus selecionado e pelo menos 200 Favor.',
     verificarProgresso: (estado) => ({
-      atual: estado.deusAtual ? Math.floor(estado.recursos.favor) : 0,
+      atual: estado.deusAtual ? Math.floor(estado.recursos.favor || 0) : 0,
       necessario: 200
     }),
     recompensa: { favor: 80, prata: 200 },
@@ -152,7 +152,7 @@ export const POOL_MISSOES_DIARIAS: MissaoDiaria[] = [
     titulo: 'Negociador Nato',
     descricao: 'Alcance Mercado Nível 5.',
     verificarProgresso: (estado) => ({
-      atual: estado.edificios['market'] || 0,
+      atual: estado.edificios?.mercado || 0,
       necessario: 5
     }),
     recompensa: { prata: 300, madeira: 300, pedra: 300 },

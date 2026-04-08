@@ -475,19 +475,19 @@ body {
 
 /* Positions aligned with the background image */
 /* Positions aligned with the Granpolis background image */
-#slot-senate { top: 34%; left: 47.5%; }
-#slot-timber { top: 72%; left: 18.5%; }
-#slot-quarry { top: 82%; left: 42%; }
-#slot-silver { top: 96.5%; left: 91.5%; }
-#slot-farm { top: 48%; left: 16.5%; }
-#slot-warehouse { top: 19%; left: 77.5%; }
-#slot-barracks { top: 76%; left: 82.5%; }
-#slot-temple { top: 30%; left: 38%; }
-#slot-market { top: 54%; left: 56%; }
-#slot-harbor { top: 44%; left: 84%; }
-#slot-academy { top: 28%; left: 55%; }
-#slot-walls { top: 73%; left: 54%; }
-#slot-cave { top: 91%; left: 85%; }
+#slot-senado { top: 34%; left: 47.5%; }
+#slot-serraria { top: 72%; left: 18.5%; }
+#slot-pedreira { top: 82%; left: 42%; }
+#slot-mina-de-prata { top: 96.5%; left: 91.5%; }
+#slot-fazenda { top: 48%; left: 16.5%; }
+#slot-armazem { top: 19%; left: 77.5%; }
+#slot-quartel { top: 76%; left: 82.5%; }
+#slot-templo { top: 30%; left: 38%; }
+#slot-mercado { top: 54%; left: 56%; }
+#slot-porto { top: 44%; left: 84%; }
+#slot-academia { top: 28%; left: 55%; }
+#slot-muralha { top: 73%; left: 54%; }
+#slot-gruta { top: 91%; left: 85%; }
 
 /* MODAL */
 #modal-overlay {
@@ -523,7 +523,7 @@ body {
     overflow: hidden;
 }
 
-#modal-container.senate-wide {
+#modal-container.senado-wide {
     width: 1000px;
     background: #fdf5e6; /* Full Beige */
     border: 4px solid #6d4c41; /* Dark brown border */
@@ -542,7 +542,7 @@ body {
     align-items: center;
 }
 
-.senate-wide #modal-header {
+.senado-wide #modal-header {
     background: #eedcba;
 }
 
@@ -552,7 +552,7 @@ body {
     font-size: 1.5rem;
 }
 
-.senate-wide #modal-title {
+.senado-wide #modal-title {
     color: #3e2723; /* Dark brown for beige theme */
 }
 
@@ -564,20 +564,20 @@ body {
     cursor: pointer;
 }
 
-.senate-wide #close-modal {
+.senado-wide #close-modal {
     color: #3e2723;
 }
 
-.senate-wide #modal-body {
+.senado-wide #modal-body {
     color: #3e2723;
 }
 
-.senate-wide .building-card {
+.senado-wide .building-card {
     background: #fff8e1;
     border: 2px solid #6d4c41;
 }
 
-.senate-wide .building-card h4 {
+.senado-wide .building-card h4 {
     color: #3e2723;
 }
 
@@ -650,8 +650,8 @@ body {
     cursor: not-allowed;
 }
 
-/* SENATE TREE */
-#senate-tree {
+/* SENADO ARVORE */
+#senado-arvore {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -661,7 +661,7 @@ body {
     color: #3e2723;
 }
 
-.senate-root {
+.senado-raiz {
     z-index: 10;
 }
 
@@ -687,7 +687,7 @@ body {
 .tree-connector-main::before { left: 33%; }
 .tree-connector-main::after { right: 33%; }
 
-.senate-columns {
+.senado-colunas {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -695,7 +695,7 @@ body {
     padding: 0 20px;
 }
 
-.senate-column {
+.senado-coluna {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -710,7 +710,7 @@ body {
 }
 
 /* Card overrides for tree */
-#senate-tree .building-card {
+#senado-arvore .building-card {
     background: #fff8e1;
     border: 2px solid #6d4c41;
     padding: 8px;
@@ -723,38 +723,38 @@ body {
     z-index: 1;
 }
 
-#senate-tree .building-card:hover {
+#senado-arvore .building-card:hover {
     transform: translateY(-5px);
     z-index: 100;
 }
 
-#senate-tree .building-card-main {
+#senado-arvore .building-card-main {
     flex-direction: column;
     gap: 8px;
     text-align: center;
 }
 
-#senate-tree .building-image-container {
+#senado-arvore .building-image-container {
     width: 60px;
     height: 60px;
     border-width: 2px;
 }
 
-#senate-tree .building-card h4 {
+#senado-arvore .building-card h4 {
     color: #3e2723;
     font-size: 0.9rem;
     margin: 0;
 }
 
-#senate-tree .building-card p {
+#senado-arvore .building-card p {
     display: none; /* Hide description in tree to save space */
 }
 
-#senate-tree .costs {
+#senado-arvore .costs {
     font-size: 0.75rem;
 }
 
-#senate-tree .upgrade-btn {
+#senado-arvore .upgrade-btn {
     width: 100%;
     min-width: 0;
     padding: 6px;
@@ -764,11 +764,11 @@ body {
     border: 1px solid #3e2723;
 }
 
-#senate-tree .upgrade-btn:hover:not(:disabled) {
+#senado-arvore .upgrade-btn:hover:not(:disabled) {
     background: #8d6e63;
 }
 
-#senate-tree .upgrade-btn:disabled {
+#senado-arvore .upgrade-btn:disabled {
     background: #9e9e9e;
     color: #616161;
     border-color: #757575;
@@ -1314,15 +1314,14 @@ body {
     font-weight: bold;
 }
 
-/* ARMY PANEL */
-#army-panel {
+/* ARMY PANEL & SIDEBAR MENU CARDS */
+#army-panel, .sidebar-menu-card {
     position: relative;
     border: 1px solid var(--primary-gold);
     padding: 15px;
     border-radius: 8px;
-    width: 200px;
     box-shadow:
-        0 0 20px rgba(0,0,0,0.6),
+        0 4px 20px rgba(0,0,0,0.6),
         0 0 30px rgba(212, 175, 55, 0.05) inset;
     z-index: 500;
     overflow: hidden;
@@ -1334,10 +1333,31 @@ body {
         rgba(14, 11, 3, 0.96) 60%,
         rgba(22, 16, 4, 0.97) 100%
     );
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+#army-panel {
+    width: 200px;
+}
+
+.sidebar-menu-card {
+    width: 240px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 15px;
+    border: 2px solid var(--primary-gold);
+}
+
+.sidebar-menu-card:hover {
+    transform: translateX(10px) scale(1.02);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.2);
+    filter: brightness(1.2);
 }
 
 /* Faixa topo dourada */
-#army-panel::before {
+#army-panel::before, .sidebar-menu-card::before {
     content: '';
     position: absolute;
     top: 0;
@@ -1353,10 +1373,11 @@ body {
         transparent 100%
     );
     pointer-events: none;
+    z-index: 2;
 }
 
 /* Padrão meandro grego (SVG inline) */
-#army-panel::after {
+#army-panel::after, .sidebar-menu-card::after {
     content: '';
     position: absolute;
     inset: 0;
@@ -1367,7 +1388,7 @@ body {
 }
 
 /* Filhos acima dos pseudo-elementos */
-#army-panel > * {
+#army-panel > *, .sidebar-menu-card > * {
     position: relative;
     z-index: 1;
 }
@@ -1383,6 +1404,31 @@ body {
     text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
 }
 
+.sidebar-menu-icon {
+    font-size: 2.2rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+    transition: transform 0.3s ease;
+}
+
+.sidebar-menu-card:hover .sidebar-menu-icon {
+    transform: rotate(-10deg) scale(1.1);
+}
+
+.sidebar-menu-content .title {
+    font-weight: bold;
+    font-family: var(--font-heading);
+    color: var(--primary-gold);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.sidebar-menu-content .subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    font-family: var(--font-inter);
+}
 
 .army-grid {
     display: grid;
@@ -1540,7 +1586,7 @@ body {
     transition: box-shadow 0.3s;
 }
 
-/* Smooth resource bar fill in warehouse */
+/* Smooth resource bar fill in armazem */
 .arm-bar-fill {
     transition: width 1s ease !important;
 }
@@ -1555,12 +1601,12 @@ body {
     50% { box-shadow: 0 0 15px rgba(118, 199, 192, 0.6); }
 }
 
-/* Building card hover lift in senate tree */
-#senate-tree .building-card {
+/* Building card hover lift in senado tree */
+#senado-arvore .building-card {
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-#senate-tree .building-card:hover {
+#senado-arvore .building-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.25);
 }

@@ -22,6 +22,14 @@ interface FilaConstrucaoProps {
 export const FilaConstrucao = memo(function FilaConstrucao({ fila, agora, aoCancelar }: FilaConstrucaoProps) {
   const itens: FilaProducaoItem[] = fila.map((item) => {
     const edificio = EDIFICIOS[item.edificio];
+    if (!edificio) {
+      return {
+        name: 'Edifício Desconhecido',
+        content: <div>?</div>,
+        inicioTempo: item.inicioTempo,
+        fimTempo: item.fimTempo,
+      };
+    }
     return {
       name: edificio.nome,
       content: (

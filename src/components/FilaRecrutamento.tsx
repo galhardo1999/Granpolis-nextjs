@@ -22,6 +22,14 @@ interface FilaRecrutamentoProps {
 export const FilaRecrutamento = memo(function FilaRecrutamento({ fila, agora, aoCancelar }: FilaRecrutamentoProps) {
   const itens: FilaProducaoItem[] = fila.map((item) => {
     const unidade = UNIDADES[item.unidade];
+    if (!unidade) {
+      return {
+        name: 'Unidade Desconhecida',
+        content: <div className="q-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>?</div>,
+        inicioTempo: item.inicioTempo,
+        fimTempo: item.fimTempo,
+      };
+    }
     return {
       name: unidade.nome,
       content: (

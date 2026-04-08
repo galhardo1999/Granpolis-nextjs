@@ -100,31 +100,31 @@ const ESTADO_INICIAL: EstadoJogo = {
   },
   deusAtual: null,
   edificios: {
-    'senate': 1,
-    'timber-camp': 0,
-    'quarry': 0,
-    'silver-mine': 0,
-    'farm': 0,
-    'warehouse': 0,
-    'barracks': 0,
-    'temple': 0,
-    'market': 0,
-    'harbor': 0,
-    'academy': 0,
-    'walls': 0,
-    'cave': 0
+    'senado': 1,
+    'serraria': 0,
+    'pedreira': 0,
+    'mina-de-prata': 0,
+    'fazenda': 0,
+    'armazem': 0,
+    'quartel': 0,
+    'templo': 0,
+    'mercado': 0,
+    'porto': 0,
+    'academia': 0,
+    'muralha': 0,
+    'gruta': 0
   },
   unidades: {
-    'swordsman': 0,
-    'slinger': 0,
-    'archer': 0,
-    'hoplite': 0,
-    'horseman': 0,
-    'chariot': 0,
-    'catapult': 0,
-    'bireme': 0,
-    'transport-ship': 0,
-    'trireme': 0,
+    'espadachim': 0,
+    'fundeiro': 0,
+    'arqueiro': 0,
+    'hoplita': 0,
+    'cavaleiro': 0,
+    'carruagem': 0,
+    'catapulta': 0,
+    'birreme': 0,
+    'navio-de-transporte': 0,
+    'trirreme': 0,
   },
   pesquisasConcluidas: [],
   missoesColetadas: [],
@@ -165,10 +165,10 @@ function calcularProtecaoGruta(nivelGruta: number): number {
 
 function rendaDoEdificio(edificios: Record<string, number>): { madeira: number; pedra: number; prata: number; populacao: number } {
   return {
-    madeira: calcularProducaoRecurso(edificios['timber-camp'] || 0, EDIFICIOS['timber-camp'].multiplicadorProducao),
-    pedra: calcularProducaoRecurso(edificios['quarry'] || 0, EDIFICIOS['quarry'].multiplicadorProducao),
-    prata: calcularProducaoRecurso(edificios['silver-mine'] || 0, EDIFICIOS['silver-mine'].multiplicadorProducao),
-    populacao: (edificios['farm'] || 0) > 0 ? 1 + Math.floor((edificios['farm'] || 0) / 10) : 0
+    madeira: calcularProducaoRecurso(edificios['serraria'] || 0, EDIFICIOS['serraria'].multiplicadorProducao),
+    pedra: calcularProducaoRecurso(edificios['pedreira'] || 0, EDIFICIOS['pedreira'].multiplicadorProducao),
+    prata: calcularProducaoRecurso(edificios['mina-de-prata'] || 0, EDIFICIOS['mina-de-prata'].multiplicadorProducao),
+    populacao: (edificios['fazenda'] || 0) > 0 ? 1 + Math.floor((edificios['fazenda'] || 0) / 10) : 0
   };
 }
 
@@ -258,7 +258,7 @@ export const useGameStore = create<GameStore>()(
         const edificio = EDIFICIOS[idEdificio];
         const temForja = s.pesquisasConcluidas.includes('forja');
         const bonusForja = temForja ? 0.85 : 1;
-        const bonusSenado = Math.max(0.1, 1 - (s.edificios['senate'] * 0.05));
+        const bonusSenado = Math.max(0.1, 1 - (s.edificios['senado'] * 0.05));
         const tempo = edificio.tempoBase * Math.pow(edificio.multiplicadorTempo, proximoNivel);
         return (tempo * bonusSenado * bonusForja) / TEMPO_CONSTRUCAO_EDIFICIOS;
       },
@@ -318,7 +318,7 @@ export const useGameStore = create<GameStore>()(
           return { sucesso: true };
         }
 
-        if (s.recursos.populacao < custoPop) return { sucesso: false, motivo: 'População insuficiente (Melhore a Quinta)' };
+        if (s.recursos.populacao < custoPop) return { sucesso: false, motivo: 'População insuficiente (Melhore a Fazenda)' };
         return { sucesso: false, motivo: 'Recursos insuficientes' };
       },
 
@@ -385,8 +385,8 @@ export const useGameStore = create<GameStore>()(
         const tempoBase = unidade.tempoBase * quantidade;
 
         // Navais usam nível do porto
-        const isNaval = ['bireme', 'transport-ship', 'trireme'].includes(idUnidade);
-        const nivelEdificio = isNaval ? (s.edificios['harbor'] || 0) : (s.edificios['barracks'] || 0);
+        const isNaval = ['birreme', 'navio-de-transporte', 'trirreme'].includes(idUnidade);
+        const nivelEdificio = isNaval ? (s.edificios['porto'] || 0) : (s.edificios['quartel'] || 0);
         const reducao = Math.pow(0.95, nivelEdificio);
 
         const temEstrategia = s.pesquisasConcluidas.includes('estrategia');
@@ -401,11 +401,11 @@ export const useGameStore = create<GameStore>()(
         const unidade = UNIDADES[idUnidade];
 
         // Navais requerem pesquisa de navegação
-        const isNaval = ['bireme', 'transport-ship', 'trireme'].includes(idUnidade);
+        const isNaval = ['birreme', 'navio-de-transporte', 'trirreme'].includes(idUnidade);
         if (isNaval && !s.pesquisasConcluidas.includes('navegacao')) {
           return { sucesso: false, motivo: 'Requer pesquisa: Navegação Avançada' };
         }
-        if (isNaval && (s.edificios['harbor'] || 0) === 0) {
+        if (isNaval && (s.edificios['porto'] || 0) === 0) {
           return { sucesso: false, motivo: 'Requer Porto construído' };
         }
 
@@ -479,7 +479,7 @@ export const useGameStore = create<GameStore>()(
       pesquisar: (idPesquisa) => {
         const s = get();
         const pesquisa = PESQUISAS[idPesquisa];
-        const nivelAcademia = s.edificios['academy'] || 0;
+        const nivelAcademia = s.edificios['academia'] || 0;
 
         if (s.pesquisasConcluidas.includes(idPesquisa)) return { sucesso: false, motivo: 'Pesquisa já concluída' };
         if (nivelAcademia < pesquisa.requisitoAcademia) return { sucesso: false, motivo: `Requer Academia Nv. ${pesquisa.requisitoAcademia}` };
@@ -490,9 +490,9 @@ export const useGameStore = create<GameStore>()(
         clone.pesquisasConcluidas.push(idPesquisa);
 
         if (idPesquisa === 'ceramica') {
-          clone.recursos.recursosMaximos = calcularCapacidadeArmazem(clone.edificios['warehouse'], true);
+          clone.recursos.recursosMaximos = calcularCapacidadeArmazem(clone.edificios['armazem'], true);
         } else if (idPesquisa === 'arado') {
-          clone.recursos.populacaoMaxima = calcularPopulacaoMaximaPorFarm(clone.edificios['farm'], true);
+          clone.recursos.populacaoMaxima = calcularPopulacaoMaximaPorFarm(clone.edificios['fazenda'], true);
         }
 
         set({ recursos: clone.recursos, pesquisasConcluidas: clone.pesquisasConcluidas });
@@ -544,7 +544,7 @@ export const useGameStore = create<GameStore>()(
       // ─── PODERES DIVINOS ───────────────────────────────
       selecionarDeus: (idDeus) => {
         const s = get();
-        if ((s.edificios['temple'] || 0) < 1) return { sucesso: false, motivo: 'Construa o Templo Nv. 1 para venerar os deuses' };
+        if ((s.edificios['templo'] || 0) < 1) return { sucesso: false, motivo: 'Construa o Templo Nv. 1 para venerar os deuses' };
         set({ deusAtual: idDeus, recursos: { ...s.recursos, favor: 0 } });
         return { sucesso: true };
       },
@@ -570,7 +570,7 @@ export const useGameStore = create<GameStore>()(
         clone.poderesUsadosHoje[idPoder] = Date.now();
 
         switch (idPoder) {
-          case 'zeus-sign': clone.unidades['chariot'] = (clone.unidades['chariot'] || 0) + 1; break;
+          case 'zeus-sign': clone.unidades['carruagem'] = (clone.unidades['carruagem'] || 0) + 1; break;
           case 'zeus-bolt': clone.recursos.pedra = Math.min(clone.recursos.recursosMaximos, clone.recursos.pedra + 500); break;
           case 'poseidon-gift': clone.recursos.madeira = Math.min(clone.recursos.recursosMaximos, clone.recursos.madeira + 1000); break;
           case 'poseidon-call': clone.recursos.prata = Math.min(clone.recursos.recursosMaximos, clone.recursos.prata + 500); break;
@@ -581,9 +581,9 @@ export const useGameStore = create<GameStore>()(
             break;
           case 'hera-growth': clone.recursos.populacao += 10; break;
           case 'atena-wisdom': clone.recursos.prata = Math.min(clone.recursos.recursosMaximos, clone.recursos.prata + 300); break;
-          case 'atena-power': clone.unidades['hoplite'] = (clone.unidades['hoplite'] || 0) + 5; break;
+          case 'atena-power': clone.unidades['hoplita'] = (clone.unidades['hoplita'] || 0) + 5; break;
           case 'hades-treasures': clone.recursos.prata = Math.min(clone.recursos.recursosMaximos, clone.recursos.prata + 800); break;
-          case 'hades-return': clone.unidades['swordsman'] = (clone.unidades['swordsman'] || 0) + 5; break;
+          case 'hades-return': clone.unidades['espadachim'] = (clone.unidades['espadachim'] || 0) + 5; break;
         }
 
         set({ recursos: clone.recursos, unidades: clone.unidades, poderesUsadosHoje: clone.poderesUsadosHoje });
@@ -596,7 +596,7 @@ export const useGameStore = create<GameStore>()(
         if (de === para) return { sucesso: false, motivo: 'Não é possível trocar o mesmo recurso' };
         if (quantidade <= 0 || quantidade > s.recursos[de]) return { sucesso: false, motivo: 'Quantidade inválida' };
 
-        const nivelMercado = s.edificios['market'] || 0;
+        const nivelMercado = s.edificios['mercado'] || 0;
         if (nivelMercado === 0) return { sucesso: false, motivo: 'Construa o Mercado primeiro' };
 
         const bonusMercado = 1 + (nivelMercado * 0.02);
@@ -684,9 +684,9 @@ export const useGameStore = create<GameStore>()(
         clone.recursos.prata = Math.min(max, s0 + (renda.prata / 3600) * diferenca);
         clone.recursos.populacao = Math.min(popMax, pop0 + (renda.populacao / 3600) * diferenca);
 
-        const rendaFavor = calcularProducaoFavor(clone.deusAtual, clone.edificios['temple'] || 0);
+        const rendaFavor = calcularProducaoFavor(clone.deusAtual, clone.edificios['templo'] || 0);
         clone.recursos.favor = Math.min(clone.recursos.favorMaximo, f0 + (rendaFavor / 3600) * diferenca);
-        clone.recursos.prataNaGruta = calcularProtecaoGruta(clone.edificios['cave'] || 0);
+        clone.recursos.prataNaGruta = calcularProtecaoGruta(clone.edificios['gruta'] || 0);
 
         // Calcular ganhos reais deste tick (inteiros para animação)
         const ganhos = {
@@ -707,13 +707,13 @@ export const useGameStore = create<GameStore>()(
           clone.edificios[tarefa.edificio]++;
           eventos.push({ tipo: 'edificio', id: tarefa.edificio, nome: EDIFICIOS[tarefa.edificio].nome, nivel: tarefa.nivel });
 
-          if (tarefa.edificio === 'farm') {
-            clone.recursos.populacaoMaxima = calcularPopulacaoMaximaPorFarm(clone.edificios.farm, temArado);
+          if (tarefa.edificio === 'fazenda') {
+            clone.recursos.populacaoMaxima = calcularPopulacaoMaximaPorFarm(clone.edificios.fazenda, temArado);
             clone.recursos.populacao += 20;
-          } else if (tarefa.edificio === 'warehouse') {
-            clone.recursos.recursosMaximos = calcularCapacidadeArmazem(clone.edificios.warehouse, temCeramica);
-          } else if (tarefa.edificio === 'cave') {
-            clone.recursos.prataNaGruta = calcularProtecaoGruta(clone.edificios.cave);
+          } else if (tarefa.edificio === 'armazem') {
+            clone.recursos.recursosMaximos = calcularCapacidadeArmazem(clone.edificios.armazem, temCeramica);
+          } else if (tarefa.edificio === 'gruta') {
+            clone.recursos.prataNaGruta = calcularProtecaoGruta(clone.edificios.gruta);
           }
           filaAlterada = true;
         }

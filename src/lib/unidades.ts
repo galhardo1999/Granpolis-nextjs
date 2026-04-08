@@ -5,8 +5,8 @@
 
 export const UNIDADES = {
   // ─── TERRESTRES ────────────────────────────────────────
-  'swordsman': {
-    id: 'swordsman',
+  'espadachim': {
+    id: 'espadachim',
     nome: 'Espadachim',
     descricao: 'Especialistas em defesa contra armas de longo alcance.',
     custos: { madeira: 95, pedra: 0, prata: 85, populacao: 1 },
@@ -18,9 +18,9 @@ export const UNIDADES = {
     capacidadeTransporte: 15,
     tipo: 'terrestre' as const
   },
-  'slinger': {
-    id: 'slinger',
-    nome: 'Fundibulário',
+  'fundeiro': {
+    id: 'fundeiro',
+    nome: 'Fundeiro',
     descricao: 'Excelentes no ataque de longo alcance.',
     custos: { madeira: 55, pedra: 100, prata: 40, populacao: 1 },
     tempoBase: 25,
@@ -31,8 +31,8 @@ export const UNIDADES = {
     capacidadeTransporte: 20,
     tipo: 'terrestre' as const
   },
-  'archer': {
-    id: 'archer',
+  'arqueiro': {
+    id: 'arqueiro',
     nome: 'Arqueiro',
     descricao: 'Defesa eficaz contra tropas de combate corpo a corpo.',
     custos: { madeira: 120, pedra: 0, prata: 75, populacao: 1 },
@@ -44,8 +44,8 @@ export const UNIDADES = {
     capacidadeTransporte: 10,
     tipo: 'terrestre' as const
   },
-  'hoplite': {
-    id: 'hoplite',
+  'hoplita': {
+    id: 'hoplita',
     nome: 'Hoplita',
     descricao: 'Guerreiro grego clássico, bom tanto no ataque quanto na defesa.',
     custos: { madeira: 0, pedra: 75, prata: 150, populacao: 1 },
@@ -57,8 +57,8 @@ export const UNIDADES = {
     capacidadeTransporte: 20,
     tipo: 'terrestre' as const
   },
-  'horseman': {
-    id: 'horseman',
+  'cavaleiro': {
+    id: 'cavaleiro',
     nome: 'Cavaleiro',
     descricao: 'Unidade rápida e poderosa no ataque.',
     custos: { madeira: 240, pedra: 120, prata: 360, populacao: 3 },
@@ -70,9 +70,9 @@ export const UNIDADES = {
     capacidadeTransporte: 60,
     tipo: 'terrestre' as const
   },
-  'chariot': {
-    id: 'chariot',
-    nome: 'Biga',
+  'carruagem': {
+    id: 'carruagem',
+    nome: 'Carruagem',
     descricao: 'Poderosa unidade de elite, rápida e mortal.',
     custos: { madeira: 200, pedra: 440, prata: 320, populacao: 4 },
     tempoBase: 80,
@@ -83,8 +83,8 @@ export const UNIDADES = {
     capacidadeTransporte: 100,
     tipo: 'terrestre' as const
   },
-  'catapult': {
-    id: 'catapult',
+  'catapulta': {
+    id: 'catapulta',
     nome: 'Catapulta',
     descricao: 'Máquina de guerra usada para destruir as muralhas inimigas.',
     custos: { madeira: 700, pedra: 700, prata: 700, populacao: 15 },
@@ -98,8 +98,8 @@ export const UNIDADES = {
   },
 
   // ─── NAVAIS (FEAT-06) ─────────────────────────────────
-  'bireme': {
-    id: 'bireme',
+  'birreme': {
+    id: 'birreme',
     nome: 'Birreme',
     descricao: 'Navio de guerra ágil, excelente em ataque naval. Requer: Navegação.',
     custos: { madeira: 250, pedra: 150, prata: 200, populacao: 8 },
@@ -111,8 +111,8 @@ export const UNIDADES = {
     capacidadeTransporte: 0,
     tipo: 'naval' as const
   },
-  'transport-ship': {
-    id: 'transport-ship',
+  'navio-de-transporte': {
+    id: 'navio-de-transporte',
     nome: 'Navio de Transporte',
     descricao: 'Transporta até 26 unidades de tropas terrestres para ataques marítimos.',
     custos: { madeira: 500, pedra: 250, prata: 200, populacao: 5 },
@@ -124,8 +124,8 @@ export const UNIDADES = {
     capacidadeTransporte: 26,
     tipo: 'naval' as const
   },
-  'trireme': {
-    id: 'trireme',
+  'trirreme': {
+    id: 'trirreme',
     nome: 'Trirreme',
     descricao: 'O navio de guerra supremo. Defesa naval formidável e poder de ataque.',
     custos: { madeira: 700, pedra: 300, prata: 700, populacao: 16 },

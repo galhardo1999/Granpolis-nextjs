@@ -59,11 +59,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ erro: 'Unidade não encontrada' }, { status: 400 });
   }
 
-  const isNaval = ['bireme', 'transport-ship', 'trireme'].includes(idUnidade);
+  const isNaval = ['birreme', 'navio-de-transporte', 'trirreme'].includes(idUnidade);
   if (isNaval && !pesquisas.includes('navegacao')) {
     return NextResponse.json({ erro: 'Requer pesquisa: Navegação Avançada' }, { status: 400 });
   }
-  if (isNaval && (edificios['harbor'] || 0) === 0) {
+  if (isNaval && (edificios['porto'] || 0) === 0) {
     return NextResponse.json({ erro: 'Requer Porto construído' }, { status: 400 });
   }
 
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 3. Calcular tempo de recrutamento
-  const nivelEdificio = isNaval ? (edificios['harbor'] || 0) : (edificios['barracks'] || 0);
+  const nivelEdificio = isNaval ? (edificios['porto'] || 0) : (edificios['quartel'] || 0);
   const reducao = Math.pow(0.95, nivelEdificio);
   const temEstrategia = pesquisas.includes('estrategia');
   const reducaoEstrategia = temEstrategia ? 0.80 : 1;

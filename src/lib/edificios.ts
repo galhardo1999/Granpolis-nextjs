@@ -1,6 +1,6 @@
 export const EDIFICIOS = {
-  'senate': {
-    id: 'senate',
+  'senado': {
+    id: 'senado',
     nome: 'Senado',
     descricao: 'O centro político da sua cidade. Aumenta a velocidade de construção.',
     imagem: '/edificios/senado.png',
@@ -11,9 +11,9 @@ export const EDIFICIOS = {
     custoPop: 2,
     nivelMaximo: 15
   },
-  'timber-camp': {
-    id: 'timber-camp',
-    nome: 'Bosque',
+  'serraria': {
+    id: 'serraria',
+    nome: 'Serraria',
     descricao: 'Produz madeira bruta para construções e tropas.',
     imagem: '/edificios/madeireira.png',
     custoBase: { madeira: 50, pedra: 30, prata: 20 },
@@ -24,8 +24,8 @@ export const EDIFICIOS = {
     custoPop: 1,
     nivelMaximo: 40
   },
-  'quarry': {
-    id: 'quarry',
+  'pedreira': {
+    id: 'pedreira',
     nome: 'Pedreira',
     descricao: 'Fornece pedras para muralhas e edifícios.',
     imagem: '/edificios/pedreira.png',
@@ -37,8 +37,8 @@ export const EDIFICIOS = {
     custoPop: 1,
     nivelMaximo: 40
   },
-  'silver-mine': {
-    id: 'silver-mine',
+  'mina-de-prata': {
+    id: 'mina-de-prata',
     nome: 'Mina de Prata',
     descricao: 'Extrai minério de prata para comércio e divindades.',
     imagem: '/edificios/mina_prata.png',
@@ -50,9 +50,9 @@ export const EDIFICIOS = {
     custoPop: 1,
     nivelMaximo: 40
   },
-  'farm': {
-    id: 'farm',
-    nome: 'Quinta',
+  'fazenda': {
+    id: 'fazenda',
+    nome: 'Fazenda',
     descricao: 'Fornece alimento para seus cidadãos e exército. Aumenta a população máxima.',
     imagem: '/edificios/fazenda.png',
     custoBase: { madeira: 40, pedra: 20, prata: 20 },
@@ -62,8 +62,8 @@ export const EDIFICIOS = {
     custoPop: 0,
     nivelMaximo: 45
   },
-  'warehouse': {
-    id: 'warehouse',
+  'armazem': {
+    id: 'armazem',
     nome: 'Armazém',
     descricao: 'Local onde as matérias-primas são armazenadas. Aumenta a capacidade de recursos.',
     imagem: '/edificios/armazem.png',
@@ -74,8 +74,8 @@ export const EDIFICIOS = {
     custoPop: 1,
     nivelMaximo: 35
   },
-  'barracks': {
-    id: 'barracks',
+  'quartel': {
+    id: 'quartel',
     nome: 'Quartel',
     descricao: 'No quartel, você pode recrutar tanto tropas regulares, como unidades míticas. Quanto maior o nível do quartel, mais rápido será treinado as suas tropas.',
     imagem: '/edificios/quartel.png',
@@ -85,10 +85,10 @@ export const EDIFICIOS = {
     tempoBase: 300,
     custoPop: 3,
     nivelMaximo: 30,
-    requisitos: { 'senate': 4, 'silver-mine': 1 }
+    requisitos: { 'senado': 4, 'mina-de-prata': 1 }
   },
-  'temple': {
-    id: 'temple',
+  'templo': {
+    id: 'templo',
     nome: 'Templo',
     descricao: 'Local de culto aos Deuses. Aumenta a produção de favores divinos.',
     imagem: '/edificios/templo.png',
@@ -98,10 +98,10 @@ export const EDIFICIOS = {
     tempoBase: 600,
     custoPop: 2,
     nivelMaximo: 30,
-    requisitos: { 'senate': 15, 'quarry': 12, 'walls': 6 }
+    requisitos: { 'senado': 15, 'pedreira': 12, 'muralha': 6 }
   },
-  'market': {
-    id: 'market',
+  'mercado': {
+    id: 'mercado',
     nome: 'Mercado',
     descricao: 'Permite trocar recursos com outras cidades ou aldeias bárbaras.',
     imagem: '/edificios/mercado.png',
@@ -111,10 +111,10 @@ export const EDIFICIOS = {
     tempoBase: 240,
     custoPop: 2,
     nivelMaximo: 30,
-    requisitos: { 'senate': 5, 'warehouse': 5 }
+    requisitos: { 'senado': 5, 'armazem': 5 }
   },
-  'harbor': {
-    id: 'harbor',
+  'porto': {
+    id: 'porto',
     nome: 'Porto',
     descricao: 'Permite a construção de navios e barcos de transporte.',
     imagem: '/edificios/porto.png',
@@ -124,10 +124,10 @@ export const EDIFICIOS = {
     tempoBase: 480,
     custoPop: 5,
     nivelMaximo: 30,
-    requisitos: { 'senate': 14, 'timber-camp': 15, 'quarry': 10, 'silver-mine': 10 }
+    requisitos: { 'senado': 14, 'serraria': 15, 'pedreira': 10, 'mina-de-prata': 10 }
   },
-  'academy': {
-    id: 'academy',
+  'academia': {
+    id: 'academia',
     nome: 'Academia',
     descricao: 'Onde novas tecnologias e unidades de elite são pesquisadas.',
     imagem: '/edificios/senado.png',
@@ -137,10 +137,10 @@ export const EDIFICIOS = {
     tempoBase: 900,
     custoPop: 3,
     nivelMaximo: 36,
-    requisitos: { 'senate': 8, 'farm': 6, 'barracks': 5 }
+    requisitos: { 'senado': 8, 'fazenda': 6, 'quartel': 5 }
   },
-  'walls': {
-    id: 'walls',
+  'muralha': {
+    id: 'muralha',
     nome: 'Muralha',
     descricao: 'Protege a cidade contra-ataques terrestres.',
     imagem: '/edificios/pedreira.png',
@@ -150,10 +150,10 @@ export const EDIFICIOS = {
     tempoBase: 60,
     custoPop: 0,
     nivelMaximo: 25,
-    requisitos: { 'senate': 5, 'quarry': 3 }
+    requisitos: { 'senado': 5, 'pedreira': 3 }
   },
-  'cave': {
-    id: 'cave',
+  'gruta': {
+    id: 'gruta',
     nome: 'Gruta',
     descricao: 'Permite armazenar prata para espionagem e proteção contra espiões.',
     imagem: '/edificios/mina_prata.png',
@@ -163,7 +163,7 @@ export const EDIFICIOS = {
     tempoBase: 180,
     custoPop: 1,
     nivelMaximo: 10,
-    requisitos: { 'senate': 10, 'warehouse': 4, 'market': 4 }
+    requisitos: { 'senado': 10, 'armazem': 4, 'mercado': 4 }
   }
 } as const;
 
