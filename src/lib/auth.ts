@@ -357,6 +357,11 @@ export function recalcularEstadoServidor(cidade: DadosCidade): DadosCidade {
   const filaRecrutamento = (cidade.filaRecrutamento as ItemFilaRecrutamentoServidor[]).map(i => ({ ...i }));
 
   // ── 1. Processar fila de construção ────────────────────────
+  const nivelFarmAntigo = cidade.edificios['fazenda'] || 0;
+  const temArado = cidade.pesquisasConcluidas.includes('arado');
+  const popMaxAntigoBase = nivelFarmAntigo > 0 ? (100 + (nivelFarmAntigo - 1) * 20) : 100;
+  const popMaxAntigoTotal = temArado ? Math.floor(popMaxAntigoBase * 1.10) : popMaxAntigoBase;
+
   // Para cada item cujo fimTempo já passou, aplica o level-up
   while (fila.length > 0 && agora >= fila[0].fimTempo) {
     const tarefa = fila.shift()!;
@@ -365,7 +370,6 @@ export function recalcularEstadoServidor(cidade: DadosCidade): DadosCidade {
 
   // ── 2. Recalcular capacidades derivadas dos novos níveis ───
   const temCeramica = cidade.pesquisasConcluidas.includes('ceramica');
-  const temArado = cidade.pesquisasConcluidas.includes('arado');
   const nivelWarehouse = edificios['armazem'] || 0;
   const nivelFarm = edificios['fazenda'] || 0;
 
@@ -377,6 +381,11 @@ export function recalcularEstadoServidor(cidade: DadosCidade): DadosCidade {
     cidade.populacaoMaxima,
     temArado ? Math.floor(popMaxFarm * 1.10) : popMaxFarm
   );
+
+  let populacaoExtra = 0;
+  if (popMax > popMaxAntigoTotal) {
+    populacaoExtra = popMax - popMaxAntigoTotal;
+  }
 
   // ── 3. Processar fila de recrutamento ──────────────────────
   // Cada tropa tem um tempo fixo; processa unidade por unidade
@@ -423,11 +432,11 @@ export function recalcularEstadoServidor(cidade: DadosCidade): DadosCidade {
     filaRecrutamento,
     populacaoMaxima: popMax,
     recursosMaximos: recursosMax,
-    madeira: Math.min(recursosMax, Math.floor(cidade.madeira + (madeiraPorHora / 3600) * deltaSegundos)),
-    pedra: Math.min(recursosMax, Math.floor(cidade.pedra + (pedraPorHora / 3600) * deltaSegundos)),
-    prata: Math.min(recursosMax, Math.floor(cidade.prata + (prataPorHora / 3600) * deltaSegundos)),
-    populacao: Math.min(popMax, Math.floor(cidade.populacao + (1 / 3600) * deltaSegundos)),
-    favor: Math.min(cidade.favorMaximo, Math.floor(cidade.favor + (favorPorHora / 3600) * deltaSegundos)),
+    madeira: Math.min(recursosMax, cidade.madeira + (madeiraPorHora / 3600) * deltaSegundos),
+    pedra: Math.min(recursosMax, cidade.pedra + (pedraPorHora / 3600) * deltaSegundos),
+    prata: Math.min(recursosMax, cidade.prata + (prataPorHora / 3600) * deltaSegundos),
+    populacao: Math.min(popMax, cidade.populacao + populacaoExtra),
+    favor: Math.min(cidade.favorMaximo, cidade.favor + (favorPorHora / 3600) * deltaSegundos),
     ultimaAtualizacao: new Date(),
   };
 }

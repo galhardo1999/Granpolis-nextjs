@@ -7,14 +7,15 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { MISSOES } from '@/lib/missoes';
 import { useGameStore } from '@/store/gameStore';
+import { useMotorJogo } from '@/hooks/useMotorJogo';
 import { useToast } from './ToastProvider';
 
 export function ModalMissoes({ aberto, aoFechar }: { aberto: boolean; aoFechar: () => void }) {
   const { mostrarToast } = useToast();
+  const { coletarRecompensaMissao } = useMotorJogo();
   const edificios = useGameStore(s => s.edificios);
   const unidades = useGameStore(s => s.unidades);
   const missoesColetadas = useGameStore(s => s.missoesColetadas);
-  const coletarRecompensaMissao = useGameStore(s => s.coletarRecompensaMissao);
   const estadoCompleto = useGameStore(s => s);
 
   // Estado das missões diárias
@@ -100,8 +101,8 @@ export function ModalMissoes({ aberto, aoFechar }: { aberto: boolean; aoFechar: 
     );
   };
 
-  const handleColetar = (id: string, recom: any) => {
-    const res = coletarRecompensaMissao(id, recom);
+  const handleColetar = async (id: string, recom: any) => {
+    const res = await coletarRecompensaMissao(id, recom);
     if (res.sucesso) {
       mostrarToast('Recompensa coletada com sucesso!', 'sucesso');
       if (typeof window !== 'undefined') {

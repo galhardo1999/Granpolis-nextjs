@@ -168,7 +168,7 @@ function rendaDoEdificio(edificios: Record<string, number>): { madeira: number; 
     madeira: calcularProducaoRecurso(edificios['serraria'] || 0, EDIFICIOS['serraria'].multiplicadorProducao),
     pedra: calcularProducaoRecurso(edificios['pedreira'] || 0, EDIFICIOS['pedreira'].multiplicadorProducao),
     prata: calcularProducaoRecurso(edificios['mina-de-prata'] || 0, EDIFICIOS['mina-de-prata'].multiplicadorProducao),
-    populacao: (edificios['fazenda'] || 0) > 0 ? 1 + Math.floor((edificios['fazenda'] || 0) / 10) : 0
+    populacao: 0
   };
 }
 
@@ -686,8 +686,10 @@ export const useGameStore = create<GameStore>()(
           eventos.push({ tipo: 'edificio', id: tarefa.edificio, nome: EDIFICIOS[tarefa.edificio].nome, nivel: tarefa.nivel });
 
           if (tarefa.edificio === 'fazenda') {
-            clone.recursos.populacaoMaxima = calcularPopulacaoMaximaPorFarm(clone.edificios.fazenda, temArado);
-            clone.recursos.populacao += 20;
+            const popMaxAnti = calcularPopulacaoMaximaPorFarm(clone.edificios.fazenda - 1, temArado);
+            const popMaxNovo = calcularPopulacaoMaximaPorFarm(clone.edificios.fazenda, temArado);
+            clone.recursos.populacaoMaxima = popMaxNovo;
+            clone.recursos.populacao += (popMaxNovo - popMaxAnti);
           } else if (tarefa.edificio === 'armazem') {
             clone.recursos.recursosMaximos = calcularCapacidadeArmazem(clone.edificios.armazem, temCeramica);
           } else if (tarefa.edificio === 'gruta') {

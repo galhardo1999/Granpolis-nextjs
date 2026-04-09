@@ -118,7 +118,7 @@ export const BarraSuperior = memo(function BarraSuperior({
           <span className={`value ${recursos.populacao <= 0 ? 'empty' : ''}`}>
             {Math.floor(recursos.populacao)} / {recursos.populacaoMaxima}
           </span>
-          <span className="income">+{Math.floor(renda.populacao)}/h</span>
+
           {floatingEffects.filter(ef => ef.type === 'populacao').map(ef => (
             <span key={ef.id} className="floating-reward">+{ef.amount}</span>
           ))}

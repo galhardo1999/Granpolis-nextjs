@@ -145,13 +145,13 @@ model Cidade {
   poderesUsadosHoje Json   @default("{}")
 
   // Recursos
-  madeira         Int      @default(250)
-  pedra           Int      @default(250)
-  prata           Int      @default(250)
-  populacao       Int      @default(100)
+  madeira         Float    @default(250)
+  pedra           Float    @default(250)
+  prata           Float    @default(250)
+  populacao       Float    @default(100)
   populacaoMaxima Int      @default(100)
   recursosMaximos Int      @default(300)
-  favor           Int      @default(0)
+  favor           Float    @default(0)
   favorMaximo     Int      @default(500)
   prataNaGruta    Int      @default(0)
 

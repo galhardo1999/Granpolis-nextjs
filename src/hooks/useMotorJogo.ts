@@ -82,13 +82,14 @@ export function useMotorJogo() {
   const calcularTempoRecrutamento = useGameStore((s) => s.calcularTempoRecrutamento);
   const definirNomeCidade = useGameStore((s) => s.definirNomeCidade);
   const lancarPoder = useGameStore((s) => s.lancarPoder);
-  const pesquisar = useGameStore((s) => s.pesquisar);
+  const pesquisarStore = useGameStore((s) => s.pesquisar);
   const temPesquisa = useGameStore((s) => s.temPesquisa);
   const atacarAldeiaBarbar = useGameStore((s) => s.atacarAldeiaBarbar);
   const trocarRecurso = useGameStore((s) => s.trocarRecurso);
   const resetarJogoStore = useGameStore((s) => s.resetarJogo);
   const tick = useGameStore((s) => s.tick);
   const sincronizarEstado = useGameStore((s) => s.sincronizarEstado);
+  const coletarRecompensaMissaoStore = useGameStore((s) => s.coletarRecompensaMissao);
 
   // Ações otimistas
   const melhorarEdificioStore = useGameStore((s) => s.melhorarEdificio);
@@ -229,6 +230,57 @@ export function useMotorJogo() {
       }).catch(() => {});
   }, [aplicarEstadoServidor, cancelarRecrutamentoStore]);
 
+  // ─── SERVER-FIRST: Pesquisar ───────────────────────────
+  const pesquisar = useCallback(async (
+    idPesquisa: IdPesquisa
+  ): Promise<{ sucesso: boolean; motivo?: string }> => {
+    // 1. Atualização otimista (instantânea)
+    const resultado = pesquisarStore(idPesquisa);
+    if (!resultado.sucesso) return resultado;
+
+    // 2. Persistir no servidor em background
+    fetch('/api/game/pesquisar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pesquisa: idPesquisa }),
+    })
+      .then(res => res.json())
+      .then(dados => {
+        if (dados.sucesso && dados.estado) aplicarEstadoServidor(dados.estado);
+        // Se o servidor recusar, reverter seria complexo — a próxima sync corrige
+      }).catch(() => {});
+
+    return { sucesso: true };
+  }, [aplicarEstadoServidor, pesquisarStore]);
+
+  // ─── SERVER-FIRST: Coletar Missão ─────────────────────
+  const coletarRecompensaMissao = useCallback(async (
+    idMissao: string,
+    recompensa: { madeira?: number; pedra?: number; prata?: number; favor?: number }
+  ): Promise<{ sucesso: boolean; motivo?: string }> => {
+    // 1. Primeiro persistir no servidor (missão é crítica — não pode resgatar 2x)
+    try {
+      const res = await fetch('/api/game/missoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ missaoId: idMissao }),
+      });
+      const dados = await res.json();
+
+      if (!res.ok || !dados.sucesso) {
+        return { sucesso: false, motivo: dados.erro || 'Erro ao coletar missão' };
+      }
+
+      // 2. Após confirmar no servidor, atualizar o Zustand com estado do banco
+      if (dados.estado) aplicarEstadoServidor(dados.estado);
+      return { sucesso: true };
+    } catch {
+      // Fallback otimista em caso de erro de rede
+      const res = coletarRecompensaMissaoStore(idMissao, recompensa);
+      return res;
+    }
+  }, [aplicarEstadoServidor, coletarRecompensaMissaoStore]);
+
   // ─── Wrappers para compatibilidade retroativa ─────────
   const resetarJogo = useCallback(() => {
     resetarJogoStore();
@@ -263,6 +315,7 @@ export function useMotorJogo() {
     temPesquisa,
     atacarAldeiaBarbar,
     trocarRecurso,
-    resetarJogoStore
+    resetarJogoStore,
+    coletarRecompensaMissao,
   };
 }

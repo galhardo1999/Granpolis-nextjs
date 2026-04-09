@@ -8,7 +8,7 @@ interface ModalEdificioAcademiaProps {
   nivelAcademia: number;
   prata: number;
   pesquisasConcluidas: IdPesquisa[];
-  aoPesquisar: (id: IdPesquisa) => { sucesso: boolean; motivo?: string };
+  aoPesquisar: (id: IdPesquisa) => Promise<{ sucesso: boolean; motivo?: string }> | { sucesso: boolean; motivo?: string };
   aomostrarToast?: (msg: React.ReactNode, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: React.ReactNode) => void;
 }
 
@@ -20,8 +20,8 @@ export function ModalEdificioAcademia({
   aomostrarToast
 }: ModalEdificioAcademiaProps) {
 
-  const handlePesquisar = (id: IdPesquisa) => {
-    const resultado = aoPesquisar(id);
+  const handlePesquisar = async (id: IdPesquisa) => {
+    const resultado = await aoPesquisar(id);
     if (resultado.sucesso) {
       const p = PESQUISAS[id];
       aomostrarToast?.(

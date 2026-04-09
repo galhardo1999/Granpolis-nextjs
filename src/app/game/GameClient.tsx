@@ -301,8 +301,7 @@ export function GameClient({
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/login');
-    router.refresh();
+    window.location.href = '/login';
   };
 
   let missoesProntas = 0;
@@ -370,7 +369,7 @@ export function GameClient({
               )}
             </div>
             {missoesProntas > 0 && (
-              <div style={{ position: 'absolute', top: '-8px', right: '-8px', background: '#e11d48', color: '#fff', fontSize: '0.75rem', fontWeight: 'bold', width: '24px', height: '24px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #fff', boxShadow: '0 2px 4px rgba(0,0,0,0.5)', zIndex: 10 }}>
+              <div className="notification-badge">
                 {missoesProntas}
               </div>
             )}
@@ -387,7 +386,7 @@ export function GameClient({
               )}
             </div>
             {mensagensNaoLidas > 0 && (
-              <div style={{ position: 'absolute', top: '-8px', right: '-8px', background: '#e11d48', color: '#fff', fontSize: '0.7rem', fontWeight: 'bold', width: '22px', height: '22px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #fff', boxShadow: '0 2px 4px rgba(0,0,0,0.5)', zIndex: 10 }}>
+              <div className="notification-badge">
                 {mensagensNaoLidas}
               </div>
             )}
@@ -495,11 +494,20 @@ export function GameClient({
         textoBotaoConfirmar="Sim, resetar tudo"
         textoBotaoCancelar="Cancelar"
         tipo="perigo"
-        aoConfirmar={() => {
-          resetarJogoStore();
-          setModalResetAberto(false);
-          mostrarToast('🏛️ Polis reiniciada. Boa sorte!', 'info');
-          salvarNoServidor();
+        aoConfirmar={async () => {
+          mostrarToast('Resetando Polis... aguarde.', 'info');
+          try {
+            const res = await fetch('/api/game/reset', { method: 'POST' });
+            if (res.ok) {
+              setModalResetAberto(false);
+              resetarJogoStore();
+              handleLogout();
+            } else {
+              mostrarToast('Erro ao resetar. Tente novamente.', 'erro');
+            }
+          } catch {
+            mostrarToast('Erro de conexão ao resetar.', 'erro');
+          }
         }}
         aoCancelar={() => setModalResetAberto(false)}
       />

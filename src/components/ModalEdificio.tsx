@@ -65,7 +65,7 @@ interface ModalEdificioProps {
   filaRecrutamento: { unidade: IdUnidade; quantidade: number; inicioTempo: number; fimTempo: number }[];
   renda?: { madeira: number; pedra: number; prata: number };
   pesquisasConcluidas: IdPesquisa[];
-  aoPesquisar: (id: IdPesquisa) => { sucesso: boolean; motivo?: string };
+  aoPesquisar: (id: IdPesquisa) => Promise<{ sucesso: boolean; motivo?: string }> | { sucesso: boolean; motivo?: string };
   aoAtacarAldeiaBarbar: (idAldeia: string, exercito: Record<string, number>) => ResultadoBatalha | null;
   aoTrocarRecurso: (de: 'madeira' | 'pedra' | 'prata', para: 'madeira' | 'pedra' | 'prata', quantidade: number) => { sucesso: boolean; motivo?: string };
   agora: number;
