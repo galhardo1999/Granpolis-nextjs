@@ -34,10 +34,24 @@ const COOKIE_NAME = 'granpolis_session';
 const SALT_ROUNDS = 12;
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 dias
 
-// JWT secreta — fallback para desenvolvimento
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? 'dev-secret-do-not-use-in-production-change-me'
-);
+// JWT secreta — falha em produção se não estiver definida
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.JWT_SECRET;
+
+  if (!secret || secret === 'dev-secret-do-not-use-in-production-change-me') {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        'JWT_SECRET environment variable must be set in production with a secure random string (at least 256 bits).'
+      );
+    }
+    // Fallback apenas em desenvolvimento local
+    return new TextEncoder().encode('dev-secret-do-not-use-in-production-change-me');
+  }
+
+  return new TextEncoder().encode(secret);
+}
+
+const JWT_SECRET = getJwtSecret();
 
 // Schemas de validação
 export const loginSchema = z.object({
@@ -103,8 +117,8 @@ async function revogarSession(tokenHash: string): Promise<void> {
   await prisma.session.deleteMany({ where: { tokenHash } });
 }
 
-// TODO: Chamar periodicamente via cron job ou scheduler
-async function limparSessionsExpiradas(): Promise<void> {
+// Chamar periodicamente via cron job: /api/cron/cleanup-sessions
+export async function limparSessionsExpiradas(): Promise<void> {
   await prisma.session.deleteMany({
     where: { expiresAt: { lt: new Date() } },
   });
@@ -217,7 +231,11 @@ export async function loginUsuario(
   }
 
   const user = await prisma.user.findUnique({ where: { username: validacao.data.username } });
-  if (!user) return { sucesso: false, erro: 'Usuário ou senha incorretos' };
+  if (!user) {
+    // Fake work para prevenir timing attack de enumeração de usuários
+    await bcrypt.hash('dummy-password-for-timing', SALT_ROUNDS);
+    return { sucesso: false, erro: 'Usuário ou senha incorretos' };
+  }
 
   const senhaValida = await bcrypt.compare(senha, user.password);
   if (!senhaValida) return { sucesso: false, erro: 'Usuário ou senha incorretos' };
@@ -524,7 +542,7 @@ export async function autenticarOuCidade(
       maxAge: SESSION_MAX_AGE,
     });
     cookieStore.set('granpolis_jwt', jwt, {
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
@@ -533,5 +551,7 @@ export async function autenticarOuCidade(
     return { sucesso: true };
   }
 
-  return registrarUsuario('', username, senha, nomeCidade);
+  // Auto-registro: gerar email placeholder se não fornecido
+  const email = `${username}@auto-generated.local`;
+  return registrarUsuario(email, username, senha, nomeCidade);
 }

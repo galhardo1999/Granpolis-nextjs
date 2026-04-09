@@ -2,9 +2,22 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? 'dev-secret-do-not-use-in-production-change-me'
-);
+// JWT secreta — falha em produção se não estiver definida
+function getJwtSecret(): Uint8Array {
+  const secret = process.env.JWT_SECRET;
+
+  if (!secret || secret === 'dev-secret-do-not-use-in-production-change-me') {
+    if (process.env.NODE_ENV === 'production') {
+      // Em produção, retorna vazio — o middleware vai falhar safe
+      return new Uint8Array(0);
+    }
+    return new TextEncoder().encode('dev-secret-do-not-use-in-production-change-me');
+  }
+
+  return new TextEncoder().encode(secret);
+}
+
+const JWT_SECRET = getJwtSecret();
 
 const COOKIE_SESSION = 'granpolis_session';
 const COOKIE_JWT = 'granpolis_jwt';
@@ -15,7 +28,7 @@ export async function middleware(req: NextRequest) {
 
   // Validar JWT no middleware (stateless — sem banco)
   let isValido = false;
-  if (jwtCookie && sessionCookie) {
+  if (jwtCookie?.value && sessionCookie?.value && JWT_SECRET.length > 0) {
     try {
       await jwtVerify(jwtCookie.value, JWT_SECRET);
       isValido = true;
@@ -24,8 +37,14 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // Rotas protegidas
-  if (req.nextUrl.pathname.startsWith('/game')) {
+  // Rotas protegidas — incluindo API routes do jogo
+  const protectedPaths = ['/game', '/api/game'];
+  const isProtected = protectedPaths.some(path =>
+    req.nextUrl.pathname.startsWith(path) ||
+    req.nextUrl.pathname.startsWith('/api/game')
+  );
+
+  if (isProtected) {
     if (!isValido) {
       const loginUrl = new URL('/login', req.url);
       loginUrl.searchParams.set('redirect', req.nextUrl.pathname);
@@ -52,5 +71,11 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/registro', '/game/:path*'],
+  matcher: [
+    '/',
+    '/login',
+    '/registro',
+    '/game/:path*',
+    '/api/game/:path*',
+  ],
 };
