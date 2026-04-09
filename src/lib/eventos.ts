@@ -130,6 +130,10 @@ const EVENTOS_ALEATORIOS: EventoTipo[] = [
 
 let schedulerIniciado = false;
 
+/**
+ * Inicia o scheduler de eventos mundiais.
+ * TODO: Chamar no bootstrap do servidor (server.ts ou app/layout.tsx).
+ */
 export function iniciarSchedulerEventos() {
   if (schedulerIniciado) return;
   schedulerIniciado = true;

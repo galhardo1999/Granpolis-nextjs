@@ -532,7 +532,7 @@ export function GameClient({
                 cooldownsAldeias={estado.cooldownsAldeias}
                 agora={agora}
                 aoAtacar={atacarAldeiaBarbar}
-                aomostrarToast={mostrarToast}
+                aoMostrarToast={mostrarToast}
                 nomeCidade={estado.nomeCidade}
               />
             </div>

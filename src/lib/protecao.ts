@@ -5,8 +5,6 @@
 import { prisma } from './db';
 
 const PROTECAO_NOVO_PLAYER = 24 * 60 * 60 * 1000; // 24h
-const PROTECAO_APOS_DERROTA = 12 * 60 * 60 * 1000; // 12h
-const PROTECAO_SENNA_AUSENTE = 8 * 60 * 60 * 1000; // 8h offline → 4h shield
 
 export interface CheckProtecaoResult {
   protegido: boolean;
@@ -67,4 +65,4 @@ export async function verificarProtecaoAusencia(cidadeId: string, ultimoLogin: D
   return false;
 }
 
-export { PROTECAO_NOVO_PLAYER, PROTECAO_APOS_DERROTA };
+export { PROTECAO_NOVO_PLAYER };

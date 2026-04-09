@@ -68,6 +68,8 @@ model Ataque {
   @@index([atacanteCidadeId])
   @@index([tempoChegada])
   @@index([processado])
+  @@index([atacanteAliancaId])
+  @@index([defensorAliancaId])
 }
 
 model MensagemAlianca {
@@ -207,5 +209,6 @@ model Cidade {
   @@index([aliacaId])
   @@index([mapaX, mapaY])
   @@index([pontos])
+  @@index([nivelMaravilha])
   @@index([ilha])
 }

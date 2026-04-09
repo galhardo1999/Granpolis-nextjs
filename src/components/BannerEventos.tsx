@@ -16,7 +16,7 @@ interface BannerEventoProps {
   aoFechar: () => void;
 }
 
-function BannerEventoIndividual({ evento, aoFechar }: BannerEventoProps) {
+const BannerEventoIndividual = React.memo(function BannerEventoIndividual({ evento, aoFechar }: BannerEventoProps) {
   const [tempoRestante, setTempoRestante] = useState(evento.tempoRestanteMinutos);
 
   useEffect(() => {
@@ -131,9 +131,9 @@ function BannerEventoIndividual({ evento, aoFechar }: BannerEventoProps) {
       </button>
     </div>
   );
-}
+});
 
-export function BannerEventos() {
+export const BannerEventos = React.memo(function BannerEventos() {
   const [eventos, setEventos] = useState<EventoAtivo[]>([]);
   const [dispensados, setDispensados] = useState<Set<string>>(new Set());
 
@@ -202,4 +202,4 @@ export function BannerEventos() {
       `}</style>
     </div>
   );
-}
+});

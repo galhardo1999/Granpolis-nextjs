@@ -18,7 +18,7 @@ interface ModalConfirmacaoProps {
   aoCancelar: () => void;
 }
 
-export function ModalConfirmacao({
+export const ModalConfirmacao = React.memo(function ModalConfirmacao({
   aberto,
   titulo,
   mensagem,
@@ -113,4 +113,4 @@ export function ModalConfirmacao({
       `}</style>
     </div>
   );
-}
+});

@@ -9,28 +9,28 @@ interface ModalEdificioAcademiaProps {
   prata: number;
   pesquisasConcluidas: IdPesquisa[];
   aoPesquisar: (id: IdPesquisa) => Promise<{ sucesso: boolean; motivo?: string }> | { sucesso: boolean; motivo?: string };
-  aomostrarToast?: (msg: React.ReactNode, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: React.ReactNode) => void;
+  aoMostrarToast?: (msg: React.ReactNode, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: React.ReactNode) => void;
 }
 
-export function ModalEdificioAcademia({
+export const ModalEdificioAcademia = React.memo(function ModalEdificioAcademia({
   nivelAcademia,
   prata,
   pesquisasConcluidas,
   aoPesquisar,
-  aomostrarToast
+  aoMostrarToast
 }: ModalEdificioAcademiaProps) {
 
   const handlePesquisar = async (id: IdPesquisa) => {
     const resultado = await aoPesquisar(id);
     if (resultado.sucesso) {
       const p = PESQUISAS[id];
-      aomostrarToast?.(
-        `${p.nome} pesquisada com sucesso!`, 
+      aoMostrarToast?.(
+        `${p.nome} pesquisada com sucesso!`,
         'sucesso',
         <Image src={p.icone} alt={p.nome} width={24} height={24} style={{ borderRadius: '4px' }} />
       );
     } else {
-      aomostrarToast?.(resultado.motivo ?? 'Erro ao pesquisar', 'erro');
+      aoMostrarToast?.(resultado.motivo ?? 'Erro ao pesquisar', 'erro');
     }
   };
 
@@ -179,4 +179,4 @@ export function ModalEdificioAcademia({
       ))}
     </div>
   );
-}
+});

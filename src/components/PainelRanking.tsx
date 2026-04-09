@@ -30,7 +30,7 @@ interface Props {
   aoFechar: () => void;
 }
 
-export function PainelRanking({ aberto, aoFechar }: Props) {
+export const PainelRanking = React.memo(function PainelRanking({ aberto, aoFechar }: Props) {
   const [ranking, setRanking] = useState<JogadorRanking[]>([]);
   const [rankingAliancas, setRankingAliancas] = useState<AliancaRanking[]>([]);
   const [pagina, setPagina] = useState(0);
@@ -180,4 +180,4 @@ export function PainelRanking({ aberto, aoFechar }: Props) {
       </div>
     </div>
   );
-}
+});

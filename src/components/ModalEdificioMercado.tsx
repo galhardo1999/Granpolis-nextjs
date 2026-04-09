@@ -30,7 +30,7 @@ const NOME_RECURSO: Record<TipoRecurso, string> = {
 
 const TIPOS_RECURSO: TipoRecurso[] = ['madeira', 'pedra', 'prata'];
 
-export function ModalEdificioMercado({
+export const ModalEdificioMercado = React.memo(function ModalEdificioMercado({
   nivelMercado,
   recursos,
   aoTrocar,
@@ -250,4 +250,4 @@ export function ModalEdificioMercado({
       </div>
     </div>
   );
-}
+});

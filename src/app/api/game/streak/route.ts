@@ -4,14 +4,13 @@
 // ============================================================
 
 import { NextResponse } from 'next/server';
-import { getSession, getCidadeByUserId } from '@/lib/auth';
+import { NextRequest } from 'next/server';
+import { withAuth } from '@/lib/api-helpers';
+import { AuthSession, getCidadeByUserId } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { calcularProximoStreak, RECOMPENSAS_STREAK } from '@/lib/login-streak';
 
-export async function POST() {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ erro: 'Não autenticado' }, { status: 401 });
-
+export const POST = withAuth(async (_req: NextRequest, session: AuthSession) => {
   const cidadeDb = await getCidadeByUserId(session.userId);
   if (!cidadeDb) return NextResponse.json({ erro: 'Cidade não encontrada' }, { status: 404 });
 
@@ -50,4 +49,4 @@ export async function POST() {
     proximaRecompensa: RECOMPENSAS_STREAK[streak % 7],
     rewardsApplied,
   });
-}
+});

@@ -12,11 +12,11 @@ interface ModalCombateProps {
   cooldownsAldeias: Record<string, number>;
   agora: number;
   aoAtacar: (idAldeia: string, exercito: Record<string, number>) => ResultadoBatalha | null;
-  aomostrarToast?: (msg: React.ReactNode, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: React.ReactNode) => void;
+  aoMostrarToast?: (msg: React.ReactNode, tipo?: 'sucesso' | 'erro' | 'info' | 'aviso', icone?: React.ReactNode) => void;
   nomeCidade: string;
 }
 
-export function ModalCombate({ unidades, cooldownsAldeias, agora, aoAtacar, aomostrarToast, nomeCidade }: ModalCombateProps) {
+export const ModalCombate = React.memo(function ModalCombate({ unidades, cooldownsAldeias, agora, aoAtacar, aoMostrarToast, nomeCidade }: ModalCombateProps) {
   const [aldeiaSelecionada, setAldeiaSelecionada] = useState<string | null>(null);
   const [exercitoEnviado, setExercitoEnviado] = useState<Record<string, number>>({});
   const [ultimoRelatorio, setUltimoRelatorio] = useState<ResultadoBatalha | null>(null);
@@ -45,7 +45,7 @@ export function ModalCombate({ unidades, cooldownsAldeias, agora, aoAtacar, aomo
   const handleAtacar = () => {
     if (!aldeiaSelecionada) return;
     if (totalEnviado === 0) {
-      aomostrarToast?.('Selecione ao menos uma unidade!', 'aviso', '⚔️');
+      aoMostrarToast?.('Selecione ao menos uma unidade!', 'aviso', '⚔️');
       return;
     }
     setCarregando(true);
@@ -55,7 +55,7 @@ export function ModalCombate({ unidades, cooldownsAldeias, agora, aoAtacar, aomo
       setCarregando(false);
       if (resultado?.sucesso) {
         const { madeira, pedra, prata } = resultado.recursosRoubados;
-        aomostrarToast?.(
+        aoMostrarToast?.(
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             Vitória! Saqueados:
             <span style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>{madeira} <Image src="/icones/icone_madeira.png" width={16} height={16} alt="madeira" /></span>
@@ -65,7 +65,7 @@ export function ModalCombate({ unidades, cooldownsAldeias, agora, aoAtacar, aomo
           'sucesso', '⚔️'
         );
       } else {
-        aomostrarToast?.('Derrota! Suas tropas recuaram.', 'erro', '💀');
+        aoMostrarToast?.('Derrota! Suas tropas recuaram.', 'erro', '💀');
       }
       setExercitoEnviado({});
     }, 800);
@@ -519,4 +519,4 @@ export function ModalCombate({ unidades, cooldownsAldeias, agora, aoAtacar, aomo
 
     </div>
   );
-}
+});

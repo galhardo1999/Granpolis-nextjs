@@ -18,7 +18,7 @@ interface ModalEdificioRecrutamentoProps {
   tipoFiltro?: 'terrestre' | 'naval';
 }
 
-export function ModalEdificioRecrutamento({
+export const ModalEdificioRecrutamento = React.memo(function ModalEdificioRecrutamento({
   unidades,
   fila,
   aoRecrutar,
@@ -257,4 +257,4 @@ export function ModalEdificioRecrutamento({
       </div>
     </div>
   );
-}
+});

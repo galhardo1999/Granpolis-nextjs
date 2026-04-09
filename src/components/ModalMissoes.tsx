@@ -10,7 +10,7 @@ import { useGameStore } from '@/store/gameStore';
 import { useMotorJogo } from '@/hooks/useMotorJogo';
 import { useToast } from './ToastProvider';
 
-export function ModalMissoes({ aberto, aoFechar }: { aberto: boolean; aoFechar: () => void }) {
+export const ModalMissoes = React.memo(function ModalMissoes({ aberto, aoFechar }: { aberto: boolean; aoFechar: () => void }) {
   const { mostrarToast } = useToast();
   const { coletarRecompensaMissao } = useMotorJogo();
   const edificios = useGameStore(s => s.edificios);
@@ -279,4 +279,4 @@ export function ModalMissoes({ aberto, aoFechar }: { aberto: boolean; aoFechar: 
       </div>
     </div>
   );
-}
+});

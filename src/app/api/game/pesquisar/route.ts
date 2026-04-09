@@ -5,14 +5,13 @@
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, getCidadeByUserId, recalcularEstadoServidor, DadosCidade } from '@/lib/auth';
+import { withAuth } from '@/lib/api-helpers';
+import { AuthSession, getCidadeByUserId, recalcularEstadoServidor, DadosCidade } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { PESQUISAS } from '@/lib/pesquisas';
 import { calcularCapacidadeArmazem } from '@/lib/config';
 
-export async function POST(req: NextRequest) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ erro: 'Não autenticado' }, { status: 401 });
+export const POST = withAuth(async (req: NextRequest, session: AuthSession) => {
 
   let body: { pesquisa?: string };
   try {
@@ -117,4 +116,4 @@ export async function POST(req: NextRequest) {
       ultimaAtualizacao: Date.now(),
     },
   });
-}
+});

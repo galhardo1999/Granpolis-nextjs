@@ -5,15 +5,13 @@
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, getCidadeByUserId, recalcularEstadoServidor, DadosCidade } from '@/lib/auth';
+import { withAuth } from '@/lib/api-helpers';
+import { getCidadeByUserId, recalcularEstadoServidor, DadosCidade, AuthSession } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { MISSOES } from '@/lib/missoes';
 import { EstadoJogo } from '@/store/gameStore';
 
-export async function POST(req: NextRequest) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ erro: 'Não autenticado' }, { status: 401 });
-
+export const POST = withAuth(async (req: NextRequest, session: AuthSession) => {
   let body: { missaoId?: string };
   try {
     body = await req.json();
@@ -57,10 +55,10 @@ export async function POST(req: NextRequest) {
       favorMaximo: cidade.favorMaximo,
       prataNaGruta: cidade.prataNaGruta,
     },
-    deusAtual: cidade.deusAtual as string | null,
+    deusAtual: cidade.deusAtual as import('@/lib/deuses').IdDeus | null,
     edificios: cidade.edificios as Record<string, number>,
     unidades: cidade.unidades as Record<string, number>,
-    pesquisasConcluidas: cidade.pesquisasConcluidas as string[],
+    pesquisasConcluidas: cidade.pesquisasConcluidas as import('@/lib/pesquisas').IdPesquisa[],
     missoesColetadas: missoesColetadas,
     fila: cidade.fila as import('@/store/gameStore').ItemFila[],
     filaRecrutamento: cidade.filaRecrutamento as import('@/store/gameStore').ItemFilaRecrutamento[],
@@ -135,4 +133,4 @@ export async function POST(req: NextRequest) {
       ultimaAtualizacao: Date.now(),
     },
   });
-}
+});

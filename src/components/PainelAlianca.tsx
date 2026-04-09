@@ -41,7 +41,7 @@ interface Props {
   aoFechar: () => void;
 }
 
-export function PainelAlianca({ aberto, aoFechar }: Props) {
+export const PainelAlianca = React.memo(function PainelAlianca({ aberto, aoFechar }: Props) {
   const [minhaAlianca, setMinhaAlianca] = useState<Alianca | null>(null);
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [textoChat, setTextoChat] = useState('');
@@ -347,4 +347,4 @@ export function PainelAlianca({ aberto, aoFechar }: Props) {
       </div>
     </div>
   );
-}
+});

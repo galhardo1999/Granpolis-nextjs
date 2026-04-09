@@ -5,13 +5,15 @@
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, getCidadeByUserId, recalcularEstadoServidor, DadosCidade } from '@/lib/auth';
+import { withAuth } from '@/lib/api-helpers';
+import { getCidadeByUserId, recalcularEstadoServidor, DadosCidade, AuthSession } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { EDIFICIOS } from '@/lib/edificios';
 import {
   TEMPO_CONSTRUCAO_EDIFICIOS,
   TAMANHO_MAXIMO_FILA_OBRAS,
 } from '@/lib/config';
+import { formatarEstadoParaCliente } from '@/lib/utils';
 
 // Tipos da fila (espelhados do gameStore para uso no servidor)
 interface ItemFilaServidor {
@@ -21,10 +23,7 @@ interface ItemFilaServidor {
   nivel: number;
 }
 
-export async function POST(req: NextRequest) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ erro: 'Não autenticado' }, { status: 401 });
-
+export const POST = withAuth(async (req: NextRequest, session: AuthSession) => {
   let body: { edificio?: string };
   try {
     body = await req.json();
@@ -156,33 +155,4 @@ export async function POST(req: NextRequest) {
   };
 
   return NextResponse.json({ sucesso: true, estado: formatarEstadoParaCliente(estadoRetornado) });
-}
-
-// Helper para serializar o estado para o cliente
-function formatarEstadoParaCliente(cidade: DadosCidade) {
-  return {
-    recursos: {
-      madeira: cidade.madeira,
-      pedra: cidade.pedra,
-      prata: cidade.prata,
-      populacao: cidade.populacao,
-      populacaoMaxima: cidade.populacaoMaxima,
-      recursosMaximos: cidade.recursosMaximos,
-      favor: cidade.favor,
-      favorMaximo: cidade.favorMaximo,
-      prataNaGruta: cidade.prataNaGruta,
-    },
-    edificios: cidade.edificios,
-    unidades: cidade.unidades,
-    pesquisasConcluidas: cidade.pesquisasConcluidas,
-    missoesColetadas: cidade.missoesColetadas,
-    fila: cidade.fila,
-    filaRecrutamento: cidade.filaRecrutamento,
-    cooldownsAldeias: cidade.cooldownsAldeias,
-    nomeCidade: cidade.nomeCidade,
-    deusAtual: cidade.deusAtual,
-    ultimaAtualizacao: (cidade.ultimaAtualizacao instanceof Date)
-      ? cidade.ultimaAtualizacao.getTime()
-      : cidade.ultimaAtualizacao,
-  };
-}
+});

@@ -5,13 +5,15 @@
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, getCidadeByUserId, recalcularEstadoServidor, DadosCidade } from '@/lib/auth';
+import { withAuth } from '@/lib/api-helpers';
+import { getCidadeByUserId, recalcularEstadoServidor, DadosCidade, AuthSession } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { UNIDADES } from '@/lib/unidades';
 import {
   TEMPO_TREINAMENTO_UNIDADES,
   TAMANHO_MAXIMO_FILA_RECRUTAMENTO,
 } from '@/lib/config';
+import { formatarEstadoParaCliente } from '@/lib/utils';
 
 interface ItemFilaRecrutamentoServidor {
   unidade: string;
@@ -20,10 +22,7 @@ interface ItemFilaRecrutamentoServidor {
   fimTempo: number;
 }
 
-export async function POST(req: NextRequest) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ erro: 'Não autenticado' }, { status: 401 });
-
+export const POST = withAuth(async (req: NextRequest, session: AuthSession) => {
   let body: { unidade?: string; quantidade?: number };
   try {
     body = await req.json();
@@ -138,32 +137,4 @@ export async function POST(req: NextRequest) {
   };
 
   return NextResponse.json({ sucesso: true, estado: formatarEstadoParaCliente(estadoRetornado) });
-}
-
-function formatarEstadoParaCliente(cidade: DadosCidade) {
-  return {
-    recursos: {
-      madeira: cidade.madeira,
-      pedra: cidade.pedra,
-      prata: cidade.prata,
-      populacao: cidade.populacao,
-      populacaoMaxima: cidade.populacaoMaxima,
-      recursosMaximos: cidade.recursosMaximos,
-      favor: cidade.favor,
-      favorMaximo: cidade.favorMaximo,
-      prataNaGruta: cidade.prataNaGruta,
-    },
-    edificios: cidade.edificios,
-    unidades: cidade.unidades,
-    pesquisasConcluidas: cidade.pesquisasConcluidas,
-    missoesColetadas: cidade.missoesColetadas,
-    fila: cidade.fila,
-    filaRecrutamento: cidade.filaRecrutamento,
-    cooldownsAldeias: cidade.cooldownsAldeias,
-    nomeCidade: cidade.nomeCidade,
-    deusAtual: cidade.deusAtual,
-    ultimaAtualizacao: (cidade.ultimaAtualizacao instanceof Date)
-      ? cidade.ultimaAtualizacao.getTime()
-      : cidade.ultimaAtualizacao,
-  };
-}
+});

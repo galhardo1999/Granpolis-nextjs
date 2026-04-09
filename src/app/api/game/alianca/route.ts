@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
 
   // Todas as alianças (para lista)
   if (acao === 'listar') {
+    // OPTIMIZED: Use _count aggregation instead of fetching all members
     const aliancas = await prisma.alianca.findMany({
       select: {
         id: true,
@@ -25,14 +26,8 @@ export async function GET(req: NextRequest) {
         tag: true,
         descricao: true,
         criadoEm: true,
-        membros: {
-          select: {
-            id: true,
-            nomeCidade: true,
-            pontos: true,
-            user: { select: { username: true } },
-          },
-          orderBy: { pontos: 'desc' },
+        _count: {
+          select: { membros: true }
         },
       },
       orderBy: { criadoEm: 'desc' },
@@ -44,34 +39,53 @@ export async function GET(req: NextRequest) {
       nome: a.nome,
       tag: a.tag,
       descricao: a.descricao,
-      membrosCount: a.membros.length,
+      membrosCount: a._count.membros,
     }));
 
     return NextResponse.json({ aliancas: resultado });
   }
 
-  // Minha aliança
-  const cidade = await prisma.cidade.findFirst({
-    where: { userId: session.userId },
-    include: {
-      aliaca: {
-        include: {
-          membros: {
-            include: { user: { select: { username: true } } },
-            orderBy: { pontos: 'desc' },
+  // OPTIMIZED: Fetch user's city and alliance data in parallel
+  const [cidade, mensagens] = await Promise.all([
+    prisma.cidade.findFirst({
+      where: { userId: session.userId },
+      include: {
+        aliaca: {
+          include: {
+            membros: {
+              select: {
+                id: true,
+                nomeCidade: true,
+                pontos: true,
+                user: { select: { username: true } },
+              },
+              orderBy: { pontos: 'desc' },
+            },
           },
         },
       },
-    },
-  });
+    }),
+    // We'll fetch messages after we know the alliance ID
+    Promise.resolve(null),
+  ]);
 
   if (!cidade) return NextResponse.json({ erro: 'Cidade não encontrada' }, { status: 404 });
   if (!cidade.aliaca) return NextResponse.json({ minhaAlianca: null });
 
-  // Mensagens recentes
-  const mensagens = await prisma.mensagemAlianca.findMany({
+  // OPTIMIZED: Only fetch messages if user is in an alliance
+  const mensagensResult = await prisma.mensagemAlianca.findMany({
     where: { aliacaId: cidade.aliacaId! },
-    include: { cidade: { select: { nomeCidade: true, user: { select: { username: true } } } } },
+    select: {
+      id: true,
+      texto: true,
+      criadoEm: true,
+      cidade: { 
+        select: { 
+          nomeCidade: true, 
+          user: { select: { username: true } } 
+        } 
+      },
+    },
     orderBy: { criadoEm: 'desc' },
     take: 50,
   });
@@ -89,7 +103,7 @@ export async function GET(req: NextRequest) {
         pontos: m.pontos,
       })),
     },
-    mensagens: mensagens.reverse().map((m: { id: string; texto: string; criadoEm: Date; cidade: { nomeCidade: string; user: { username: string } } }) => ({
+    mensagens: mensagensResult.reverse().map((m: { id: string; texto: string; criadoEm: Date; cidade: { nomeCidade: string; user: { username: string } } }) => ({
       id: m.id,
       texto: m.texto,
       username: m.cidade.user.username,

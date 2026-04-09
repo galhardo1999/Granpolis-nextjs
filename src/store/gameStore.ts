@@ -17,6 +17,7 @@ import {
   TAMANHO_MAXIMO_FILA_RECRUTAMENTO,
   TAXAS_MERCADO,
   calcularCapacidadeArmazem,
+  calcularPopulacaoMaxima,
   TipoRecurso
 } from '@/lib/config';
 import { calcularProducaoRecurso, calcularProducaoFavor } from '@/lib/calculoProducao';
@@ -152,11 +153,6 @@ function deepClone(estado: EstadoJogo): EstadoJogo {
     cooldownsAldeias: { ...estado.cooldownsAldeias },
     poderesUsadosHoje: { ...estado.poderesUsadosHoje }
   };
-}
-
-function calcularPopulacaoMaximaPorFarm(nivelFarm: number, temArado: boolean): number {
-  const base = 100 + (nivelFarm - 1) * 20;
-  return temArado ? Math.floor(base * 1.10) : base;
 }
 
 function calcularProtecaoGruta(nivelGruta: number): number {
@@ -492,7 +488,7 @@ export const useGameStore = create<GameStore>()(
         if (idPesquisa === 'ceramica') {
           clone.recursos.recursosMaximos = calcularCapacidadeArmazem(clone.edificios['armazem'], true);
         } else if (idPesquisa === 'arado') {
-          clone.recursos.populacaoMaxima = calcularPopulacaoMaximaPorFarm(clone.edificios['fazenda'], true);
+          clone.recursos.populacaoMaxima = calcularPopulacaoMaxima(clone.edificios['fazenda'], true);
         }
 
         set({ recursos: clone.recursos, pesquisasConcluidas: clone.pesquisasConcluidas });
@@ -686,8 +682,8 @@ export const useGameStore = create<GameStore>()(
           eventos.push({ tipo: 'edificio', id: tarefa.edificio, nome: EDIFICIOS[tarefa.edificio].nome, nivel: tarefa.nivel });
 
           if (tarefa.edificio === 'fazenda') {
-            const popMaxAnti = calcularPopulacaoMaximaPorFarm(clone.edificios.fazenda - 1, temArado);
-            const popMaxNovo = calcularPopulacaoMaximaPorFarm(clone.edificios.fazenda, temArado);
+            const popMaxAnti = calcularPopulacaoMaxima(clone.edificios.fazenda - 1, temArado);
+            const popMaxNovo = calcularPopulacaoMaxima(clone.edificios.fazenda, temArado);
             clone.recursos.populacaoMaxima = popMaxNovo;
             clone.recursos.populacao += (popMaxNovo - popMaxAnti);
           } else if (tarefa.edificio === 'armazem') {

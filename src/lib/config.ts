@@ -1,12 +1,12 @@
 //PRODUCAO DE RECURSOS
-export const PROD_DE_RECURSOS = 130; //Recursos por hora
+export const PROD_DE_RECURSOS = 100; //Recursos por hora
 
 //PRODUCAO DE FAVORES
 export const PRODUCAO_BASE_FAVOR = 1; // Favor por hora
 
 //TEMPO DE CONSTRUCAO DE EDIFICIOS E TREINAMENTO DE UNIDADES
-export const TEMPO_CONSTRUCAO_EDIFICIOS = 111;
-export const TEMPO_TREINAMENTO_UNIDADES = 111;
+export const TEMPO_CONSTRUCAO_EDIFICIOS = 1;
+export const TEMPO_TREINAMENTO_UNIDADES = 1;
 
 //TAMANHO MAXIMO DE FILA DE OBRAS E RECRUTAMENTO
 export const TAMANHO_MAXIMO_FILA_OBRAS = 7;
@@ -31,4 +31,13 @@ export function calcularCapacidadeArmazem(nivelArmazem: number, temCeramica: boo
   const indice = Math.max(0, Math.min(nivelArmazem, CAPACIDADE_ARMAZEM_POR_NIVEL.length - 1));
   const base = CAPACIDADE_ARMAZEM_POR_NIVEL[indice];
   return temCeramica ? Math.floor(base * 1.10) : base;
+}
+
+/**
+ * Calcula população máxima baseada no nível da fazenda.
+ * Fórmula: 100 + (nivel - 1) * 20, com bônus de 10% se tiver Arado.
+ */
+export function calcularPopulacaoMaxima(nivelFazenda: number, temArado: boolean): number {
+  const base = nivelFazenda > 0 ? 100 + (nivelFazenda - 1) * 20 : 100;
+  return temArado ? Math.floor(base * 1.10) : base;
 }

@@ -81,7 +81,7 @@ const MODAL_ACADEMIA: IdEdificio[] = ['academia'];
 // Edifícios que usam modal de mercado
 const MODAL_MERCADO: IdEdificio[] = ['mercado'];
 
-export function ModalEdificio({
+export const ModalEdificio = React.memo(function ModalEdificio({
   aberto,
   aoFechar,
   idEdificio,
@@ -407,7 +407,7 @@ export function ModalEdificio({
             prata={recursos.prata}
             pesquisasConcluidas={pesquisasConcluidas}
             aoPesquisar={aoPesquisar}
-            aomostrarToast={mostrarToast}
+            aoMostrarToast={mostrarToast}
           />
           <hr style={{ margin: '20px 0', borderColor: '#3a5a8a' }} />
           {renderizarCartaoEdificio(idEdificio)}
@@ -486,4 +486,4 @@ export function ModalEdificio({
       </div>
     </div>
   );
-}
+});

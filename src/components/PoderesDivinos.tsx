@@ -14,7 +14,7 @@ interface PoderDivinoProps {
   aoLancarPoder: (idPoder: string) => { sucesso: boolean; motivo?: string };
 }
 
-export function PoderDivino({ idDeusAtual, favor, favorMaximo, nivelTemplo, aoSelecionarDeus, aoLancarPoder }: PoderDivinoProps) {
+export const PoderDivino = React.memo(function PoderDivino({ idDeusAtual, favor, favorMaximo, nivelTemplo, aoSelecionarDeus, aoLancarPoder }: PoderDivinoProps) {
   const [seletorAberto, setSeletorAberto] = useState(false);
   const [menuPoderAberto, setMenuPoderAberto] = useState(false);
   const { mostrarToast } = useToast();
@@ -122,4 +122,4 @@ export function PoderDivino({ idDeusAtual, favor, favorMaximo, nivelTemplo, aoSe
       )}
     </>
   );
-}
+});

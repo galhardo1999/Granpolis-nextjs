@@ -42,7 +42,7 @@ function getCorAlianca(tag: string | null | undefined): string {
   return cores[Math.abs(hash) % cores.length];
 }
 
-export function MapaMundo({ aberto, aoFechar, aoClicarCidade, aliacaTag }: Props) {
+export const MapaMundo = React.memo(function MapaMundo({ aberto, aoFechar, aoClicarCidade, aliacaTag }: Props) {
   const [zoom, setZoom] = useState(1);
   const [panX, setPanX] = useState(0);
   const [panY, setPanY] = useState(0);
@@ -347,4 +347,4 @@ export function MapaMundo({ aberto, aoFechar, aoClicarCidade, aliacaTag }: Props
       </div>
     </div>
   );
-}
+});

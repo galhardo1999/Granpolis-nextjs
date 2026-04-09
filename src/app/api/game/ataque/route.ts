@@ -5,16 +5,14 @@
 // ============================================================
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth';
+import { withAuth } from '@/lib/api-helpers';
+import { AuthSession } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { verificarProtecao } from '@/lib/protecao';
 
 const TEMPO_VIAGEM_MINUTOS = 5; // 5 min de viagem entre cidades
 
-export async function GET() {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ erro: 'Não autenticado' }, { status: 401 });
-
+export const GET = withAuth(async (_req: NextRequest, session: AuthSession) => {
   const cidade = await prisma.cidade.findFirst({ where: { userId: session.userId } });
   if (!cidade) return NextResponse.json({ erro: 'Cidade não encontrada' }, { status: 404 });
 
@@ -60,12 +58,9 @@ export async function GET() {
       lido: r.lido,
     })),
   });
-}
+});
 
-export async function POST(req: NextRequest) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ erro: 'Não autenticado' }, { status: 401 });
-
+export const POST = withAuth(async (req: NextRequest, session: AuthSession) => {
   const cidadeAtual = await prisma.cidade.findFirst({
     where: { userId: session.userId },
     include: { user: { select: { username: true } } },
@@ -107,7 +102,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ erro: 'Não pode atacar a si mesmo' }, { status: 400 });
   }
 
-  // Verificar proteção de escudo
+  // Buscar defensor antes de verificar proteção
+  const defensor = await prisma.cidade.findUnique({
+    where: { id: alvoId },
+    include: { user: { select: { username: true } } },
+  });
+
+  if (!defensor) {
+    return NextResponse.json({ erro: 'Alvo não encontrado' }, { status: 404 });
+  }
+
+  // Verificar proteção de escudo do atacante
   const protecaoAtacante = await verificarProtecao(cidadeAtual.id);
   if (protecaoAtacante.protegido) {
     return NextResponse.json({
@@ -116,21 +121,12 @@ export async function POST(req: NextRequest) {
     }, { status: 400 });
   }
 
+  // Verificar proteção de escudo do defensor
   const protecaoDefensor = await verificarProtecao(defensor.id);
   if (protecaoDefensor.protegido) {
     return NextResponse.json({
       erro: `Alvo protegido por escudo (${Math.ceil(protecaoDefensor.tempoRestanteMinutos)}min restante).`,
     }, { status: 400 });
-  }
-
-  // Buscar defensor
-  const defensor = await prisma.cidade.findUnique({
-    where: { id: alvoId },
-    include: { user: { select: { username: true } } },
-  });
-
-  if (!defensor) {
-    return NextResponse.json({ erro: 'Alvo não encontrado' }, { status: 404 });
   }
 
   const agora = new Date();
@@ -192,4 +188,4 @@ export async function POST(req: NextRequest) {
     tempoChegada: chegada.getTime(),
     mensagem: `Ataque enviado contra ${defensor.nomeCidade} de ${defensor.user.username}. Chegada em ${TEMPO_VIAGEM_MINUTOS} min.`,
   });
-}
+});

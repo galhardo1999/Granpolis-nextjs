@@ -1,11 +1,12 @@
 import { IdEdificio, EDIFICIOS } from '@/lib/edificios';
+import React from 'react';
 
 interface ModalEdificioCidadeProps {
   edificios: Record<string, number>;
   aoClicarEdificio: (id: IdEdificio) => void;
 }
 
-export function ModalEdificioCidade({ edificios, aoClicarEdificio }: ModalEdificioCidadeProps) {
+export const ModalEdificioCidade = React.memo(function ModalEdificioCidade({ edificios, aoClicarEdificio }: ModalEdificioCidadeProps) {
   const renderLabel = (id: IdEdificio, nome: string) => {
     const nivel = edificios[id] || 0;
     const max = (EDIFICIOS[id] as any).nivelMaximo;
@@ -75,4 +76,4 @@ export function ModalEdificioCidade({ edificios, aoClicarEdificio }: ModalEdific
       </div>
     </main>
   );
-}
+});

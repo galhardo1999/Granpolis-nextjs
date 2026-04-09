@@ -10,7 +10,7 @@ interface ModalEdificioArmazemProps {
   nivelAtual: number;
 }
 
-export function ModalEdificioArmazem({ recursos, renda, nivelAtual }: ModalEdificioArmazemProps) {
+export const ModalEdificioArmazem = React.memo(function ModalEdificioArmazem({ recursos, renda, nivelAtual }: ModalEdificioArmazemProps) {
 
   const getTempoRestante = (atual: number, rendaValor: number, max: number) => {
     if (atual >= max) return "Máxima capacidade alcançada";
@@ -92,4 +92,4 @@ export function ModalEdificioArmazem({ recursos, renda, nivelAtual }: ModalEdifi
       </div>
     </div>
   );
-}
+});

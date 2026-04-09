@@ -8,11 +8,12 @@ import { SignJWT, jwtVerify } from 'jose';
 import { prisma } from './db';
 import { cookies } from 'next/headers';
 import { z } from 'zod';
-import { PRODUCAO_BASE_FAVOR, calcularCapacidadeArmazem, CAPACIDADE_ARMAZEM_POR_NIVEL } from './config';
+import { calcularCapacidadeArmazem, calcularPopulacaoMaxima } from './config';
 import { EDIFICIOS } from './edificios';
 import { calcularProducaoRecurso, calcularProducaoFavor } from './calculoProducao';
 import { gerarPosicaoMapa } from './mapa';
 import { PROTECAO_NOVO_PLAYER } from './protecao';
+import { calcularProximoStreak } from './login-streak';
 
 // Tipos internos para processar filas no servidor
 interface ItemFilaServidor {
@@ -28,10 +29,6 @@ interface ItemFilaRecrutamentoServidor {
   inicioTempo: number;
   fimTempo: number;
 }
-
-// Suprime o aviso de import não usado
-void PRODUCAO_BASE_FAVOR;
-void CAPACIDADE_ARMAZEM_POR_NIVEL;
 
 const COOKIE_NAME = 'granpolis_session';
 const SALT_ROUNDS = 12;
@@ -106,6 +103,7 @@ async function revogarSession(tokenHash: string): Promise<void> {
   await prisma.session.deleteMany({ where: { tokenHash } });
 }
 
+// TODO: Chamar periodicamente via cron job ou scheduler
 async function limparSessionsExpiradas(): Promise<void> {
   await prisma.session.deleteMany({
     where: { expiresAt: { lt: new Date() } },
@@ -231,25 +229,16 @@ export async function loginUsuario(
   // Atualizar loginStreak e ultimoLogin na cidade do usuario
   const cidade = await prisma.cidade.findFirst({ where: { userId: user.id } });
   if (cidade) {
-    const agora = new Date();
-    const ultimo = (cidade as unknown as Record<string, unknown>).ultimoLogin as Date | null | undefined;
-    let novoStreak: number;
+    const { streak: novoStreak } = calcularProximoStreak(
+      cidade.ultimoLogin,
+      cidade.loginStreak ?? 1,
+    );
 
-    if (ultimo) {
-      const diffDias = Math.floor((agora.getTime() - (ultimo instanceof Date ? ultimo.getTime() : 0)) / (1000 * 60 * 60 * 24));
-      novoStreak = diffDias === 0 ? ((cidade as unknown as Record<string, number>).loginStreak ?? 1)
-        : diffDias === 1 ? ((cidade as unknown as Record<string, number>).loginStreak ?? 0) + 1
-        : 1;
-    } else {
-      novoStreak = 1;
-    }
-
-    // Usando update por id para garantir unicidade
     await prisma.cidade.update({
       where: { id: (cidade as any).id },
       data: {
         loginStreak: novoStreak,
-        ultimoLogin: agora,
+        ultimoLogin: new Date(),
       },
     });
   }
@@ -359,8 +348,7 @@ export function recalcularEstadoServidor(cidade: DadosCidade): DadosCidade {
   // ── 1. Processar fila de construção ────────────────────────
   const nivelFarmAntigo = cidade.edificios['fazenda'] || 0;
   const temArado = cidade.pesquisasConcluidas.includes('arado');
-  const popMaxAntigoBase = nivelFarmAntigo > 0 ? (100 + (nivelFarmAntigo - 1) * 20) : 100;
-  const popMaxAntigoTotal = temArado ? Math.floor(popMaxAntigoBase * 1.10) : popMaxAntigoBase;
+  const popMaxAntigoTotal = calcularPopulacaoMaxima(nivelFarmAntigo, temArado);
 
   // Para cada item cujo fimTempo já passou, aplica o level-up
   while (fila.length > 0 && agora >= fila[0].fimTempo) {
@@ -374,17 +362,12 @@ export function recalcularEstadoServidor(cidade: DadosCidade): DadosCidade {
   const nivelFarm = edificios['fazenda'] || 0;
 
   const recursosMax = calcularCapacidadeArmazem(nivelWarehouse, temCeramica);
-  const popMaxFarm = nivelFarm > 0
-    ? (100 + (nivelFarm - 1) * 20)
-    : 100;
-  const popMax = Math.max(
-    cidade.populacaoMaxima,
-    temArado ? Math.floor(popMaxFarm * 1.10) : popMaxFarm
-  );
+  const popMax = calcularPopulacaoMaxima(nivelFarm, temArado);
+  const popMaxFinal = Math.max(cidade.populacaoMaxima, popMax);
 
   let populacaoExtra = 0;
-  if (popMax > popMaxAntigoTotal) {
-    populacaoExtra = popMax - popMaxAntigoTotal;
+  if (popMaxFinal > popMaxAntigoTotal) {
+    populacaoExtra = popMaxFinal - popMaxAntigoTotal;
   }
 
   // ── 3. Processar fila de recrutamento ──────────────────────
@@ -430,7 +413,7 @@ export function recalcularEstadoServidor(cidade: DadosCidade): DadosCidade {
     unidades,
     fila,
     filaRecrutamento,
-    populacaoMaxima: popMax,
+    populacaoMaxima: popMaxFinal,
     recursosMaximos: recursosMax,
     madeira: Math.min(recursosMax, cidade.madeira + (madeiraPorHora / 3600) * deltaSegundos),
     pedra: Math.min(recursosMax, cidade.pedra + (pedraPorHora / 3600) * deltaSegundos),

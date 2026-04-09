@@ -57,7 +57,7 @@ export const FilaItem = memo(function FilaItem({
   );
 });
 
-export function FilaProducao({
+export const FilaProducao = React.memo(function FilaProducao({
   label,
   labelColor = '#4e342e',
   itens,
@@ -87,4 +87,4 @@ export function FilaProducao({
       </div>
     </div>
   );
-}
+});

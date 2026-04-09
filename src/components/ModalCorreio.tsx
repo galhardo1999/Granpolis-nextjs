@@ -27,7 +27,7 @@ interface MensagemAlianca {
 
 type Mensagem = MensagemCombate | MensagemAlianca;
 
-export function ModalCorreio({ aberto, aoFechar }: { aberto: boolean; aoFechar: () => void }) {
+export const ModalCorreio = React.memo(function ModalCorreio({ aberto, aoFechar }: { aberto: boolean; aoFechar: () => void }) {
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [naoLidos, setNaoLidos] = useState(0);
   const [selecionada, setSelecionada] = useState<Mensagem | null>(null);
@@ -333,4 +333,4 @@ export function ModalCorreio({ aberto, aoFechar }: { aberto: boolean; aoFechar: 
       </div>
     </div>
   );
-}
+});

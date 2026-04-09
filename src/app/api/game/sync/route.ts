@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession, recalcularEstadoServidor, getCidadeByUserId } from '@/lib/auth';
+import { withAuth } from '@/lib/api-helpers';
+import { AuthSession, recalcularEstadoServidor, getCidadeByUserId } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { z } from 'zod';
 
@@ -10,10 +11,7 @@ const syncSchema = z.object({
 }).strict();
 
 // GET: retorna o estado atual (recalculado) da cidade do usuário
-export async function GET() {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ erro: 'Não autenticado' }, { status: 401 });
-
+export const GET = withAuth(async (_req: NextRequest, session: AuthSession) => {
   const cidadeRaw = await getCidadeByUserId(session.userId);
   if (!cidadeRaw) return NextResponse.json({ erro: 'Cidade não encontrada' }, { status: 404 });
 
@@ -100,13 +98,10 @@ export async function GET() {
     aliacaNome,
     protecaoOfflineAte: (cidade as any).protecaoOfflineAte as Date | null,
   });
-}
+});
 
 // POST: salva o estado — MAS recalcula tudo no servidor, ignora valores do cliente
-export async function POST(req: NextRequest) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ erro: 'Não autenticado' }, { status: 401 });
-
+export const POST = withAuth(async (req: NextRequest, session: AuthSession) => {
   const cidadeRaw = await getCidadeByUserId(session.userId);
   if (!cidadeRaw) return NextResponse.json({ erro: 'Cidade não encontrada' }, { status: 404 });
 
@@ -149,6 +144,7 @@ export async function POST(req: NextRequest) {
       poderesUsadosHoje: (cidadeRaw.poderesUsadosHoje as Record<string, unknown>) ?? {},
       pontos: cidadeRaw.pontos ?? 0,
       nivelMaravilha: cidadeRaw.nivelMaravilha ?? 0,
+      protecaoOfflineAte: cidadeRaw.protecaoOfflineAte,
     });
 
     // Merge poderesUsadosHoje from client (cooler tracked client-side)
@@ -195,4 +191,4 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ erro: 'Erro ao salvar' }, { status: 500 });
   }
-}
+});

@@ -61,14 +61,6 @@ export function calcularBonusMuralha(nivelMuralha: number): number {
 }
 
 /**
- * Calcula moral do atacante (0.3 a 1.0 baseado em diferença de pontos)
- * Simplificado para single-player: sempre 1.0
- */
-export function calcularMoral(): number {
-  return 1.0;
-}
-
-/**
  * Simula uma batalha entre dois exércitos
  * Baseado nas mecânicas clássicas do Grepolis
  */
@@ -82,10 +74,9 @@ export function simularBatalha(
 ): ResultadoBatalha {
   const relatorio: string[] = [];
 
-  const moral = calcularMoral();
   const bonusMuralha = calcularBonusMuralha(nivelMuralha);
 
-  const poderAtaque = calcularPoderAtaque(exercitoAtacante, bonusAtaque * moral);
+  const poderAtaque = calcularPoderAtaque(exercitoAtacante, bonusAtaque);
   const poderDefesa = calcularPoderDefesa(exercitoDefensor, bonusDefesa * bonusMuralha);
 
   relatorio.push(`⚔️ Poder de ataque: ${Math.round(poderAtaque)}`);
